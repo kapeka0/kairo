@@ -62,7 +62,7 @@ function SignInForm() {
     <div className="w-full max-w-md space-y-3 overflow-x-hidden px-2">
       <Form {...form}>
         <form
-          className="space-y-3 w-full"
+          className="space-y-3 w-full pb-1"
           onSubmit={form.handleSubmit(onSubmit)}
         >
           <FormField

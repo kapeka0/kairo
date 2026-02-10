@@ -73,6 +73,18 @@
   },
   "Metadata": {
     "title": "Kairo",
-    "description": "App Description"
+    "description": "Privacy-first web app for tracking crypto portfolios."
+  },
+  "Sidebar": {
+    "platform": "Platform",
+    "portfolio": "Portfolio",
+    "Overview": "Overview",
+    "Wallets": "Wallets",
+    "Tokens": "Tokens",
+    "Activity": "Activity"
+  },
+  "Portfolio": {
+    "portfolios": "Portfolios",
+    "addPortfolio": "Add Portfolio"
   }
 }

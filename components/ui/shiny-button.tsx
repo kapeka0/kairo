@@ -15,7 +15,7 @@ export function ShinyButton({
     <Button
       {...props}
       className={cn(
-        "group w-full relative flex transform items-center justify-center gap-2 overflow-hidden whitespace-nowrap font-medium  transition-all duration-300 hover:ring-primary hover:ring-2 hover:ring-offset-2 focus:outline-none focus:ring-2 focus:ring-offset-2 dark:ring-offset-gray-900 cursor-pointer",
+        "group w-full relative flex transform items-center justify-center gap-2 overflow-hidden whitespace-nowrap font-medium  transition-all duration-300 hover:ring-primary hover:ring-1 hover:ring-offset-1 focus:outline-none focus:ring-1 focus:ring-offset-1 dark:ring-offset-gray-900 cursor-pointer",
         className,
       )}
     >

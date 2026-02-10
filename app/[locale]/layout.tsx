@@ -7,9 +7,9 @@ import {
   getTranslations,
   setRequestLocale,
 } from "next-intl/server";
+import localFont from "next/font/local";
 import { cookies } from "next/headers";
 import { redirect } from "next/navigation";
-import localFont from "next/font/local";
 
 import { ThemeProvider } from "@/components/providers/ThemeProvider";
 import { Toaster } from "@/components/ui/sonner";
@@ -113,7 +113,7 @@ export default async function RootLayout({
         {/* icon */}
         <link
           rel="icon"
-          href="/images/logos/logo.svg"
+          href="/images/logos/logo-square.svg"
           type="image/svg+xml"
           sizes="any"
         />
@@ -123,9 +123,7 @@ export default async function RootLayout({
           async
         ></script>
       </head>
-      <body
-        className={cn(`${satoshi.className}   h-full antialiased `)}
-      >
+      <body className={cn(`${satoshi.className}   h-full antialiased `)}>
         {" "}
         <NextIntlClientProvider messages={messages}>
           <div className="">

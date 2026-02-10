@@ -73,5 +73,17 @@
   "Metadata": {
     "title": "Kairo",
     "description": "Descripción de la App"
+  },
+  "Sidebar": {
+    "platform": "Plataforma",
+    "portfolio": "Portafolio",
+    "Overview": "Resumen",
+    "Wallets": "Billeteras",
+    "Tokens": "Tokens",
+    "Activity": "Actividad"
+  },
+  "Portfolio": {
+    "portfolios": "Portafolios",
+    "addPortfolio": "Agregar Portafolio"
   }
 }

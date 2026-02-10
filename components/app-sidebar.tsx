@@ -2,9 +2,7 @@
 
 import * as React from "react";
 
-import { AppHeader } from "@/components/app-header";
 import { NavMain } from "@/components/nav-main";
-import { NavProjects } from "@/components/nav-projects";
 import { NavUser } from "@/components/nav-user";
 import {
   Sidebar,
@@ -14,137 +12,115 @@ import {
   SidebarRail,
 } from "@/components/ui/sidebar";
 import {
-  BookOpenIcon,
-  BotIcon,
-  FrameIcon,
-  MapIcon,
-  PieChartIcon,
-  Settings2Icon,
-  TerminalSquareIcon,
+  Activity,
+  AudioWaveform,
+  Command,
+  GalleryVerticalEnd,
+  House,
+  Package,
+  WalletMinimal,
 } from "lucide-react";
+import { useParams, usePathname } from "next/navigation";
+import { PortfolioSwitcher } from "./ui/portfolio-switcher";
 
-// This is sample data.
-const data = {
+export interface NavItem {
+  title: string;
+  url: string;
+  icon?: React.ReactElement;
+  isActive: boolean;
+  items?: NavItem[];
+}
+
+interface NavData {
   user: {
-    name: "shadcn",
-    email: "m@example.com",
-    avatar: "/avatars/shadcn.jpg",
-  },
-  navMain: [
-    {
-      title: "Playground",
-      url: "#",
-      icon: <TerminalSquareIcon />,
-      isActive: true,
-      items: [
-        {
-          title: "History",
-          url: "#",
-        },
-        {
-          title: "Starred",
-          url: "#",
-        },
-        {
-          title: "Settings",
-          url: "#",
-        },
-      ],
-    },
-    {
-      title: "Models",
-      url: "#",
-      icon: <BotIcon />,
-      items: [
-        {
-          title: "Genesis",
-          url: "#",
-        },
-        {
-          title: "Explorer",
-          url: "#",
-        },
-        {
-          title: "Quantum",
-          url: "#",
-        },
-      ],
-    },
-    {
-      title: "Documentation",
-      url: "#",
-      icon: <BookOpenIcon />,
-      items: [
-        {
-          title: "Introduction",
-          url: "#",
-        },
-        {
-          title: "Get Started",
-          url: "#",
-        },
-        {
-          title: "Tutorials",
-          url: "#",
-        },
-        {
-          title: "Changelog",
-          url: "#",
-        },
-      ],
-    },
-    {
-      title: "Settings",
-      url: "#",
-      icon: <Settings2Icon />,
-      items: [
-        {
-          title: "General",
-          url: "#",
-        },
-        {
-          title: "Team",
-          url: "#",
-        },
-        {
-          title: "Billing",
-          url: "#",
-        },
-        {
-          title: "Limits",
-          url: "#",
-        },
-      ],
-    },
-  ],
-  projects: [
-    {
-      name: "Design Engineering",
-      url: "#",
-      icon: <FrameIcon />,
-    },
-    {
-      name: "Sales & Marketing",
-      url: "#",
-      icon: <PieChartIcon />,
-    },
-    {
-      name: "Travel",
-      url: "#",
-      icon: <MapIcon />,
-    },
-  ],
-};
-
+    name: string;
+    email: string;
+    avatar: string;
+  };
+  navMain: NavItem[];
+  // projects: { name: string; url: string; icon?: React.ComponentType<any> }[];
+}
 export function AppSidebar({ ...props }: React.ComponentProps<typeof Sidebar>) {
+  const pathname = usePathname();
+  const params = useParams();
+  const portfolioId = (params["portfolio-id"] as string) || "main-portfolio";
+
+  const data: NavData = {
+    user: {
+      name: "Kapeka",
+      email: "m@example.com",
+      avatar: "/avatars/kapeka.jpg",
+    },
+    navMain: [
+      {
+        title: "Overview",
+        url: `/${portfolioId}`,
+        icon: <House />,
+        isActive: pathname.endsWith(`/${portfolioId}`),
+      },
+      {
+        title: "Wallets",
+        url: `/${portfolioId}/wallets`,
+        icon: <WalletMinimal />,
+        isActive: pathname.includes(`/${portfolioId}/wallets`),
+      },
+      {
+        title: "Tokens",
+        url: `/${portfolioId}/tokens`,
+        isActive: pathname.includes(`/${portfolioId}/tokens`),
+        icon: <Package />,
+      },
+      {
+        title: "Activity",
+        url: `/${portfolioId}/activity`,
+        isActive: pathname.includes(`/${portfolioId}/activity`),
+        icon: <Activity />,
+      },
+    ],
+    // projects: [
+    //   {
+    //     name: "Design Engineering",
+    //     url: "#",
+    //     icon: <FrameIcon />,
+    //   },
+    //   {
+    //     name: "Sales & Marketing",
+    //     url: "#",
+    //     icon: <PieChartIcon />,
+    //   },
+    //   {
+    //     name: "Travel",
+    //     url: "#",
+    //     icon: <MapIcon />,
+    //   },
+    // ],
+  };
+
+  const teams = [
+    {
+      name: "Acme Inc",
+      logo: GalleryVerticalEnd,
+      plan: "Enterprise",
+    },
+    {
+      name: "Acme Corp.",
+      logo: AudioWaveform,
+      plan: "Startup",
+    },
+    {
+      name: "Evil Corp.",
+      logo: Command,
+      plan: "Free",
+    },
+  ];
   return (
     <Sidebar collapsible="icon" {...props}>
       <SidebarHeader>
-        <AppHeader />
+        <PortfolioSwitcher teams={teams} />
       </SidebarHeader>
       <SidebarContent>
         <NavMain items={data.navMain} />
-        <NavProjects projects={data.projects} />
+        {/* <NavProjects projects={data.projects} /> */}
       </SidebarContent>
       <SidebarFooter>
         <NavUser user={data.user} />

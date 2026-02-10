@@ -19,7 +19,7 @@ function SignInPage() {
             alt="Kairo"
             className="shrink-0"
             height={80}
-            src="/images/logos/logo.svg"
+            src="/images/logos/logo-square.svg"
             width={80}
           />
         </AnimatedUpEntrance>

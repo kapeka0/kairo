@@ -1,9 +1,11 @@
 "use client";
 
+import { useTheme } from "next-themes";
 import Image from "next/image";
 
 function ScreenLoader() {
   console.log("ScreenLoader");
+  const { theme } = useTheme();
   return (
     <div className="flex h-screen w-full items-center justify-center bg-background">
       <div className="relative">
@@ -11,7 +13,11 @@ function ScreenLoader() {
 
         <div className="relative animate-smooth-pulse">
           <Image
-            src="/images/logos/logo.svg"
+            src={
+              theme === "light"
+                ? "/images/logos/logo-square.svg"
+                : "/images/logos/logo-square-light.svg"
+            }
             alt="Loading..."
             width={80}
             height={56}

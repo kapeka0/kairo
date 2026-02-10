@@ -24,6 +24,7 @@ import {
   LogOutIcon,
   SparklesIcon,
 } from "lucide-react";
+import { ThemeToggleItem } from "./global/ThemeToggleItem";
 
 export function NavUser({
   user,
@@ -97,6 +98,7 @@ export function NavUser({
                 <CreditCardIcon />
                 Billing
               </DropdownMenuItem>
+              <ThemeToggleItem />
               <DropdownMenuItem>
                 <BellIcon />
                 Notifications
