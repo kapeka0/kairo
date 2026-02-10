@@ -1,0 +1,78 @@
+{
+  "Auth": {
+    "welcome": "Welcome to Kairo",
+    "welcomeMessage": "Sign in to continue to your account",
+    "signIn": "Sign in",
+    "email": "Email",
+    "invalidEmail": "Invalid email",
+    "invalidUsername": "Invalid username",
+    "password": "Password",
+    "passwordPlaceholder": "Make sure nobody is watching",
+    "noAccount": "Don't have an account?",
+    "signUp": "Sign up",
+    "loginError": "Invalid username or password",
+    "join": "Join Kairo",
+    "joinMessage": "Start your journey today",
+    "strongPassword": "Choose a strong password",
+    "confirmPassword": "Confirm your password",
+    "preTerms": "I agree to the ",
+    "inTerms": " and ",
+    "terms": "Terms and Conditions",
+    "privacy": "Privacy Policy",
+    "alreadyAccount": "Already have an account?",
+    "passwordMismatch": "Passwords do not match",
+    "acceptTerms": "You must accept the terms and conditions",
+    "username": "Username",
+    "usernamePlaceholder": "Satoshi Nakamoto",
+    "signUpSuccess": "Sign up successful!",
+    "emailSent": "You have successfully signed up. Please check your email to verify your account.",
+    "resendEmail": "Resend email",
+    "resendEmailSuccess": "Email resent",
+    "resendEmailError": "An error occurred resending the email",
+    "google": "Continue with Google",
+    "or": "or",
+    "errors": {
+      "unexpected": "An unexpected error occurred.",
+      "existingEmail": "Email already in use.",
+      "existingEmailDesc": "Email already in use, please sign in.",
+      "existingUsername": "Username already taken.",
+      "existingUsernameDesc": "Username already taken, please choose another."
+    },
+
+    "zod": {
+      "email": "Invalid email",
+      "passwordMatch": "Passwords do not match",
+      "required": "This field is required",
+      "passwordRestriction": "Password must contain at least one uppercase letter, one lowercase letter and one number",
+      "passwordLength": "Password must be at least 8 characters long",
+      "passwordMaxLength": "Password cannot be more than 20 characters long",
+      "passwordLowercase": "Password must contain at least one lowercase letter",
+      "passwordUppercase": "Password must contain at least one uppercase letter",
+      "passwordNumber": "Password must contain at least one number",
+      "passwordSpecial": "Password must contain at least one special character",
+      "usernameLength": "Username must be between 3 and 20 characters.",
+      "usernameMaxLength": "Username cannot be more than 20 characters.",
+      "usernameInvalid": "Username can only contain letters, numbers, and underscores."
+    }
+  },
+  "Global": {
+    "title": "Kairo",
+
+    "theme": "Theme",
+    "light": "Light",
+    "dark": "Dark",
+    "system": "System",
+    "lang": "Language",
+    "es": "Spanish",
+    "en": "English"
+  },
+  "LandingPage": {
+    "title": "Start building 🚀",
+    "description": "My Next.js template designed to develop SaaS, AI tools or other web applications quickly and effectively, ready to help you monetize from day one.",
+    "button": "Click me"
+  },
+  "Metadata": {
+    "title": "Kairo",
+    "description": "App Description"
+  }
+}
