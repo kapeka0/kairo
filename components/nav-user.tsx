@@ -16,6 +16,7 @@ import {
   SidebarMenuItem,
   useSidebar,
 } from "@/components/ui/sidebar";
+import { useUser } from "@/lib/hooks/useUser";
 import {
   BadgeCheckIcon,
   BellIcon,
@@ -25,18 +26,14 @@ import {
   SparklesIcon,
 } from "lucide-react";
 import { ThemeToggleItem } from "./global/ThemeToggleItem";
+import { Skeleton } from "./ui/skeleton";
 
-export function NavUser({
-  user,
-}: {
-  user: {
-    name: string;
-    email: string;
-    avatar: string;
-  };
-}) {
+export function NavUser() {
   const { isMobile } = useSidebar();
-  return (
+  const { isPending, user } = useUser();
+  return !user ? (
+    <Skeleton className="w-full h-12" />
+  ) : (
     <SidebarMenu>
       <SidebarMenuItem>
         <DropdownMenu>
@@ -47,10 +44,10 @@ export function NavUser({
           >
             <Avatar>
               <AvatarImage
-                src={`/api/avatar?name=${user.name}`}
+                src={user.image || `/api/avatar?name=${user.name}`}
                 alt={user.name}
               />
-              <AvatarFallback>CN</AvatarFallback>
+              <AvatarFallback>{user.name.slice(0, 1)}</AvatarFallback>
             </Avatar>
             <div className="grid flex-1 text-left text-sm leading-tight">
               <span className="truncate font-medium">{user.name}</span>
@@ -69,7 +66,7 @@ export function NavUser({
                 <div className="flex items-center gap-2 px-1 py-1.5 text-left text-sm">
                   <Avatar>
                     <AvatarImage
-                      src={`/api/avatar?name=${user.name}`}
+                      src={user.image || `/api/avatar?name=${user.name}`}
                       alt={user.name}
                     />
                     <AvatarFallback>CN</AvatarFallback>

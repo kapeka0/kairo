@@ -6,7 +6,6 @@ import { useTranslations } from "next-intl";
 import { useAction } from "next-safe-action/hooks";
 import { useState } from "react";
 import { useForm } from "react-hook-form";
-import { toast } from "react-hot-toast";
 import { z } from "zod";
 
 import { Checkbox } from "@/components/ui/checkbox";
@@ -21,7 +20,10 @@ import {
 import { Input } from "@/components/ui/input";
 import { ShinyButton } from "@/components/ui/shiny-button";
 import { Link, useRouter } from "@/i18n/routing";
-import { signUp } from "../../../../data/actions/user";
+import { signUp } from "@/lib/actions/auth";
+import { devLog } from "@/lib/utils";
+import { getProfilePicBySeed } from "@/lib/utils/development";
+import { toast } from "sonner";
 
 function SignUpForm() {
   const router = useRouter();
@@ -30,104 +32,70 @@ function SignUpForm() {
   const tError = useTranslations("Auth.errors");
   const [showPassword, setshowPassword] = useState(false);
   const signUpSchema = z
-
     .object({
-      username: z
+      name: z
         .string()
-        .min(3, { message: tForm("usernameLength") })
-        .max(20, { message: tForm("usernameMaxLength") })
-        .regex(/^[a-zA-Z0-9_]+$/, {
-          message: tForm("usernameInvalid"),
-        }),
+        .min(3, { message: tForm("nameLength") })
+        .max(50),
+      email: z.string().email({ message: tForm("email") }),
       password: z
         .string()
         .min(8, { message: tForm("passwordLength") })
-        .max(20, {
-          message: tForm("passwordMaxLength"),
-        })
-        .regex(/[a-z]/, {
-          message: tForm("passwordLowercase"),
-        })
-        .regex(/[A-Z]/, {
-          message: tForm("passwordUppercase"),
-        })
-        .regex(/[0-9]/, {
-          message: tForm("passwordNumber"),
-        })
-        .regex(/[^a-zA-Z0-9]/, {
-          message: tForm("passwordSpecial"),
-        }),
-      confirmPassword: z
-        .string()
-        .min(8, { message: tForm("passwordLength") })
-        .max(20, {
-          message: tForm("passwordMaxLength"),
-        })
-        .regex(/[a-z]/, {
-          message: tForm("passwordLowercase"),
-        })
-        .regex(/[A-Z]/, {
-          message: tForm("passwordUppercase"),
-        })
-        .regex(/[0-9]/, {
-          message: tForm("passwordNumber"),
-        })
-        .regex(/[^a-zA-Z0-9]/, {
-          message: tForm("passwordSpecial"),
-        }),
-      acceptTerms: z
-        .boolean({ message: tAuth("acceptTerms") })
-        .refine((data) => data === true, {
-          message: tAuth("acceptTerms"),
-        }),
+        .max(100, { message: tForm("passwordMaxLength", { length: 100 }) })
+        .regex(/[a-z]/, { message: tForm("passwordLowercase") })
+        .regex(/[A-Z]/, { message: tForm("passwordUppercase") })
+        .regex(/[0-9]/, { message: tForm("passwordNumber") })
+        .regex(/[^a-zA-Z0-9]/, { message: tForm("passwordSpecial") }),
+      confirmPassword: z.string().min(8).max(100),
+      acceptTerms: z.boolean().refine((data) => data === true, {
+        message: tAuth("acceptTerms"),
+      }),
     })
     .refine((data) => data.password === data.confirmPassword, {
       message: tAuth("passwordMismatch"),
-      path: ["confirm"],
+      path: ["confirmPassword"],
     });
   const form = useForm<z.infer<typeof signUpSchema>>({
     mode: "onChange",
     resolver: zodResolver(signUpSchema),
     defaultValues: {
-      username: "",
+      name: "",
+      email: "",
       password: "",
       confirmPassword: "",
       acceptTerms: false,
     },
   });
   const { execute, isPending } = useAction(signUp, {
-    onExecute: () => {},
     onError: (e) => {
-      if (e.error.validationErrors?.username) {
-        form.setError("username", {
+      devLog(e);
+      if (e.error.validationErrors?.email) {
+        form.setError("email", {
           type: "manual",
-          message: tError("existingUsernameDesc"),
+          message: "Email already in use",
         });
-        toast.error(tError("existingUsername"), {
-          duration: 1500,
-        });
+        toast.error("Email already exists");
       } else {
-        console.log("Error", e);
-        toast.error(tError("unexpected"), {
-          duration: 1500,
-        });
+        toast.error(e.error.serverError || tError("unexpected"));
       }
     },
     onSuccess: (res) => {
-      router.push(
-        `/sign-up/success?username=${encodeURIComponent(
-          res.input.username || "",
-        )}`,
-      );
+      toast.success("Account created successfully!");
+      // router.push(
+      //   `/sign-up/success?email=${encodeURIComponent(
+      //     res.data?.user?.email || "",
+      //   )}`,
+      // );
     },
   });
 
   const onSubmit = async (data: z.infer<typeof signUpSchema>) => {
     execute({
-      username: data.username,
+      name: data.name,
+      email: data.email,
       password: data.password,
       acceptTerms: data.acceptTerms,
-      redirect: `${process.env.NEXT_PUBLIC_BASE_URL}/set-up`,
+      image: getProfilePicBySeed(data.name),
     });
   };
 
@@ -140,19 +108,40 @@ function SignUpForm() {
         >
           <FormField
             control={form.control}
-            name="username"
+            name="name"
             render={({ field }) => (
               <FormItem className="space-y-0">
                 <FormLabel className="text-sm text-muted-foreground font-normal">
-                  {tAuth("username")}
+                  Full Name
                 </FormLabel>
                 <FormControl>
                   <Input
                     disabled={isPending}
-                    placeholder={tAuth("usernamePlaceholder")}
+                    placeholder={tAuth("namePlaceholder")}
                     {...field}
                     className="placeholder:text-muted-foreground/50"
                     type="text"
+                  />
+                </FormControl>
+                <FormMessage />
+              </FormItem>
+            )}
+          />
+          <FormField
+            control={form.control}
+            name="email"
+            render={({ field }) => (
+              <FormItem className="space-y-0">
+                <FormLabel className="text-sm text-muted-foreground font-normal">
+                  Email
+                </FormLabel>
+                <FormControl>
+                  <Input
+                    disabled={isPending}
+                    placeholder={tAuth("emailPlaceholder")}
+                    {...field}
+                    className="placeholder:text-muted-foreground/50"
+                    type="email"
                   />
                 </FormControl>
                 <FormMessage />

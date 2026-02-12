@@ -23,12 +23,10 @@
     "passwordMismatch": "Passwords do not match",
     "acceptTerms": "You must accept the terms and conditions",
     "username": "Username",
-    "usernamePlaceholder": "Satoshi Nakamoto",
+    "namePlaceholder": "Satoshi Nakamoto",
+    "emailPlaceholder": "satoshinakamoto@btc.com",
     "signUpSuccess": "Sign up successful!",
-    "emailSent": "You have successfully signed up. Please check your email to verify your account.",
-    "resendEmail": "Resend email",
-    "resendEmailSuccess": "Email resent",
-    "resendEmailError": "An error occurred resending the email",
+    "emailSent": "You have successfully signed up for Kairo.",
     "google": "Continue with Google",
     "or": "or",
     "errors": {
@@ -45,7 +43,7 @@
       "required": "This field is required",
       "passwordRestriction": "Password must contain at least one uppercase letter, one lowercase letter and one number",
       "passwordLength": "Password must be at least 8 characters long",
-      "passwordMaxLength": "Password cannot be more than 20 characters long",
+      "passwordMaxLength": "Password cannot be more than {length} characters long",
       "passwordLowercase": "Password must contain at least one lowercase letter",
       "passwordUppercase": "Password must contain at least one uppercase letter",
       "passwordNumber": "Password must contain at least one number",
@@ -53,6 +51,23 @@
       "usernameLength": "Username must be between 3 and 20 characters.",
       "usernameMaxLength": "Username cannot be more than 20 characters.",
       "usernameInvalid": "Username can only contain letters, numbers, and underscores."
+    }
+  },
+  "New":{
+    "title" : "Start by creating your first portfolio", "description": "Add your wallets and tokens to start tracking your crypto assets.", "button": "Create Portfolio",
+    "createPortfolio": "Create Portfolio",
+    "portfolioName": "Portfolio Name",
+    "portfolioNamePlaceholder": "Enter portfolio name",
+    "portfolioCurrency": "Currency",
+    "selectCurrency": "Select a currency",
+    "creating": "Creating...",
+    "createSuccess": "Portfolio created successfully!",
+    "createError": "Failed to create portfolio",
+    "errors": {
+      "duplicateName": "A portfolio with this name already exists",
+      "invalidName": "Please enter a valid portfolio name",
+      "invalidCurrency": "Please select a valid currency",
+      "unexpected": "Something went wrong. Please try again"
     }
   },
   "Global": {

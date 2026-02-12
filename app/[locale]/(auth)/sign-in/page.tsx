@@ -1,13 +1,15 @@
+"use client";
 import { useTranslations } from "next-intl";
 import Image from "next/image";
 
 import AnimatedUpEntrance from "@/components/ui/framer/AnimatedUpEntrance";
 import { Link } from "@/i18n/routing";
+import { useTheme } from "next-themes";
 import SignInForm from "../_components/SignInForm";
 
 function SignInPage() {
   const tAuth = useTranslations("Auth");
-
+  const { theme } = useTheme();
   return (
     <div className="flex w-full h-full flex-col justify-center items-center space-y-5">
       <Link
@@ -19,7 +21,11 @@ function SignInPage() {
             alt="Kairo"
             className="shrink-0"
             height={80}
-            src="/images/logos/logo-square.svg"
+            src={
+              theme === "light"
+                ? "/images/logos/logo-square.svg"
+                : "/images/logos/logo-square-light.svg"
+            }
             width={80}
           />
         </AnimatedUpEntrance>

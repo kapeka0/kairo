@@ -6,7 +6,6 @@ import { useTranslations } from "next-intl";
 import { useAction } from "next-safe-action/hooks";
 import { useEffect, useState } from "react";
 import { useForm } from "react-hook-form";
-import toast from "react-hot-toast";
 import { z } from "zod";
 
 import {
@@ -19,10 +18,11 @@ import {
 } from "@/components/ui/form";
 import { Input } from "@/components/ui/input";
 import { ShinyButton } from "@/components/ui/shiny-button";
-import { signIn } from "@/data/actions/user";
+import { signIn } from "@/lib/actions/auth";
+import { toast } from "sonner";
 
 const formSchema = z.object({
-  username: z.string().min(3, "Username must be at least 3 characters"),
+  email: z.string().email("Invalid email"),
   password: z.string(),
 });
 
@@ -33,15 +33,19 @@ function SignInForm() {
   const tError = useTranslations("Auth.errors");
   const [showPassword, setshowPassword] = useState(false);
   const { execute, isPending, result } = useAction(signIn, {
-    onError: (error) => {
-      console.log("Error a", error);
-      toast.error(tError("unexpected"));
+    onError: (e) => {
+      if (e.error.validationErrors?._errors) {
+        const errorMessage = e.error.validationErrors._errors[0];
+        toast.error(errorMessage);
+      } else {
+        toast.error(e.error.serverError || tError("unexpected"));
+      }
     },
-    onSuccess: (data) => {
-      console.log("Data", data);
-      toast.success(tAuth("signUpSuccess"));
+    onSuccess: () => {
+      toast.success("Welcome back!");
     },
   });
+
   useEffect(() => {
     console.log(result);
   }, [result]);
@@ -51,7 +55,7 @@ function SignInForm() {
     resolver: zodResolver(formSchema),
 
     defaultValues: {
-      username: "",
+      email: "",
       password: "",
     },
   });
@@ -67,25 +71,22 @@ function SignInForm() {
         >
           <FormField
             control={form.control}
-            name="username"
+            name="email"
             render={({ field }) => (
               <FormItem className="space-y-0">
                 <FormLabel className="text-sm text-muted-foreground font-normal">
-                  {tAuth("username")}
+                  {tAuth("email")}
                 </FormLabel>
                 <FormControl>
                   <Input
                     disabled={isPending}
-                    placeholder={tAuth("usernamePlaceholder")}
+                    placeholder={tAuth("emailPlaceholder")}
                     {...field}
                     className="placeholder:text-muted-foreground/50"
-                    type="text"
+                    type="email"
                   />
                 </FormControl>
                 <FormMessage />
-                {result?.validationErrors?.username && (
-                  <FormMessage>{tAuth("invalidUsername")}</FormMessage>
-                )}
               </FormItem>
             )}
           />

@@ -1,7 +1,10 @@
 import { createSafeActionClient } from "next-safe-action";
 import { z } from "zod";
+import { headers } from "next/headers";
 
 import { debugLog } from "./utils/development";
+import { auth } from "./auth";
+import type { AuthActionContext } from "./types";
 
 export const actionClient = createSafeActionClient({
   defineMetadataSchema() {
@@ -45,22 +48,22 @@ export const actionClient = createSafeActionClient({
   }
 });
 
-//Extended base one
+//Extended base one with Better Auth authentication
 export const authActionClient = actionClient.use(async ({ next }) => {
-  //Check here if the user is logged in
-  const user = false;
-  const userError = false;
-  if (userError) {
-    console.log("User error", { cause: userError });
-    throw new Error("User error", { cause: userError });
+  // Get the session from Better Auth
+  const session = await auth.api.getSession({
+    headers: await headers(),
+  });
+
+  if (!session) {
+    throw new Error("Unauthorized: You must be logged in to perform this action");
   }
-  if (!user) {
-    console.log("User not logged in");
-    throw new Error("User not logged in");
-  }
-  return await next({
+
+  // Pass the user data to the action context
+  return await next<AuthActionContext>({
     ctx: {
-      //  userId: user.id,
+      user: session.user,
+      session: session.session,
     },
   });
 });
