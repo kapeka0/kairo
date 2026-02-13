@@ -101,5 +101,11 @@
   "Portfolio": {
     "portfolios": "Portfolios",
     "addPortfolio": "Add Portfolio"
+  },
+  "PortfolioSwitcher": {
+    "createPortfolio": "Create Portfolio",
+    "getStarted": "Get started",
+    "portfolios": "Portfolios",
+    "addPortfolio": "Add portfolio"
   }
 }

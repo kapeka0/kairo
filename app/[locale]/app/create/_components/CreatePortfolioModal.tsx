@@ -11,33 +11,35 @@ import { z } from "zod";
 
 import { Button } from "@/components/ui/button";
 import {
-     Dialog,
-     DialogContent,
-     DialogDescription,
-     DialogHeader,
-     DialogTitle,
-     DialogTrigger,
+  Dialog,
+  DialogContent,
+  DialogDescription,
+  DialogHeader,
+  DialogTitle,
+  DialogTrigger,
 } from "@/components/ui/dialog";
 import {
-     Form,
-     FormControl,
-     FormField,
-     FormItem,
-     FormLabel,
-     FormMessage,
+  Form,
+  FormControl,
+  FormField,
+  FormItem,
+  FormLabel,
+  FormMessage,
 } from "@/components/ui/form";
 import { Input } from "@/components/ui/input";
 import {
-     Select,
-     SelectContent,
-     SelectItem,
-     SelectTrigger,
-     SelectValue,
+  Select,
+  SelectContent,
+  SelectItem,
+  SelectTrigger,
+  SelectValue,
 } from "@/components/ui/select";
 import { useRouter } from "@/i18n/routing";
 import { createPortfolio } from "@/lib/actions/portfolio";
+import { activePortfolioIdAtom } from "@/lib/atoms/ActivePortfolio";
 import { devLog } from "@/lib/utils";
 import { CURRENCIES } from "@/lib/utils/constants";
+import { useSetAtom } from "jotai";
 
 const formSchema = z.object({
   name: z.string().min(1).max(50),
@@ -47,16 +49,19 @@ const formSchema = z.object({
 type CreatePortfolioFormData = z.infer<typeof formSchema>;
 
 type Props = {
-  triggerButton: React.ReactNode;
+  triggerButton?: React.ReactNode;
+  open?: boolean;
+  onOpenChange?: (open: boolean) => void;
 };
 
-
-
-const CreatePortfolioModal = ({ triggerButton }: Props) => {
+const CreatePortfolioModal = ({ triggerButton, open, onOpenChange }: Props) => {
   const tNew = useTranslations("New");
   const tErrors = useTranslations("New.errors");
-  const [open, setOpen] = useState(false);
-     const router = useRouter();
+  const [internalOpen, setInternalOpen] = useState(false);
+  const router = useRouter();
+  const setActivePortfolioId = useSetAtom(activePortfolioIdAtom);
+  const isOpen = open !== undefined ? open : internalOpen;
+  const setIsOpen = onOpenChange || setInternalOpen;
   const { execute, isPending } = useAction(createPortfolio, {
     onError: (e) => {
       devLog("[CreatePortfolioModal] Error creating portfolio", e);
@@ -71,14 +76,13 @@ const CreatePortfolioModal = ({ triggerButton }: Props) => {
         toast.error(tErrors("unexpected"));
       }
     },
-    onSuccess: ({data}) => {
+    onSuccess: ({ data }) => {
+      setActivePortfolioId(data.portfolio.id);
       toast.success(tNew("createSuccess"));
       devLog("[CreatePortfolioModal] Portfolio created successfully", data);
-      // Redirect to the new portfolio page after creation
-      router.push("/app" + `/${data.portfolio.id}`); 
-      setOpen(false);
+      setIsOpen(false);
       form.reset();
-
+      router.push("/app" + `/${data.portfolio.id}`);
     },
   });
 
@@ -96,8 +100,16 @@ const CreatePortfolioModal = ({ triggerButton }: Props) => {
   };
 
   return (
-    <Dialog open={open} onOpenChange={setOpen}>
-      <DialogTrigger><div>{triggerButton}</div></DialogTrigger>
+    <Dialog open={isOpen} onOpenChange={setIsOpen}>
+      {triggerButton && (
+        <DialogTrigger
+          className="w-full"
+          render={<div className="w-full" />}
+          nativeButton={false}
+        >
+          {triggerButton}
+        </DialogTrigger>
+      )}
       <DialogContent>
         <DialogHeader>
           <DialogTitle>{tNew("createPortfolio")}</DialogTitle>
@@ -144,14 +156,15 @@ const CreatePortfolioModal = ({ triggerButton }: Props) => {
                     >
                       <FormControl>
                         <SelectTrigger>
-                          <SelectValue
-                            placeholder={tNew("selectCurrency")}
-                          />
+                          <SelectValue placeholder={tNew("selectCurrency")} />
                         </SelectTrigger>
                       </FormControl>
-                      <SelectContent className="min-w-[200px]">
+                      <SelectContent className="min-w-50">
                         {CURRENCIES.map((currency) => (
-                          <SelectItem key={currency.value} value={currency.value}>
+                          <SelectItem
+                            key={currency.value}
+                            value={currency.value}
+                          >
                             <span className="flex items-center gap-2">
                               <span className="text-muted-foreground">
                                 {currency.symbol}
@@ -166,11 +179,7 @@ const CreatePortfolioModal = ({ triggerButton }: Props) => {
                   </FormItem>
                 )}
               />
-              <Button
-                className="w-full"
-                disabled={isPending}
-                type="submit"
-              >
+              <Button className="w-full" disabled={isPending} type="submit">
                 {!isPending ? (
                   tNew("createPortfolio")
                 ) : (

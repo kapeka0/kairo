@@ -85,5 +85,11 @@
   "Portfolio": {
     "portfolios": "Portafolios",
     "addPortfolio": "Agregar Portafolio"
+  },
+  "PortfolioSwitcher": {
+    "createPortfolio": "Crear Portafolio",
+    "getStarted": "Comenzar",
+    "portfolios": "Portafolios",
+    "addPortfolio": "Agregar portafolio"
   }
 }

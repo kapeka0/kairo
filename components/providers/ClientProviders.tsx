@@ -2,6 +2,7 @@
 import { ThemeProvider } from "@/components/providers/ThemeProvider";
 import { QueryClient, QueryClientProvider } from "@tanstack/react-query";
 import { ReactQueryDevtools } from "@tanstack/react-query-devtools";
+import { Provider } from 'jotai';
 import { IntlErrorCode, NextIntlClientProvider } from "next-intl";
 import React from "react";
 
@@ -27,18 +28,20 @@ const ClientProviders = ({ children, messages, locale }: Props) => {
         throw err;
       }}
     >
-      <QueryClientProvider client={queryClient}>
-        {" "}
-        <ReactQueryDevtools initialIsOpen={false} />
-        <ThemeProvider
-          attribute="class"
-          defaultTheme="system"
-          enableSystem
-          disableTransitionOnChange
-        >
-          {children}
-        </ThemeProvider>
-      </QueryClientProvider>
+      <Provider>
+        <QueryClientProvider client={queryClient}>
+          {" "}
+          <ReactQueryDevtools initialIsOpen={false} />
+          <ThemeProvider
+            attribute="class"
+            defaultTheme="system"
+            enableSystem
+            disableTransitionOnChange
+          >
+            {children}
+          </ThemeProvider>
+        </QueryClientProvider>
+      </Provider>
     </NextIntlClientProvider>
   );
 };

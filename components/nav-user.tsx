@@ -42,12 +42,15 @@ export function NavUser() {
               <SidebarMenuButton size="lg" className="aria-expanded:bg-muted" />
             }
           >
-            <Avatar>
+            <Avatar className="rounded-lg">
               <AvatarImage
                 src={user.image || `/api/avatar?name=${user.name}`}
                 alt={user.name}
+                className="rounded-lg"
               />
-              <AvatarFallback>{user.name.slice(0, 1)}</AvatarFallback>
+              <AvatarFallback className="rounded-lg">
+                {user.name.slice(0, 1)}
+              </AvatarFallback>
             </Avatar>
             <div className="grid flex-1 text-left text-sm leading-tight">
               <span className="truncate font-medium">{user.name}</span>
@@ -64,12 +67,12 @@ export function NavUser() {
             <DropdownMenuGroup>
               <DropdownMenuLabel className="p-0 font-normal">
                 <div className="flex items-center gap-2 px-1 py-1.5 text-left text-sm">
-                  <Avatar>
+                  <Avatar className="rounded-lg">
                     <AvatarImage
                       src={user.image || `/api/avatar?name=${user.name}`}
                       alt={user.name}
                     />
-                    <AvatarFallback>CN</AvatarFallback>
+                    <AvatarFallback className="rounded-lg">CN</AvatarFallback>
                   </Avatar>
                   <div className="grid flex-1 text-left text-sm leading-tight">
                     <span className="truncate font-medium">{user.name}</span>

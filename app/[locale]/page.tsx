@@ -1,12 +1,12 @@
-import { useTranslations } from "next-intl";
 
 import LangToggle from "@/components/global/LangToggle";
 import { ThemeToggle } from "@/components/global/ThemeToggle";
 import { Button } from "@/components/ui/button";
 import { Link } from "@/i18n/routing";
+import { useTranslations } from "next-intl";
 
 export default function Home() {
-  const t = useTranslations("LandingPage");
+  const t =  useTranslations("LandingPage");
   return (
     <div className="flex flex-col items-center justify-center h-screen gap-3">
       <h1 className="text-4xl font-semibold">{t("title")}</h1>

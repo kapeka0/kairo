@@ -116,11 +116,12 @@ export default async function RootLayout({
           sizes="any"
         />
 
-        {/* TODO: Remove this for production */}
-        <script
-          src="https://unpkg.com/react-scan/dist/auto.global.js"
-          async
-        ></script>
+        {process.env.NODE_ENV === "development" && (
+          <script
+            src="https://unpkg.com/react-scan/dist/auto.global.js"
+            async
+          ></script>
+        )}
       </head>
       <body className={cn(`${satoshi.className}   h-full antialiased `)}>
         <ClientProviders messages={messages} locale={locale}>

@@ -82,6 +82,10 @@ export default defineConfig([
               message: "Import from '@/components/ui' instead.",
             },
             {
+              group: ["baseui/*", "!baseui/icons"],
+              message: "Import from '@/components/ui' instead.",
+            },
+            {
               group: ["next/link"],
               message: "Import from '@/i18n/routing' instead.",
             },

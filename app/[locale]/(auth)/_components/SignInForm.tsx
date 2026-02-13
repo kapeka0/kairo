@@ -19,6 +19,9 @@ import {
 import { Input } from "@/components/ui/input";
 import { ShinyButton } from "@/components/ui/shiny-button";
 import { signIn } from "@/lib/actions/auth";
+import { activePortfolioIdAtom } from "@/lib/atoms/ActivePortfolio";
+import { useAtomValue } from "jotai";
+import { useRouter } from "next/router";
 import { toast } from "sonner";
 
 const formSchema = z.object({
@@ -32,6 +35,8 @@ function SignInForm() {
   const tAuth = useTranslations("Auth");
   const tError = useTranslations("Auth.errors");
   const [showPassword, setshowPassword] = useState(false);
+  const activePortfolioId = useAtomValue(activePortfolioIdAtom);
+  const router = useRouter();
   const { execute, isPending, result } = useAction(signIn, {
     onError: (e) => {
       if (e.error.validationErrors?._errors) {
@@ -43,6 +48,11 @@ function SignInForm() {
     },
     onSuccess: () => {
       toast.success("Welcome back!");
+      if (activePortfolioId) {
+        router.push(`/app/${activePortfolioId}`);
+      } else {
+        router.push("/app");
+      }
     },
   });
 

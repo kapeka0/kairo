@@ -1,35 +1,35 @@
-"use client"
-import LottieAnimation from "@/components/global/LottieAnimation"
-import { Button } from "@/components/ui/button"
-import { motion, Variants } from "framer-motion"
-import { Plus } from "lucide-react"
-import { useTranslations } from "next-intl"
-import CreatePortfolioModal from "./_components/CreatePortfolioModal"
-import cryptoLottie from "./_components/crypto.json"
+"use client";
+import LottieAnimation from "@/components/global/LottieAnimation";
+import { Button } from "@/components/ui/button";
+import { motion, Variants } from "framer-motion";
+import { Plus } from "lucide-react";
+import { useTranslations } from "next-intl";
+import CreatePortfolioModal from "./_components/CreatePortfolioModal";
+import cryptoLottie from "./_components/crypto.json";
 
-type Props = {}
+type Props = {};
 
-const NewPage = (props: Props) => {
-  const tNew = useTranslations("New")
+const CreatePage = (props: Props) => {
+  const tNew = useTranslations("New");
 
   const container: Variants = {
     hidden: {},
     show: {
       transition: {
-        staggerChildren: 0.3, 
+        staggerChildren: 0.3,
       },
     },
-  }
+  };
 
   const fadeInUp: Variants = {
     hidden: { opacity: 0, y: 20 },
     show: { opacity: 1, y: 0, transition: { duration: 0.6, ease: "easeOut" } },
-  }
+  };
 
   const typing: Variants = {
     hidden: { opacity: 0, x: -10 },
     show: { opacity: 1, x: 0, transition: { duration: 0.8, ease: "easeOut" } },
-  }
+  };
 
   return (
     <motion.div
@@ -51,13 +51,16 @@ const NewPage = (props: Props) => {
       </motion.h4>
 
       <motion.div variants={fadeInUp}>
-          <CreatePortfolioModal triggerButton={
-        <Button className="space-x-2">
-          <Plus /> {tNew("createPortfolio")}
-        </Button>} />
+        <CreatePortfolioModal
+          triggerButton={
+            <Button className="space-x-2">
+              <Plus /> {tNew("createPortfolio")}
+            </Button>
+          }
+        />
       </motion.div>
     </motion.div>
-  )
-}
+  );
+};
 
-export default NewPage
+export default CreatePage;

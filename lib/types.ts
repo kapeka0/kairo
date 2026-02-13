@@ -10,3 +10,17 @@ export interface AuthActionContext {
 export interface ActionMetadata {
   actionName: string;
 }
+
+export type Portfolio = {
+  id: string;
+  name: string;
+  gradientUrl: string;
+  userId: string;
+  currency: "USD" | "EUR" | "GBP" | "JPY" | "CNY";
+  lastBalance: string;
+  balanceUpdatedAt: Date;
+  createdAt: Date;
+  updatedAt: Date;
+};
+
+export type PortfoliosResponse = Portfolio[];

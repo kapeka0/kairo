@@ -1,10 +1,18 @@
- 
 import { relations } from "drizzle-orm";
-import { boolean, index, pgEnum, pgTable, text, timestamp } from "drizzle-orm/pg-core";
+import {
+  boolean,
+  index,
+  pgEnum,
+  pgTable,
+  text,
+  timestamp,
+} from "drizzle-orm/pg-core";
 import { generateUUID } from "../utils";
 
 export const user = pgTable("user", {
-  id: text("id").primaryKey().$default(() => generateUUID()),
+  id: text("id")
+    .primaryKey()
+    .$default(() => generateUUID()),
   name: text("name").notNull(),
   email: text("email").notNull().unique(),
   emailVerified: boolean("email_verified").default(false).notNull(),
@@ -78,6 +86,7 @@ export const verification = pgTable(
 export const userRelations = relations(user, ({ many }) => ({
   sessions: many(session),
   accounts: many(account),
+  portfolios: many(portfolio),
 }));
 
 export const sessionRelations = relations(session, ({ one }) => ({
@@ -94,20 +103,36 @@ export const accountRelations = relations(account, ({ one }) => ({
   }),
 }));
 
-
-export const currenciesEnum = pgEnum("currencies", ["USD", "EUR", "GBP", "JPY", "CNY"]);
+export const currenciesEnum = pgEnum("currencies", [
+  "USD",
+  "EUR",
+  "GBP",
+  "JPY",
+  "CNY",
+]);
 
 export const portfolio = pgTable("portfolio", {
-  id: text("id").primaryKey().$default(() => generateUUID()),
+  id: text("id")
+    .primaryKey()
+    .$default(() => generateUUID()),
   name: text("name").notNull(),
   gradientUrl: text("gradient_url").notNull(),
   userId: text("user_id")
     .notNull()
     .references(() => user.id, { onDelete: "cascade" }),
-    currency: currenciesEnum("currency").notNull().default("USD"),
+  currency: currenciesEnum("currency").notNull().default("USD"),
   createdAt: timestamp("created_at").defaultNow().notNull(),
+  lastBalance: text("last_balance").notNull().default("0"),
+  balanceUpdatedAt: timestamp("balance_updated_at").defaultNow().notNull(),
   updatedAt: timestamp("updated_at")
     .defaultNow()
     .$onUpdate(() => /* @__PURE__ */ new Date())
     .notNull(),
 });
+
+export const portfolioRelations = relations(portfolio, ({ one }) => ({
+  user: one(user, {
+    fields: [portfolio.userId],
+    references: [user.id],
+  }),
+}));
