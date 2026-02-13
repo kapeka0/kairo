@@ -74,7 +74,6 @@
   },
   "Global": {
     "title": "Kairo",
-
     "theme": "Theme",
     "light": "Light",
     "dark": "Dark",
@@ -83,6 +82,62 @@
     "es": "Spanish",
     "en": "English",
     "privacyMode": "Privacy Mode"
+  },
+  "Wallets": {
+    "title": "My Wallets",
+    "description": "Add your wallets to start tracking your crypto assets.",
+    "addWallet": "Add Wallet",
+    "form": {
+      "step1Title": "Add Wallet",
+      "step1Description": "Choose a name and select the cryptocurrency type",
+      "step2TitleBtc": "Add Bitcoin Wallet",
+      "step2DescriptionBtc": "Enter your extended public key to track your Bitcoin wallet",
+      "walletName": "Wallet Name",
+      "walletNamePlaceholder": "My Bitcoin Wallet",
+      "cryptocurrency": "Cryptocurrency",
+      "selectCryptocurrency": "Select a cryptocurrency",
+      "extendedPublicKey": "Extended Public Key (xpub)",
+      "extendedPublicKeyPlaceholder": "xpub6D... or ypub6X... or zpub6r...",
+      "extendedPublicKeyHelper": "Your xpub is safe to share and allows read-only access to your wallet",
+      "addressType": "Address Type",
+      "selectAddressType": "Select address type",
+      "addressTypeHelper": "Automatically detected, but you can change it manually if needed",
+      "bipTypeDetected": "Detected: {bipType}",
+      "bipTypeLegacy": "Legacy (BIP44)",
+      "bipTypeNestedSegwit": "Nested SegWit (BIP49)",
+      "bipTypeNativeSegwit": "Native SegWit (BIP84)",
+      "bipTypeTaproot": "Taproot (BIP86)",
+      "back": "Back",
+      "next": "Next",
+      "addWallet": "Add Wallet"
+    },
+    "success": {
+      "walletAdded": "Wallet added successfully!",
+      "walletAddedDescription": "{walletName} has been added to your portfolio"
+    },
+    "errors": {
+      "invalidName": "Please enter a valid wallet name",
+      "nameTooLong": "Wallet name cannot exceed 50 characters",
+      "selectCrypto": "Please select a cryptocurrency",
+      "invalidXpubFormat": "Invalid extended public key format. Must be valid xpub, ypub, or zpub",
+      "duplicateXpub": "This wallet is already added to your portfolio",
+      "duplicateName": "A wallet with this name already exists",
+      "unexpected": "Something went wrong. Please try again"
+    },
+    "table": {
+      "name": "Name",
+      "balance": "Balance",
+      "publicKey": "Public Key",
+      "lastUpdated": "Last updated",
+      "copiedToClipboard": "Copied to clipboard",
+      "copyFailed": "Failed to copy",
+      "errorLoading": "Error loading wallets",
+      "noWallets": "No wallets yet",
+      "noWalletsDescription": "Click 'Add Wallet' to get started",
+      "viewDetails": "View Details",
+      "refreshBalance": "Refresh Balance",
+      "deleteWallet": "Delete Wallet"
+    }
   },
   "LandingPage": {
     "title": "Start building 🚀",

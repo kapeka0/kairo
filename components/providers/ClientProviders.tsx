@@ -2,7 +2,7 @@
 import { ThemeProvider } from "@/components/providers/ThemeProvider";
 import { QueryClient, QueryClientProvider } from "@tanstack/react-query";
 import { ReactQueryDevtools } from "@tanstack/react-query-devtools";
-import { Provider } from 'jotai';
+import { Provider } from "jotai";
 import { IntlErrorCode, NextIntlClientProvider } from "next-intl";
 import React from "react";
 
@@ -21,6 +21,7 @@ const ClientProviders = ({ children, messages, locale }: Props) => {
     <NextIntlClientProvider
       messages={messages}
       locale={locale}
+      timeZone="UTC"
       onError={(err) => {
         if (err.code === IntlErrorCode.MISSING_MESSAGE) {
           return;

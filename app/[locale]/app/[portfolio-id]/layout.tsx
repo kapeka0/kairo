@@ -13,7 +13,7 @@ export default function PortfolioLayout({
         <AppSidebar />
         <SidebarInset>
           <AppHeader />
-          {children}
+          <main className="px-10 py-4 flex flex-col space-y-4">{children}</main>
         </SidebarInset>
       </SidebarProvider>
     </div>

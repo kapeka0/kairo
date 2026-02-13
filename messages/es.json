@@ -91,5 +91,61 @@
     "getStarted": "Comenzar",
     "portfolios": "Portafolios",
     "addPortfolio": "Agregar portafolio"
+  },
+  "Wallets": {
+    "title": "Mis Billeteras",
+    "description": "Agrega tus billeteras para comenzar a rastrear tus activos cripto.",
+    "addWallet": "Agregar Billetera",
+    "form": {
+      "step1Title": "Agregar Billetera",
+      "step1Description": "Elige un nombre y selecciona el tipo de criptomoneda",
+      "step2TitleBtc": "Agregar Billetera Bitcoin",
+      "step2DescriptionBtc": "Ingresa tu clave pública extendida para rastrear tu billetera Bitcoin",
+      "walletName": "Nombre de la Billetera",
+      "walletNamePlaceholder": "Mi Billetera Bitcoin",
+      "cryptocurrency": "Criptomoneda",
+      "selectCryptocurrency": "Selecciona una criptomoneda",
+      "extendedPublicKey": "Clave Pública Extendida (xpub)",
+      "extendedPublicKeyPlaceholder": "xpub6D... o ypub6X... o zpub6r...",
+      "extendedPublicKeyHelper": "Tu xpub es segura de compartir y permite acceso de solo lectura a tu billetera",
+      "addressType": "Tipo de Dirección",
+      "selectAddressType": "Selecciona el tipo de dirección",
+      "addressTypeHelper": "Detectado automáticamente, pero puedes cambiarlo manualmente si es necesario",
+      "bipTypeDetected": "Detectado: {bipType}",
+      "bipTypeLegacy": "Legacy (BIP44) - Direcciones comienzan con 1",
+      "bipTypeNestedSegwit": "Nested SegWit (BIP49) - Direcciones comienzan con 3",
+      "bipTypeNativeSegwit": "Native SegWit (BIP84) - Direcciones comienzan con bc1",
+      "bipTypeTaproot": "Taproot (BIP86) - Direcciones comienzan con bc1p",
+      "back": "Atrás",
+      "next": "Siguiente",
+      "addWallet": "Agregar Billetera"
+    },
+    "success": {
+      "walletAdded": "¡Billetera agregada exitosamente!",
+      "walletAddedDescription": "{walletName} ha sido agregada a tu portafolio"
+    },
+    "errors": {
+      "invalidName": "Por favor ingresa un nombre de billetera válido",
+      "nameTooLong": "El nombre de la billetera no puede exceder 50 caracteres",
+      "selectCrypto": "Por favor selecciona una criptomoneda",
+      "invalidXpubFormat": "Formato de clave pública extendida inválido. Debe ser xpub, ypub o zpub válido",
+      "duplicateXpub": "Esta billetera ya está agregada a tu portafolio",
+      "duplicateName": "Ya existe una billetera con este nombre",
+      "unexpected": "Algo salió mal. Por favor intenta nuevamente"
+    },
+    "table": {
+      "name": "Nombre",
+      "balance": "Balance",
+      "publicKey": "Clave Pública",
+      "lastUpdated": "Última actualización",
+      "copiedToClipboard": "Copiado al portapapeles",
+      "copyFailed": "Error al copiar",
+      "errorLoading": "Error al cargar billeteras",
+      "noWallets": "Aún no hay billeteras",
+      "noWalletsDescription": "Haz clic en 'Agregar Billetera' para comenzar",
+      "viewDetails": "Ver Detalles",
+      "refreshBalance": "Actualizar Balance",
+      "deleteWallet": "Eliminar Billetera"
+    }
   }
 }

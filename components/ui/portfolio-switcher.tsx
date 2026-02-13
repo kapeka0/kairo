@@ -23,7 +23,7 @@ import {
   SidebarMenuItem,
   useSidebar,
 } from "@/components/ui/sidebar";
-import { useRouter } from "@/i18n/routing";
+import { usePathname, useRouter } from "@/i18n/routing";
 import { activePortfolioIdAtom } from "@/lib/atoms/ActivePortfolio";
 import { usePortfolios } from "@/lib/hooks/usePortfolios";
 import { CURRENCIES } from "@/lib/utils/constants";
@@ -32,6 +32,7 @@ import { useEffect, useMemo, useState } from "react";
 export function PortfolioSwitcher() {
   const t = useTranslations("PortfolioSwitcher");
   const router = useRouter();
+  const pathname = usePathname();
   const [isCreateModalOpen, setIsCreateModalOpen] = useState(false);
   const [dropdownOpen, setDropdownOpen] = useState(false);
 
@@ -137,13 +138,13 @@ export function PortfolioSwitcher() {
             <div className="grid flex-1 text-left text-sm leading-tight">
               <span className="truncate font-medium">
                 {activePortfolio.name}
-              </span>
-              <span className="truncate text-xs text-muted-foreground">
-                <PrivacyValue>
+              </span>{" "}
+              <PrivacyValue>
+                <span className="truncate text-xs text-muted-foreground">
                   {getCurrencySymbol(activePortfolio.currency)}
                   {activePortfolio.lastBalance}
-                </PrivacyValue>
-              </span>
+                </span>{" "}
+              </PrivacyValue>
             </div>
             <ChevronsUpDown className="ml-auto" />
           </DropdownMenuTrigger>
@@ -162,7 +163,12 @@ export function PortfolioSwitcher() {
                   key={portfolio.id}
                   onClick={() => {
                     setActivePortfolioId(portfolio.id);
-                    router.push(`/app/${portfolio.id}`);
+                    const newPath = pathname.replace(
+                      activePortfolioId ?? "",
+                      portfolio.id,
+                    );
+
+                    router.push(newPath);
                   }}
                   className="gap-2 p-2"
                 >
@@ -178,12 +184,12 @@ export function PortfolioSwitcher() {
                   </Avatar>
                   <div className="flex flex-col flex-1">
                     <span className="text-sm">{portfolio.name}</span>
-                    <span className="text-xs text-muted-foreground">
-                      <PrivacyValue>
+                    <PrivacyValue>
+                      <span className="text-xs text-muted-foreground">
                         {getCurrencySymbol(portfolio.currency)}
                         {portfolio.lastBalance}
-                      </PrivacyValue>
-                    </span>
+                      </span>
+                    </PrivacyValue>
                   </div>
                   <DropdownMenuShortcut>⌘{index + 1}</DropdownMenuShortcut>
                 </DropdownMenuItem>

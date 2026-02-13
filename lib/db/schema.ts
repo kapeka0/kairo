@@ -136,3 +136,23 @@ export const portfolioRelations = relations(portfolio, ({ one }) => ({
     references: [user.id],
   }),
 }));
+
+export const bitcoinWallet = pgTable("bitcoin_wallet", {
+  id: text("id")
+    .primaryKey()
+    .$default(() => generateUUID()),
+  name: text("name").notNull(),
+  gradientUrl: text("gradient_url").notNull(),
+  publicKey: text("public_key").notNull(),
+  derivationPath: text("derivation_path").notNull(),
+  portfolioId: text("portfolio_id")
+    .notNull()
+    .references(() => portfolio.id, { onDelete: "cascade" }),
+  lastBalance: text("last_balance").notNull().default("0"),
+  balanceUpdatedAt: timestamp("balance_updated_at").defaultNow().notNull(),
+  createdAt: timestamp("created_at").defaultNow().notNull(),
+  updatedAt: timestamp("updated_at")
+    .defaultNow()
+    .$onUpdate(() => /* @__PURE__ */ new Date())
+    .notNull(),
+});
