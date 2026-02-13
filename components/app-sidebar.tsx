@@ -11,8 +11,10 @@ import {
   SidebarHeader,
   SidebarRail,
 } from "@/components/ui/sidebar";
+import { usePathname } from "@/i18n/routing";
 import { Activity, House, Package, WalletMinimal } from "lucide-react";
-import { useParams, usePathname } from "next/navigation";
+//eslint-disable-next-line
+import { useParams } from "next/navigation";
 import { PortfolioSwitcher } from "./ui/portfolio-switcher";
 
 export interface NavItem {
@@ -47,25 +49,25 @@ export function AppSidebar({ ...props }: React.ComponentProps<typeof Sidebar>) {
     navMain: [
       {
         title: "Overview",
-        url: `/${portfolioId}`,
+        url: `/app/${portfolioId}`,
         icon: <House />,
         isActive: pathname.endsWith(`/${portfolioId}`),
       },
       {
         title: "Wallets",
-        url: `/${portfolioId}/wallets`,
+        url: `/app/${portfolioId}/wallets`,
         icon: <WalletMinimal />,
         isActive: pathname.includes(`/${portfolioId}/wallets`),
       },
       {
         title: "Tokens",
-        url: `/${portfolioId}/tokens`,
+        url: `/app/${portfolioId}/tokens`,
         isActive: pathname.includes(`/${portfolioId}/tokens`),
         icon: <Package />,
       },
       {
         title: "Activity",
-        url: `/${portfolioId}/activity`,
+        url: `/app/${portfolioId}/activity`,
         isActive: pathname.includes(`/${portfolioId}/activity`),
         icon: <Activity />,
       },

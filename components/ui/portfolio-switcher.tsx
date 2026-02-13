@@ -5,6 +5,7 @@ import { ChevronsUpDown, Plus } from "lucide-react";
 import { useTranslations } from "next-intl";
 
 import CreatePortfolioModal from "@/app/[locale]/app/create/_components/CreatePortfolioModal";
+import { PrivacyValue } from "@/components/privacy-value";
 import { Avatar, AvatarImage } from "@/components/ui/avatar";
 import {
   DropdownMenu,
@@ -138,8 +139,10 @@ export function PortfolioSwitcher() {
                 {activePortfolio.name}
               </span>
               <span className="truncate text-xs text-muted-foreground">
-                {getCurrencySymbol(activePortfolio.currency)}
-                {activePortfolio.lastBalance}
+                <PrivacyValue>
+                  {getCurrencySymbol(activePortfolio.currency)}
+                  {activePortfolio.lastBalance}
+                </PrivacyValue>
               </span>
             </div>
             <ChevronsUpDown className="ml-auto" />
@@ -176,8 +179,10 @@ export function PortfolioSwitcher() {
                   <div className="flex flex-col flex-1">
                     <span className="text-sm">{portfolio.name}</span>
                     <span className="text-xs text-muted-foreground">
-                      {getCurrencySymbol(portfolio.currency)}
-                      {portfolio.lastBalance}
+                      <PrivacyValue>
+                        {getCurrencySymbol(portfolio.currency)}
+                        {portfolio.lastBalance}
+                      </PrivacyValue>
                     </span>
                   </div>
                   <DropdownMenuShortcut>⌘{index + 1}</DropdownMenuShortcut>

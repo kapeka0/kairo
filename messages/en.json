@@ -53,8 +53,10 @@
       "usernameInvalid": "Username can only contain letters, numbers, and underscores."
     }
   },
-  "New":{
-    "title" : "Start by creating your first portfolio", "description": "Add your wallets and tokens to start tracking your crypto assets.", "button": "Create Portfolio",
+  "New": {
+    "title": "Start by creating your first portfolio",
+    "description": "Add your wallets and tokens to start tracking your crypto assets.",
+    "button": "Create Portfolio",
     "createPortfolio": "Create Portfolio",
     "portfolioName": "Portfolio Name",
     "portfolioNamePlaceholder": "Enter portfolio name",
@@ -79,7 +81,8 @@
     "system": "System",
     "lang": "Language",
     "es": "Spanish",
-    "en": "English"
+    "en": "English",
+    "privacyMode": "Privacy Mode"
   },
   "LandingPage": {
     "title": "Start building 🚀",
