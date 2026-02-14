@@ -1,0 +1,2694 @@
+export const WALLET_ICONS: IconDefinition[] = [
+  {
+    "name": "0XBTC",
+    "src": "/images/logos/crypto/0xbtc.svg"
+  },
+  {
+    "name": "1INCH",
+    "src": "/images/logos/crypto/1inch.svg"
+  },
+  {
+    "name": "1ST",
+    "src": "/images/logos/crypto/1st.svg"
+  },
+  {
+    "name": "Aave",
+    "src": "/images/logos/crypto/aave.svg"
+  },
+  {
+    "name": "ABBC",
+    "src": "/images/logos/crypto/abbc.svg"
+  },
+  {
+    "name": "ABT",
+    "src": "/images/logos/crypto/abt.svg"
+  },
+  {
+    "name": "AC3",
+    "src": "/images/logos/crypto/ac3.svg"
+  },
+  {
+    "name": "ACT",
+    "src": "/images/logos/crypto/act.svg"
+  },
+  {
+    "name": "ADB",
+    "src": "/images/logos/crypto/adb.svg"
+  },
+  {
+    "name": "ADX",
+    "src": "/images/logos/crypto/adx.svg"
+  },
+  {
+    "name": "AE",
+    "src": "/images/logos/crypto/ae.svg"
+  },
+  {
+    "name": "AEON",
+    "src": "/images/logos/crypto/aeon.svg"
+  },
+  {
+    "name": "AERGO",
+    "src": "/images/logos/crypto/aergo.svg"
+  },
+  {
+    "name": "AGI",
+    "src": "/images/logos/crypto/agi.svg"
+  },
+  {
+    "name": "AION",
+    "src": "/images/logos/crypto/aion.svg"
+  },
+  {
+    "name": "AIT",
+    "src": "/images/logos/crypto/ait.svg"
+  },
+  {
+    "name": "AKRO",
+    "src": "/images/logos/crypto/akro.svg"
+  },
+  {
+    "name": "AKT",
+    "src": "/images/logos/crypto/akt.svg"
+  },
+  {
+    "name": "ALCX",
+    "src": "/images/logos/crypto/alcx.svg"
+  },
+  {
+    "name": "ALEPH",
+    "src": "/images/logos/crypto/aleph.svg"
+  },
+  {
+    "name": "Algorand",
+    "src": "/images/logos/crypto/algo.svg"
+  },
+  {
+    "name": "ALIS",
+    "src": "/images/logos/crypto/alis.svg"
+  },
+  {
+    "name": "ALPHA",
+    "src": "/images/logos/crypto/alpha.svg"
+  },
+  {
+    "name": "ALX",
+    "src": "/images/logos/crypto/alx.svg"
+  },
+  {
+    "name": "AMB",
+    "src": "/images/logos/crypto/amb.svg"
+  },
+  {
+    "name": "AMLT",
+    "src": "/images/logos/crypto/amlt.svg"
+  },
+  {
+    "name": "AMP",
+    "src": "/images/logos/crypto/amp.svg"
+  },
+  {
+    "name": "AMPL",
+    "src": "/images/logos/crypto/ampl.svg"
+  },
+  {
+    "name": "ANC",
+    "src": "/images/logos/crypto/anc.svg"
+  },
+  {
+    "name": "ANJ",
+    "src": "/images/logos/crypto/anj.svg"
+  },
+  {
+    "name": "ANKR",
+    "src": "/images/logos/crypto/ankr.svg"
+  },
+  {
+    "name": "ANT",
+    "src": "/images/logos/crypto/ant.svg"
+  },
+  {
+    "name": "APH",
+    "src": "/images/logos/crypto/aph.svg"
+  },
+  {
+    "name": "APL",
+    "src": "/images/logos/crypto/apl.svg"
+  },
+  {
+    "name": "APPC",
+    "src": "/images/logos/crypto/appc.svg"
+  },
+  {
+    "name": "APW",
+    "src": "/images/logos/crypto/apw.svg"
+  },
+  {
+    "name": "APY",
+    "src": "/images/logos/crypto/apy.svg"
+  },
+  {
+    "name": "AR",
+    "src": "/images/logos/crypto/ar.svg"
+  },
+  {
+    "name": "ARDR",
+    "src": "/images/logos/crypto/ardr.svg"
+  },
+  {
+    "name": "ARK",
+    "src": "/images/logos/crypto/ark.svg"
+  },
+  {
+    "name": "ARMOR",
+    "src": "/images/logos/crypto/armor.svg"
+  },
+  {
+    "name": "ARN",
+    "src": "/images/logos/crypto/arn.svg"
+  },
+  {
+    "name": "ARO",
+    "src": "/images/logos/crypto/aro.svg"
+  },
+  {
+    "name": "ARRR",
+    "src": "/images/logos/crypto/arrr.svg"
+  },
+  {
+    "name": "AST",
+    "src": "/images/logos/crypto/ast.svg"
+  },
+  {
+    "name": "ATMI",
+    "src": "/images/logos/crypto/atmi.svg"
+  },
+  {
+    "name": "AUC",
+    "src": "/images/logos/crypto/auc.svg"
+  },
+  {
+    "name": "AURA",
+    "src": "/images/logos/crypto/aura.svg"
+  },
+  {
+    "name": "AUTO",
+    "src": "/images/logos/crypto/auto.svg"
+  },
+  {
+    "name": "Avalanche",
+    "src": "/images/logos/crypto/avax.svg"
+  },
+  {
+    "name": "AWC",
+    "src": "/images/logos/crypto/awc.svg"
+  },
+  {
+    "name": "AXP",
+    "src": "/images/logos/crypto/axp.svg"
+  },
+  {
+    "name": "BAC",
+    "src": "/images/logos/crypto/bac.svg"
+  },
+  {
+    "name": "BAL",
+    "src": "/images/logos/crypto/bal.svg"
+  },
+  {
+    "name": "BAND",
+    "src": "/images/logos/crypto/band.svg"
+  },
+  {
+    "name": "BAO",
+    "src": "/images/logos/crypto/bao.svg"
+  },
+  {
+    "name": "BAT",
+    "src": "/images/logos/crypto/bat.svg"
+  },
+  {
+    "name": "BAY",
+    "src": "/images/logos/crypto/bay.svg"
+  },
+  {
+    "name": "BBR",
+    "src": "/images/logos/crypto/bbr.svg"
+  },
+  {
+    "name": "BCD",
+    "src": "/images/logos/crypto/bcd.svg"
+  },
+  {
+    "name": "BCHA",
+    "src": "/images/logos/crypto/bcha.svg"
+  },
+  {
+    "name": "BCN",
+    "src": "/images/logos/crypto/bcn.svg"
+  },
+  {
+    "name": "BCO",
+    "src": "/images/logos/crypto/bco.svg"
+  },
+  {
+    "name": "BEL",
+    "src": "/images/logos/crypto/bel.svg"
+  },
+  {
+    "name": "BETA",
+    "src": "/images/logos/crypto/beta.svg"
+  },
+  {
+    "name": "BF",
+    "src": "/images/logos/crypto/bf.svg"
+  },
+  {
+    "name": "BIFI",
+    "src": "/images/logos/crypto/bifi.svg"
+  },
+  {
+    "name": "Binance Coin",
+    "src": "/images/logos/crypto/bnb.svg"
+  },
+  {
+    "name": "Bitcoin",
+    "src": "/images/logos/crypto/btc.svg"
+  },
+  {
+    "name": "Bitcoin Cash",
+    "src": "/images/logos/crypto/bch.svg"
+  },
+  {
+    "name": "BIX",
+    "src": "/images/logos/crypto/bix.svg"
+  },
+  {
+    "name": "BLK",
+    "src": "/images/logos/crypto/blk.svg"
+  },
+  {
+    "name": "BLOCK",
+    "src": "/images/logos/crypto/block.svg"
+  },
+  {
+    "name": "BLT",
+    "src": "/images/logos/crypto/blt.svg"
+  },
+  {
+    "name": "BLUE",
+    "src": "/images/logos/crypto/blue.svg"
+  },
+  {
+    "name": "BLZ",
+    "src": "/images/logos/crypto/blz.svg"
+  },
+  {
+    "name": "BNT",
+    "src": "/images/logos/crypto/bnt.svg"
+  },
+  {
+    "name": "BOND",
+    "src": "/images/logos/crypto/bond.svg"
+  },
+  {
+    "name": "BONDLY",
+    "src": "/images/logos/crypto/bondly.svg"
+  },
+  {
+    "name": "BORA",
+    "src": "/images/logos/crypto/bora.svg"
+  },
+  {
+    "name": "BOX",
+    "src": "/images/logos/crypto/box.svg"
+  },
+  {
+    "name": "BPT",
+    "src": "/images/logos/crypto/bpt.svg"
+  },
+  {
+    "name": "BRD",
+    "src": "/images/logos/crypto/brd.svg"
+  },
+  {
+    "name": "BTC++",
+    "src": "/images/logos/crypto/btc++.svg"
+  },
+  {
+    "name": "BTCD",
+    "src": "/images/logos/crypto/btcd.svg"
+  },
+  {
+    "name": "BTCP",
+    "src": "/images/logos/crypto/btcp.svg"
+  },
+  {
+    "name": "BTG",
+    "src": "/images/logos/crypto/btg.svg"
+  },
+  {
+    "name": "BTMX",
+    "src": "/images/logos/crypto/btmx.svg"
+  },
+  {
+    "name": "BTO",
+    "src": "/images/logos/crypto/bto.svg"
+  },
+  {
+    "name": "BTS",
+    "src": "/images/logos/crypto/bts.svg"
+  },
+  {
+    "name": "BTT",
+    "src": "/images/logos/crypto/btt.svg"
+  },
+  {
+    "name": "BTU",
+    "src": "/images/logos/crypto/btu.svg"
+  },
+  {
+    "name": "BU",
+    "src": "/images/logos/crypto/bu.svg"
+  },
+  {
+    "name": "BUNNY",
+    "src": "/images/logos/crypto/bunny.svg"
+  },
+  {
+    "name": "BUSD",
+    "src": "/images/logos/crypto/busd.svg"
+  },
+  {
+    "name": "BWT",
+    "src": "/images/logos/crypto/bwt.svg"
+  },
+  {
+    "name": "BZ",
+    "src": "/images/logos/crypto/bz.svg"
+  },
+  {
+    "name": "BZNT",
+    "src": "/images/logos/crypto/bznt.svg"
+  },
+  {
+    "name": "BZRX",
+    "src": "/images/logos/crypto/bzrx.svg"
+  },
+  {
+    "name": "C20",
+    "src": "/images/logos/crypto/c20.svg"
+  },
+  {
+    "name": "C98",
+    "src": "/images/logos/crypto/c98.svg"
+  },
+  {
+    "name": "CAPP",
+    "src": "/images/logos/crypto/capp.svg"
+  },
+  {
+    "name": "CAR",
+    "src": "/images/logos/crypto/car.svg"
+  },
+  {
+    "name": "CARD",
+    "src": "/images/logos/crypto/card.svg"
+  },
+  {
+    "name": "Cardano",
+    "src": "/images/logos/crypto/ada.svg"
+  },
+  {
+    "name": "CBAT",
+    "src": "/images/logos/crypto/cbat.svg"
+  },
+  {
+    "name": "CBT",
+    "src": "/images/logos/crypto/cbt.svg"
+  },
+  {
+    "name": "CDAI",
+    "src": "/images/logos/crypto/cdai.svg"
+  },
+  {
+    "name": "CDT",
+    "src": "/images/logos/crypto/cdt.svg"
+  },
+  {
+    "name": "CEL",
+    "src": "/images/logos/crypto/cel.svg"
+  },
+  {
+    "name": "CELO",
+    "src": "/images/logos/crypto/celo.svg"
+  },
+  {
+    "name": "CELR",
+    "src": "/images/logos/crypto/celr.svg"
+  },
+  {
+    "name": "CENNZ",
+    "src": "/images/logos/crypto/cennz.svg"
+  },
+  {
+    "name": "CETH",
+    "src": "/images/logos/crypto/ceth.svg"
+  },
+  {
+    "name": "CFX",
+    "src": "/images/logos/crypto/cfx.svg"
+  },
+  {
+    "name": "CHAI",
+    "src": "/images/logos/crypto/chai.svg"
+  },
+  {
+    "name": "Chainlink",
+    "src": "/images/logos/crypto/link.svg"
+  },
+  {
+    "name": "CHAT",
+    "src": "/images/logos/crypto/chat.svg"
+  },
+  {
+    "name": "CHSB",
+    "src": "/images/logos/crypto/chsb.svg"
+  },
+  {
+    "name": "CHZ",
+    "src": "/images/logos/crypto/chz.svg"
+  },
+  {
+    "name": "CKB",
+    "src": "/images/logos/crypto/ckb.svg"
+  },
+  {
+    "name": "CLO",
+    "src": "/images/logos/crypto/clo.svg"
+  },
+  {
+    "name": "CLOAK",
+    "src": "/images/logos/crypto/cloak.svg"
+  },
+  {
+    "name": "CLOUT",
+    "src": "/images/logos/crypto/clout.svg"
+  },
+  {
+    "name": "CMT",
+    "src": "/images/logos/crypto/cmt.svg"
+  },
+  {
+    "name": "CND",
+    "src": "/images/logos/crypto/cnd.svg"
+  },
+  {
+    "name": "CNX",
+    "src": "/images/logos/crypto/cnx.svg"
+  },
+  {
+    "name": "Compound",
+    "src": "/images/logos/crypto/comp.svg"
+  },
+  {
+    "name": "CONI",
+    "src": "/images/logos/crypto/coni.svg"
+  },
+  {
+    "name": "COSM",
+    "src": "/images/logos/crypto/cosm.svg"
+  },
+  {
+    "name": "Cosmos",
+    "src": "/images/logos/crypto/atom.svg"
+  },
+  {
+    "name": "COTI",
+    "src": "/images/logos/crypto/coti.svg"
+  },
+  {
+    "name": "COV",
+    "src": "/images/logos/crypto/cov.svg"
+  },
+  {
+    "name": "COVA",
+    "src": "/images/logos/crypto/cova.svg"
+  },
+  {
+    "name": "COVER",
+    "src": "/images/logos/crypto/cover.svg"
+  },
+  {
+    "name": "CPC",
+    "src": "/images/logos/crypto/cpc.svg"
+  },
+  {
+    "name": "CRE",
+    "src": "/images/logos/crypto/cre.svg"
+  },
+  {
+    "name": "CREAM",
+    "src": "/images/logos/crypto/cream.svg"
+  },
+  {
+    "name": "CRED",
+    "src": "/images/logos/crypto/cred.svg"
+  },
+  {
+    "name": "CREP",
+    "src": "/images/logos/crypto/crep.svg"
+  },
+  {
+    "name": "CRO",
+    "src": "/images/logos/crypto/cro.svg"
+  },
+  {
+    "name": "CRPT",
+    "src": "/images/logos/crypto/crpt.svg"
+  },
+  {
+    "name": "CS",
+    "src": "/images/logos/crypto/cs.svg"
+  },
+  {
+    "name": "CSAI",
+    "src": "/images/logos/crypto/csai.svg"
+  },
+  {
+    "name": "CSC",
+    "src": "/images/logos/crypto/csc.svg"
+  },
+  {
+    "name": "CTC",
+    "src": "/images/logos/crypto/ctc.svg"
+  },
+  {
+    "name": "CTXC",
+    "src": "/images/logos/crypto/ctxc.svg"
+  },
+  {
+    "name": "Curve",
+    "src": "/images/logos/crypto/crv.svg"
+  },
+  {
+    "name": "CUSDC",
+    "src": "/images/logos/crypto/cusdc.svg"
+  },
+  {
+    "name": "CV",
+    "src": "/images/logos/crypto/cv.svg"
+  },
+  {
+    "name": "CVC",
+    "src": "/images/logos/crypto/cvc.svg"
+  },
+  {
+    "name": "CVP",
+    "src": "/images/logos/crypto/cvp.svg"
+  },
+  {
+    "name": "CVT",
+    "src": "/images/logos/crypto/cvt.svg"
+  },
+  {
+    "name": "CVX",
+    "src": "/images/logos/crypto/cvx.svg"
+  },
+  {
+    "name": "CWBTC",
+    "src": "/images/logos/crypto/cwbtc.svg"
+  },
+  {
+    "name": "CZRX",
+    "src": "/images/logos/crypto/czrx.svg"
+  },
+  {
+    "name": "DADI",
+    "src": "/images/logos/crypto/dadi.svg"
+  },
+  {
+    "name": "DAFI",
+    "src": "/images/logos/crypto/dafi.svg"
+  },
+  {
+    "name": "DAG",
+    "src": "/images/logos/crypto/dag.svg"
+  },
+  {
+    "name": "Dai",
+    "src": "/images/logos/crypto/dai.svg"
+  },
+  {
+    "name": "DASH",
+    "src": "/images/logos/crypto/dash.svg"
+  },
+  {
+    "name": "DAT",
+    "src": "/images/logos/crypto/dat.svg"
+  },
+  {
+    "name": "DATA",
+    "src": "/images/logos/crypto/data.svg"
+  },
+  {
+    "name": "DATX",
+    "src": "/images/logos/crypto/datx.svg"
+  },
+  {
+    "name": "DBC",
+    "src": "/images/logos/crypto/dbc.svg"
+  },
+  {
+    "name": "DCN",
+    "src": "/images/logos/crypto/dcn.svg"
+  },
+  {
+    "name": "DCR",
+    "src": "/images/logos/crypto/dcr.svg"
+  },
+  {
+    "name": "DCT",
+    "src": "/images/logos/crypto/dct.svg"
+  },
+  {
+    "name": "DDD",
+    "src": "/images/logos/crypto/ddd.svg"
+  },
+  {
+    "name": "DENT",
+    "src": "/images/logos/crypto/dent.svg"
+  },
+  {
+    "name": "DERI",
+    "src": "/images/logos/crypto/deri.svg"
+  },
+  {
+    "name": "DFI",
+    "src": "/images/logos/crypto/dfi.svg"
+  },
+  {
+    "name": "DFT",
+    "src": "/images/logos/crypto/dft.svg"
+  },
+  {
+    "name": "DFYN",
+    "src": "/images/logos/crypto/dfyn.svg"
+  },
+  {
+    "name": "DGB",
+    "src": "/images/logos/crypto/dgb.svg"
+  },
+  {
+    "name": "DGD",
+    "src": "/images/logos/crypto/dgd.svg"
+  },
+  {
+    "name": "DGTX",
+    "src": "/images/logos/crypto/dgtx.svg"
+  },
+  {
+    "name": "DIVI",
+    "src": "/images/logos/crypto/divi.svg"
+  },
+  {
+    "name": "DLT",
+    "src": "/images/logos/crypto/dlt.svg"
+  },
+  {
+    "name": "DMT",
+    "src": "/images/logos/crypto/dmt.svg"
+  },
+  {
+    "name": "DNT",
+    "src": "/images/logos/crypto/dnt.svg"
+  },
+  {
+    "name": "DOCK",
+    "src": "/images/logos/crypto/dock.svg"
+  },
+  {
+    "name": "DODO",
+    "src": "/images/logos/crypto/dodo.svg"
+  },
+  {
+    "name": "Dogecoin",
+    "src": "/images/logos/crypto/doge.svg"
+  },
+  {
+    "name": "DOR",
+    "src": "/images/logos/crypto/dor.svg"
+  },
+  {
+    "name": "DRGN",
+    "src": "/images/logos/crypto/drgn.svg"
+  },
+  {
+    "name": "DROP",
+    "src": "/images/logos/crypto/drop.svg"
+  },
+  {
+    "name": "DTA",
+    "src": "/images/logos/crypto/dta.svg"
+  },
+  {
+    "name": "DTR",
+    "src": "/images/logos/crypto/dtr.svg"
+  },
+  {
+    "name": "DTX",
+    "src": "/images/logos/crypto/dtx.svg"
+  },
+  {
+    "name": "DVF",
+    "src": "/images/logos/crypto/dvf.svg"
+  },
+  {
+    "name": "DXD",
+    "src": "/images/logos/crypto/dxd.svg"
+  },
+  {
+    "name": "DXT",
+    "src": "/images/logos/crypto/dxt.svg"
+  },
+  {
+    "name": "EDG",
+    "src": "/images/logos/crypto/edg.svg"
+  },
+  {
+    "name": "EDO",
+    "src": "/images/logos/crypto/edo.svg"
+  },
+  {
+    "name": "EFI",
+    "src": "/images/logos/crypto/efi.svg"
+  },
+  {
+    "name": "EFX",
+    "src": "/images/logos/crypto/efx.svg"
+  },
+  {
+    "name": "EGLD",
+    "src": "/images/logos/crypto/egld.svg"
+  },
+  {
+    "name": "EGT",
+    "src": "/images/logos/crypto/egt.svg"
+  },
+  {
+    "name": "EKG",
+    "src": "/images/logos/crypto/ekg.svg"
+  },
+  {
+    "name": "EKT",
+    "src": "/images/logos/crypto/ekt.svg"
+  },
+  {
+    "name": "ELA",
+    "src": "/images/logos/crypto/ela.svg"
+  },
+  {
+    "name": "ELEC",
+    "src": "/images/logos/crypto/elec.svg"
+  },
+  {
+    "name": "ELF",
+    "src": "/images/logos/crypto/elf.svg"
+  },
+  {
+    "name": "EMC",
+    "src": "/images/logos/crypto/emc.svg"
+  },
+  {
+    "name": "EMC2",
+    "src": "/images/logos/crypto/emc2.svg"
+  },
+  {
+    "name": "ENG",
+    "src": "/images/logos/crypto/eng.svg"
+  },
+  {
+    "name": "ENJ",
+    "src": "/images/logos/crypto/enj.svg"
+  },
+  {
+    "name": "EOS",
+    "src": "/images/logos/crypto/eos.svg"
+  },
+  {
+    "name": "EOSDAC",
+    "src": "/images/logos/crypto/eosdac.svg"
+  },
+  {
+    "name": "ERN",
+    "src": "/images/logos/crypto/ern.svg"
+  },
+  {
+    "name": "ESD",
+    "src": "/images/logos/crypto/esd.svg"
+  },
+  {
+    "name": "ESP",
+    "src": "/images/logos/crypto/esp.svg"
+  },
+  {
+    "name": "ESS",
+    "src": "/images/logos/crypto/ess.svg"
+  },
+  {
+    "name": "ETC",
+    "src": "/images/logos/crypto/etc.svg"
+  },
+  {
+    "name": "Ethereum",
+    "src": "/images/logos/crypto/eth.svg"
+  },
+  {
+    "name": "ETN",
+    "src": "/images/logos/crypto/etn.svg"
+  },
+  {
+    "name": "ETP",
+    "src": "/images/logos/crypto/etp.svg"
+  },
+  {
+    "name": "ETZ",
+    "src": "/images/logos/crypto/etz.svg"
+  },
+  {
+    "name": "EVX",
+    "src": "/images/logos/crypto/evx.svg"
+  },
+  {
+    "name": "EWT",
+    "src": "/images/logos/crypto/ewt.svg"
+  },
+  {
+    "name": "EXRN",
+    "src": "/images/logos/crypto/exrn.svg"
+  },
+  {
+    "name": "EXY",
+    "src": "/images/logos/crypto/exy.svg"
+  },
+  {
+    "name": "FAB",
+    "src": "/images/logos/crypto/fab.svg"
+  },
+  {
+    "name": "FCT",
+    "src": "/images/logos/crypto/fct.svg"
+  },
+  {
+    "name": "FEED",
+    "src": "/images/logos/crypto/feed.svg"
+  },
+  {
+    "name": "FEI",
+    "src": "/images/logos/crypto/fei.svg"
+  },
+  {
+    "name": "FET",
+    "src": "/images/logos/crypto/fet.svg"
+  },
+  {
+    "name": "FIDA",
+    "src": "/images/logos/crypto/fida.svg"
+  },
+  {
+    "name": "FILDA",
+    "src": "/images/logos/crypto/filda.svg"
+  },
+  {
+    "name": "Filecoin",
+    "src": "/images/logos/crypto/fil.svg"
+  },
+  {
+    "name": "FLOW",
+    "src": "/images/logos/crypto/flow.svg"
+  },
+  {
+    "name": "FOTA",
+    "src": "/images/logos/crypto/fota.svg"
+  },
+  {
+    "name": "FOX",
+    "src": "/images/logos/crypto/fox.svg"
+  },
+  {
+    "name": "FRAX",
+    "src": "/images/logos/crypto/frax.svg"
+  },
+  {
+    "name": "FRM",
+    "src": "/images/logos/crypto/frm.svg"
+  },
+  {
+    "name": "FRONT",
+    "src": "/images/logos/crypto/front.svg"
+  },
+  {
+    "name": "FSN",
+    "src": "/images/logos/crypto/fsn.svg"
+  },
+  {
+    "name": "FT",
+    "src": "/images/logos/crypto/ft.svg"
+  },
+  {
+    "name": "FTC",
+    "src": "/images/logos/crypto/ftc.svg"
+  },
+  {
+    "name": "FTM",
+    "src": "/images/logos/crypto/ftm.svg"
+  },
+  {
+    "name": "FTT",
+    "src": "/images/logos/crypto/ftt.svg"
+  },
+  {
+    "name": "FUEL",
+    "src": "/images/logos/crypto/fuel.svg"
+  },
+  {
+    "name": "FUN",
+    "src": "/images/logos/crypto/fun.svg"
+  },
+  {
+    "name": "FXC",
+    "src": "/images/logos/crypto/fxc.svg"
+  },
+  {
+    "name": "FXT",
+    "src": "/images/logos/crypto/fxt.svg"
+  },
+  {
+    "name": "GALA",
+    "src": "/images/logos/crypto/gala.svg"
+  },
+  {
+    "name": "GDC",
+    "src": "/images/logos/crypto/gdc.svg"
+  },
+  {
+    "name": "GEM",
+    "src": "/images/logos/crypto/gem.svg"
+  },
+  {
+    "name": "GEN",
+    "src": "/images/logos/crypto/gen.svg"
+  },
+  {
+    "name": "GNO",
+    "src": "/images/logos/crypto/gno.svg"
+  },
+  {
+    "name": "GNT",
+    "src": "/images/logos/crypto/gnt.svg"
+  },
+  {
+    "name": "GNX",
+    "src": "/images/logos/crypto/gnx.svg"
+  },
+  {
+    "name": "GO",
+    "src": "/images/logos/crypto/go.svg"
+  },
+  {
+    "name": "GOC",
+    "src": "/images/logos/crypto/goc.svg"
+  },
+  {
+    "name": "GOT",
+    "src": "/images/logos/crypto/got.svg"
+  },
+  {
+    "name": "GRIN",
+    "src": "/images/logos/crypto/grin.svg"
+  },
+  {
+    "name": "GRS",
+    "src": "/images/logos/crypto/grs.svg"
+  },
+  {
+    "name": "GRT",
+    "src": "/images/logos/crypto/grt.svg"
+  },
+  {
+    "name": "GSC",
+    "src": "/images/logos/crypto/gsc.svg"
+  },
+  {
+    "name": "GSWAP",
+    "src": "/images/logos/crypto/gswap.svg"
+  },
+  {
+    "name": "GT",
+    "src": "/images/logos/crypto/gt.svg"
+  },
+  {
+    "name": "GTC",
+    "src": "/images/logos/crypto/gtc.svg"
+  },
+  {
+    "name": "GTO",
+    "src": "/images/logos/crypto/gto.svg"
+  },
+  {
+    "name": "GUSD",
+    "src": "/images/logos/crypto/gusd.svg"
+  },
+  {
+    "name": "GVT",
+    "src": "/images/logos/crypto/gvt.svg"
+  },
+  {
+    "name": "GXS",
+    "src": "/images/logos/crypto/gxs.svg"
+  },
+  {
+    "name": "HAKKA",
+    "src": "/images/logos/crypto/hakka.svg"
+  },
+  {
+    "name": "HBAR",
+    "src": "/images/logos/crypto/hbar.svg"
+  },
+  {
+    "name": "HC",
+    "src": "/images/logos/crypto/hc.svg"
+  },
+  {
+    "name": "HEDG",
+    "src": "/images/logos/crypto/hedg.svg"
+  },
+  {
+    "name": "HER",
+    "src": "/images/logos/crypto/her.svg"
+  },
+  {
+    "name": "HEX",
+    "src": "/images/logos/crypto/hex.svg"
+  },
+  {
+    "name": "HIGH",
+    "src": "/images/logos/crypto/high.svg"
+  },
+  {
+    "name": "HIVE",
+    "src": "/images/logos/crypto/hive.svg"
+  },
+  {
+    "name": "HNT",
+    "src": "/images/logos/crypto/hnt.svg"
+  },
+  {
+    "name": "HOT",
+    "src": "/images/logos/crypto/hot.svg"
+  },
+  {
+    "name": "HOT-X",
+    "src": "/images/logos/crypto/hot-x.svg"
+  },
+  {
+    "name": "HPB",
+    "src": "/images/logos/crypto/hpb.svg"
+  },
+  {
+    "name": "HSR",
+    "src": "/images/logos/crypto/hsr.svg"
+  },
+  {
+    "name": "HT",
+    "src": "/images/logos/crypto/ht.svg"
+  },
+  {
+    "name": "HUM",
+    "src": "/images/logos/crypto/hum.svg"
+  },
+  {
+    "name": "HUSD",
+    "src": "/images/logos/crypto/husd.svg"
+  },
+  {
+    "name": "HVN",
+    "src": "/images/logos/crypto/hvn.svg"
+  },
+  {
+    "name": "HYDRO",
+    "src": "/images/logos/crypto/hydro.svg"
+  },
+  {
+    "name": "HYN",
+    "src": "/images/logos/crypto/hyn.svg"
+  },
+  {
+    "name": "HZN",
+    "src": "/images/logos/crypto/hzn.svg"
+  },
+  {
+    "name": "IBAT",
+    "src": "/images/logos/crypto/ibat.svg"
+  },
+  {
+    "name": "ICN",
+    "src": "/images/logos/crypto/icn.svg"
+  },
+  {
+    "name": "ICP",
+    "src": "/images/logos/crypto/icp.svg"
+  },
+  {
+    "name": "ICX",
+    "src": "/images/logos/crypto/icx.svg"
+  },
+  {
+    "name": "IDAI",
+    "src": "/images/logos/crypto/idai.svg"
+  },
+  {
+    "name": "IDEX",
+    "src": "/images/logos/crypto/idex.svg"
+  },
+  {
+    "name": "IETH",
+    "src": "/images/logos/crypto/ieth.svg"
+  },
+  {
+    "name": "IGNIS",
+    "src": "/images/logos/crypto/ignis.svg"
+  },
+  {
+    "name": "IKNC",
+    "src": "/images/logos/crypto/iknc.svg"
+  },
+  {
+    "name": "ILINK",
+    "src": "/images/logos/crypto/ilink.svg"
+  },
+  {
+    "name": "INB",
+    "src": "/images/logos/crypto/inb.svg"
+  },
+  {
+    "name": "INS",
+    "src": "/images/logos/crypto/ins.svg"
+  },
+  {
+    "name": "IOST",
+    "src": "/images/logos/crypto/iost.svg"
+  },
+  {
+    "name": "IOTA",
+    "src": "/images/logos/crypto/iota.svg"
+  },
+  {
+    "name": "IOTX",
+    "src": "/images/logos/crypto/iotx.svg"
+  },
+  {
+    "name": "IQ",
+    "src": "/images/logos/crypto/iq.svg"
+  },
+  {
+    "name": "IREP",
+    "src": "/images/logos/crypto/irep.svg"
+  },
+  {
+    "name": "IRIS",
+    "src": "/images/logos/crypto/iris.svg"
+  },
+  {
+    "name": "ISUSD",
+    "src": "/images/logos/crypto/isusd.svg"
+  },
+  {
+    "name": "IUSDC",
+    "src": "/images/logos/crypto/iusdc.svg"
+  },
+  {
+    "name": "IWBTC",
+    "src": "/images/logos/crypto/iwbtc.svg"
+  },
+  {
+    "name": "IZRX",
+    "src": "/images/logos/crypto/izrx.svg"
+  },
+  {
+    "name": "JNT",
+    "src": "/images/logos/crypto/jnt.svg"
+  },
+  {
+    "name": "JST",
+    "src": "/images/logos/crypto/jst.svg"
+  },
+  {
+    "name": "JUNO",
+    "src": "/images/logos/crypto/juno.svg"
+  },
+  {
+    "name": "KAVA",
+    "src": "/images/logos/crypto/kava.svg"
+  },
+  {
+    "name": "KCS",
+    "src": "/images/logos/crypto/kcs.svg"
+  },
+  {
+    "name": "KDA",
+    "src": "/images/logos/crypto/kda.svg"
+  },
+  {
+    "name": "KEEP",
+    "src": "/images/logos/crypto/keep.svg"
+  },
+  {
+    "name": "KEY",
+    "src": "/images/logos/crypto/key.svg"
+  },
+  {
+    "name": "KICK",
+    "src": "/images/logos/crypto/kick.svg"
+  },
+  {
+    "name": "KIN",
+    "src": "/images/logos/crypto/kin.svg"
+  },
+  {
+    "name": "KLAY",
+    "src": "/images/logos/crypto/klay.svg"
+  },
+  {
+    "name": "KLV",
+    "src": "/images/logos/crypto/klv.svg"
+  },
+  {
+    "name": "KMD",
+    "src": "/images/logos/crypto/kmd.svg"
+  },
+  {
+    "name": "KNC",
+    "src": "/images/logos/crypto/knc.svg"
+  },
+  {
+    "name": "KSM",
+    "src": "/images/logos/crypto/ksm.svg"
+  },
+  {
+    "name": "LAMB",
+    "src": "/images/logos/crypto/lamb.svg"
+  },
+  {
+    "name": "LAND",
+    "src": "/images/logos/crypto/land.svg"
+  },
+  {
+    "name": "LBA",
+    "src": "/images/logos/crypto/lba.svg"
+  },
+  {
+    "name": "LCX",
+    "src": "/images/logos/crypto/lcx.svg"
+  },
+  {
+    "name": "LDO",
+    "src": "/images/logos/crypto/ldo.svg"
+  },
+  {
+    "name": "LEND",
+    "src": "/images/logos/crypto/lend.svg"
+  },
+  {
+    "name": "LEO",
+    "src": "/images/logos/crypto/leo.svg"
+  },
+  {
+    "name": "LIT",
+    "src": "/images/logos/crypto/lit.svg"
+  },
+  {
+    "name": "Litecoin",
+    "src": "/images/logos/crypto/ltc.svg"
+  },
+  {
+    "name": "LKY",
+    "src": "/images/logos/crypto/lky.svg"
+  },
+  {
+    "name": "LN",
+    "src": "/images/logos/crypto/ln.svg"
+  },
+  {
+    "name": "LOKI",
+    "src": "/images/logos/crypto/loki.svg"
+  },
+  {
+    "name": "LON",
+    "src": "/images/logos/crypto/lon.svg"
+  },
+  {
+    "name": "LOOKS",
+    "src": "/images/logos/crypto/looks.svg"
+  },
+  {
+    "name": "LOOM",
+    "src": "/images/logos/crypto/loom.svg"
+  },
+  {
+    "name": "LPT",
+    "src": "/images/logos/crypto/lpt.svg"
+  },
+  {
+    "name": "LQD",
+    "src": "/images/logos/crypto/lqd.svg"
+  },
+  {
+    "name": "LQTY",
+    "src": "/images/logos/crypto/lqty.svg"
+  },
+  {
+    "name": "LRC",
+    "src": "/images/logos/crypto/lrc.svg"
+  },
+  {
+    "name": "LSK",
+    "src": "/images/logos/crypto/lsk.svg"
+  },
+  {
+    "name": "LTO",
+    "src": "/images/logos/crypto/lto.svg"
+  },
+  {
+    "name": "LUN",
+    "src": "/images/logos/crypto/lun.svg"
+  },
+  {
+    "name": "LUNA",
+    "src": "/images/logos/crypto/luna.svg"
+  },
+  {
+    "name": "LXT",
+    "src": "/images/logos/crypto/lxt.svg"
+  },
+  {
+    "name": "LYM",
+    "src": "/images/logos/crypto/lym.svg"
+  },
+  {
+    "name": "MAHA",
+    "src": "/images/logos/crypto/maha.svg"
+  },
+  {
+    "name": "MAID",
+    "src": "/images/logos/crypto/maid.svg"
+  },
+  {
+    "name": "Maker",
+    "src": "/images/logos/crypto/mkr.svg"
+  },
+  {
+    "name": "MAN",
+    "src": "/images/logos/crypto/man.svg"
+  },
+  {
+    "name": "MANA",
+    "src": "/images/logos/crypto/mana.svg"
+  },
+  {
+    "name": "MARS",
+    "src": "/images/logos/crypto/mars.svg"
+  },
+  {
+    "name": "MATH",
+    "src": "/images/logos/crypto/math.svg"
+  },
+  {
+    "name": "MATTER",
+    "src": "/images/logos/crypto/matter.svg"
+  },
+  {
+    "name": "MBC",
+    "src": "/images/logos/crypto/mbc.svg"
+  },
+  {
+    "name": "MCO",
+    "src": "/images/logos/crypto/mco.svg"
+  },
+  {
+    "name": "MCX",
+    "src": "/images/logos/crypto/mcx.svg"
+  },
+  {
+    "name": "MDA",
+    "src": "/images/logos/crypto/mda.svg"
+  },
+  {
+    "name": "MDS",
+    "src": "/images/logos/crypto/mds.svg"
+  },
+  {
+    "name": "MED",
+    "src": "/images/logos/crypto/med.svg"
+  },
+  {
+    "name": "MEDX",
+    "src": "/images/logos/crypto/medx.svg"
+  },
+  {
+    "name": "MET",
+    "src": "/images/logos/crypto/met.svg"
+  },
+  {
+    "name": "METAMASK",
+    "src": "/images/logos/crypto/metamask.svg"
+  },
+  {
+    "name": "MFG",
+    "src": "/images/logos/crypto/mfg.svg"
+  },
+  {
+    "name": "MFT",
+    "src": "/images/logos/crypto/mft.svg"
+  },
+  {
+    "name": "MIM",
+    "src": "/images/logos/crypto/mim.svg"
+  },
+  {
+    "name": "MIR",
+    "src": "/images/logos/crypto/mir.svg"
+  },
+  {
+    "name": "MITH",
+    "src": "/images/logos/crypto/mith.svg"
+  },
+  {
+    "name": "MLN",
+    "src": "/images/logos/crypto/mln.svg"
+  },
+  {
+    "name": "MNGO",
+    "src": "/images/logos/crypto/mngo.svg"
+  },
+  {
+    "name": "MOD",
+    "src": "/images/logos/crypto/mod.svg"
+  },
+  {
+    "name": "Monero",
+    "src": "/images/logos/crypto/xmr.svg"
+  },
+  {
+    "name": "MOT",
+    "src": "/images/logos/crypto/mot.svg"
+  },
+  {
+    "name": "MPL",
+    "src": "/images/logos/crypto/mpl.svg"
+  },
+  {
+    "name": "MTA",
+    "src": "/images/logos/crypto/mta.svg"
+  },
+  {
+    "name": "MTH",
+    "src": "/images/logos/crypto/mth.svg"
+  },
+  {
+    "name": "MTL",
+    "src": "/images/logos/crypto/mtl.svg"
+  },
+  {
+    "name": "MTN",
+    "src": "/images/logos/crypto/mtn.svg"
+  },
+  {
+    "name": "MVC",
+    "src": "/images/logos/crypto/mvc.svg"
+  },
+  {
+    "name": "MVL",
+    "src": "/images/logos/crypto/mvl.svg"
+  },
+  {
+    "name": "MVP",
+    "src": "/images/logos/crypto/mvp.svg"
+  },
+  {
+    "name": "MWAT",
+    "src": "/images/logos/crypto/mwat.svg"
+  },
+  {
+    "name": "MWC",
+    "src": "/images/logos/crypto/mwc.svg"
+  },
+  {
+    "name": "MXM",
+    "src": "/images/logos/crypto/mxm.svg"
+  },
+  {
+    "name": "MYB",
+    "src": "/images/logos/crypto/myb.svg"
+  },
+  {
+    "name": "NANO",
+    "src": "/images/logos/crypto/nano.svg"
+  },
+  {
+    "name": "NAS",
+    "src": "/images/logos/crypto/nas.svg"
+  },
+  {
+    "name": "NAV",
+    "src": "/images/logos/crypto/nav.svg"
+  },
+  {
+    "name": "NCASH",
+    "src": "/images/logos/crypto/ncash.svg"
+  },
+  {
+    "name": "NCT",
+    "src": "/images/logos/crypto/nct.svg"
+  },
+  {
+    "name": "NEAR",
+    "src": "/images/logos/crypto/near.svg"
+  },
+  {
+    "name": "NEBL",
+    "src": "/images/logos/crypto/nebl.svg"
+  },
+  {
+    "name": "NEC",
+    "src": "/images/logos/crypto/nec.svg"
+  },
+  {
+    "name": "NEO",
+    "src": "/images/logos/crypto/neo.svg"
+  },
+  {
+    "name": "NEW",
+    "src": "/images/logos/crypto/new.svg"
+  },
+  {
+    "name": "NEX",
+    "src": "/images/logos/crypto/nex.svg"
+  },
+  {
+    "name": "NEXXO",
+    "src": "/images/logos/crypto/nexxo.svg"
+  },
+  {
+    "name": "NFT",
+    "src": "/images/logos/crypto/nft.svg"
+  },
+  {
+    "name": "NGC",
+    "src": "/images/logos/crypto/ngc.svg"
+  },
+  {
+    "name": "NIOX",
+    "src": "/images/logos/crypto/niox.svg"
+  },
+  {
+    "name": "NKN",
+    "src": "/images/logos/crypto/nkn.svg"
+  },
+  {
+    "name": "NLG",
+    "src": "/images/logos/crypto/nlg.svg"
+  },
+  {
+    "name": "NMR",
+    "src": "/images/logos/crypto/nmr.svg"
+  },
+  {
+    "name": "NOIA",
+    "src": "/images/logos/crypto/noia.svg"
+  },
+  {
+    "name": "NPER",
+    "src": "/images/logos/crypto/nper.svg"
+  },
+  {
+    "name": "NPXS",
+    "src": "/images/logos/crypto/npxs.svg"
+  },
+  {
+    "name": "NRG",
+    "src": "/images/logos/crypto/nrg.svg"
+  },
+  {
+    "name": "NRVE",
+    "src": "/images/logos/crypto/nrve.svg"
+  },
+  {
+    "name": "NU",
+    "src": "/images/logos/crypto/nu.svg"
+  },
+  {
+    "name": "NULS",
+    "src": "/images/logos/crypto/nuls.svg"
+  },
+  {
+    "name": "NXS",
+    "src": "/images/logos/crypto/nxs.svg"
+  },
+  {
+    "name": "NXT",
+    "src": "/images/logos/crypto/nxt.svg"
+  },
+  {
+    "name": "OAG",
+    "src": "/images/logos/crypto/oag.svg"
+  },
+  {
+    "name": "OAX",
+    "src": "/images/logos/crypto/oax.svg"
+  },
+  {
+    "name": "OCEAN",
+    "src": "/images/logos/crypto/ocean.svg"
+  },
+  {
+    "name": "OCN",
+    "src": "/images/logos/crypto/ocn.svg"
+  },
+  {
+    "name": "ODE",
+    "src": "/images/logos/crypto/ode.svg"
+  },
+  {
+    "name": "OGN",
+    "src": "/images/logos/crypto/ogn.svg"
+  },
+  {
+    "name": "OHM",
+    "src": "/images/logos/crypto/ohm.svg"
+  },
+  {
+    "name": "OKB",
+    "src": "/images/logos/crypto/okb.svg"
+  },
+  {
+    "name": "OLT",
+    "src": "/images/logos/crypto/olt.svg"
+  },
+  {
+    "name": "OMG",
+    "src": "/images/logos/crypto/omg.svg"
+  },
+  {
+    "name": "ONE",
+    "src": "/images/logos/crypto/one.svg"
+  },
+  {
+    "name": "ONION",
+    "src": "/images/logos/crypto/onion.svg"
+  },
+  {
+    "name": "ONT",
+    "src": "/images/logos/crypto/ont.svg"
+  },
+  {
+    "name": "OPEN",
+    "src": "/images/logos/crypto/open.svg"
+  },
+  {
+    "name": "OPIUM",
+    "src": "/images/logos/crypto/opium.svg"
+  },
+  {
+    "name": "ORBS",
+    "src": "/images/logos/crypto/orbs.svg"
+  },
+  {
+    "name": "ORC",
+    "src": "/images/logos/crypto/orc.svg"
+  },
+  {
+    "name": "ORN",
+    "src": "/images/logos/crypto/orn.svg"
+  },
+  {
+    "name": "OSMO",
+    "src": "/images/logos/crypto/osmo.svg"
+  },
+  {
+    "name": "OST",
+    "src": "/images/logos/crypto/ost.svg"
+  },
+  {
+    "name": "OVC",
+    "src": "/images/logos/crypto/ovc.svg"
+  },
+  {
+    "name": "OXT",
+    "src": "/images/logos/crypto/oxt.svg"
+  },
+  {
+    "name": "PAI",
+    "src": "/images/logos/crypto/pai.svg"
+  },
+  {
+    "name": "PAINT",
+    "src": "/images/logos/crypto/paint.svg"
+  },
+  {
+    "name": "PAL",
+    "src": "/images/logos/crypto/pal.svg"
+  },
+  {
+    "name": "PancakeSwap",
+    "src": "/images/logos/crypto/cake.svg"
+  },
+  {
+    "name": "PAR",
+    "src": "/images/logos/crypto/par.svg"
+  },
+  {
+    "name": "PART",
+    "src": "/images/logos/crypto/part.svg"
+  },
+  {
+    "name": "PAX",
+    "src": "/images/logos/crypto/pax.svg"
+  },
+  {
+    "name": "PAXG",
+    "src": "/images/logos/crypto/paxg.svg"
+  },
+  {
+    "name": "PAY",
+    "src": "/images/logos/crypto/pay.svg"
+  },
+  {
+    "name": "PBR",
+    "src": "/images/logos/crypto/pbr.svg"
+  },
+  {
+    "name": "PBTC",
+    "src": "/images/logos/crypto/pBTC.svg"
+  },
+  {
+    "name": "PENDLE",
+    "src": "/images/logos/crypto/pendle.svg"
+  },
+  {
+    "name": "PERL",
+    "src": "/images/logos/crypto/perl.svg"
+  },
+  {
+    "name": "PERP",
+    "src": "/images/logos/crypto/perp.svg"
+  },
+  {
+    "name": "PICKLE",
+    "src": "/images/logos/crypto/pickle.svg"
+  },
+  {
+    "name": "PIVX",
+    "src": "/images/logos/crypto/pivx.svg"
+  },
+  {
+    "name": "PLAY",
+    "src": "/images/logos/crypto/play.svg"
+  },
+  {
+    "name": "PLDAI",
+    "src": "/images/logos/crypto/plDAI.svg"
+  },
+  {
+    "name": "PLR",
+    "src": "/images/logos/crypto/plr.svg"
+  },
+  {
+    "name": "PLUSDC",
+    "src": "/images/logos/crypto/plUSDC.svg"
+  },
+  {
+    "name": "PNG",
+    "src": "/images/logos/crypto/png.svg"
+  },
+  {
+    "name": "PNK",
+    "src": "/images/logos/crypto/pnk.svg"
+  },
+  {
+    "name": "PNT",
+    "src": "/images/logos/crypto/pnt.svg"
+  },
+  {
+    "name": "POA",
+    "src": "/images/logos/crypto/poa.svg"
+  },
+  {
+    "name": "POE",
+    "src": "/images/logos/crypto/poe.svg"
+  },
+  {
+    "name": "POKT",
+    "src": "/images/logos/crypto/pokt.svg"
+  },
+  {
+    "name": "Polkadot",
+    "src": "/images/logos/crypto/dot.svg"
+  },
+  {
+    "name": "POLS",
+    "src": "/images/logos/crypto/pols.svg"
+  },
+  {
+    "name": "POLY",
+    "src": "/images/logos/crypto/poly.svg"
+  },
+  {
+    "name": "Polygon",
+    "src": "/images/logos/crypto/matic.svg"
+  },
+  {
+    "name": "POND",
+    "src": "/images/logos/crypto/pond.svg"
+  },
+  {
+    "name": "POOL",
+    "src": "/images/logos/crypto/pool.svg"
+  },
+  {
+    "name": "POWR",
+    "src": "/images/logos/crypto/powr.svg"
+  },
+  {
+    "name": "PPAY",
+    "src": "/images/logos/crypto/ppay.svg"
+  },
+  {
+    "name": "PPC",
+    "src": "/images/logos/crypto/ppc.svg"
+  },
+  {
+    "name": "PPP",
+    "src": "/images/logos/crypto/ppp.svg"
+  },
+  {
+    "name": "PPT",
+    "src": "/images/logos/crypto/ppt.svg"
+  },
+  {
+    "name": "PRE",
+    "src": "/images/logos/crypto/pre.svg"
+  },
+  {
+    "name": "PREMIA",
+    "src": "/images/logos/crypto/premia.svg"
+  },
+  {
+    "name": "PRL",
+    "src": "/images/logos/crypto/prl.svg"
+  },
+  {
+    "name": "PRO",
+    "src": "/images/logos/crypto/pro.svg"
+  },
+  {
+    "name": "PROS",
+    "src": "/images/logos/crypto/pros.svg"
+  },
+  {
+    "name": "PRQ",
+    "src": "/images/logos/crypto/prq.svg"
+  },
+  {
+    "name": "PST",
+    "src": "/images/logos/crypto/pst.svg"
+  },
+  {
+    "name": "QASH",
+    "src": "/images/logos/crypto/qash.svg"
+  },
+  {
+    "name": "QBIT",
+    "src": "/images/logos/crypto/qbit.svg"
+  },
+  {
+    "name": "QI",
+    "src": "/images/logos/crypto/qi.svg"
+  },
+  {
+    "name": "QKC",
+    "src": "/images/logos/crypto/qkc.svg"
+  },
+  {
+    "name": "QLC",
+    "src": "/images/logos/crypto/qlc.svg"
+  },
+  {
+    "name": "QNT",
+    "src": "/images/logos/crypto/qnt.svg"
+  },
+  {
+    "name": "QSP",
+    "src": "/images/logos/crypto/qsp.svg"
+  },
+  {
+    "name": "QTUM",
+    "src": "/images/logos/crypto/qtum.svg"
+  },
+  {
+    "name": "QUICK",
+    "src": "/images/logos/crypto/quick.svg"
+  },
+  {
+    "name": "R",
+    "src": "/images/logos/crypto/r.svg"
+  },
+  {
+    "name": "RAE",
+    "src": "/images/logos/crypto/rae.svg"
+  },
+  {
+    "name": "RARI",
+    "src": "/images/logos/crypto/rari.svg"
+  },
+  {
+    "name": "RAY",
+    "src": "/images/logos/crypto/ray.svg"
+  },
+  {
+    "name": "RCN",
+    "src": "/images/logos/crypto/rcn.svg"
+  },
+  {
+    "name": "RDD",
+    "src": "/images/logos/crypto/rdd.svg"
+  },
+  {
+    "name": "RDN",
+    "src": "/images/logos/crypto/rdn.svg"
+  },
+  {
+    "name": "REN",
+    "src": "/images/logos/crypto/ren.svg"
+  },
+  {
+    "name": "REP",
+    "src": "/images/logos/crypto/rep.svg"
+  },
+  {
+    "name": "REQ",
+    "src": "/images/logos/crypto/req.svg"
+  },
+  {
+    "name": "REV",
+    "src": "/images/logos/crypto/rev.svg"
+  },
+  {
+    "name": "RFOX",
+    "src": "/images/logos/crypto/rfox.svg"
+  },
+  {
+    "name": "RHOC",
+    "src": "/images/logos/crypto/rhoc.svg"
+  },
+  {
+    "name": "RIF",
+    "src": "/images/logos/crypto/rif.svg"
+  },
+  {
+    "name": "Ripple",
+    "src": "/images/logos/crypto/xrp.svg"
+  },
+  {
+    "name": "RLC",
+    "src": "/images/logos/crypto/rlc.svg"
+  },
+  {
+    "name": "ROOK",
+    "src": "/images/logos/crypto/rook.svg"
+  },
+  {
+    "name": "ROSE",
+    "src": "/images/logos/crypto/rose.svg"
+  },
+  {
+    "name": "RPX",
+    "src": "/images/logos/crypto/rpx.svg"
+  },
+  {
+    "name": "RSR",
+    "src": "/images/logos/crypto/rsr.svg"
+  },
+  {
+    "name": "RSV",
+    "src": "/images/logos/crypto/rsv.svg"
+  },
+  {
+    "name": "RUNE",
+    "src": "/images/logos/crypto/rune.svg"
+  },
+  {
+    "name": "RVN",
+    "src": "/images/logos/crypto/rvn.svg"
+  },
+  {
+    "name": "S",
+    "src": "/images/logos/crypto/s.svg"
+  },
+  {
+    "name": "SAI",
+    "src": "/images/logos/crypto/sai.svg"
+  },
+  {
+    "name": "SALT",
+    "src": "/images/logos/crypto/salt.svg"
+  },
+  {
+    "name": "SAN",
+    "src": "/images/logos/crypto/san.svg"
+  },
+  {
+    "name": "SAND",
+    "src": "/images/logos/crypto/sand.svg"
+  },
+  {
+    "name": "SAR",
+    "src": "/images/logos/crypto/sar.svg"
+  },
+  {
+    "name": "SCRL",
+    "src": "/images/logos/crypto/scrl.svg"
+  },
+  {
+    "name": "SCRT",
+    "src": "/images/logos/crypto/scrt.svg"
+  },
+  {
+    "name": "SDT",
+    "src": "/images/logos/crypto/sdt.svg"
+  },
+  {
+    "name": "SEELE",
+    "src": "/images/logos/crypto/seele.svg"
+  },
+  {
+    "name": "SEFI",
+    "src": "/images/logos/crypto/sefi.svg"
+  },
+  {
+    "name": "SEM",
+    "src": "/images/logos/crypto/sem.svg"
+  },
+  {
+    "name": "SFI",
+    "src": "/images/logos/crypto/sfi.svg"
+  },
+  {
+    "name": "SFP",
+    "src": "/images/logos/crypto/sfp.svg"
+  },
+  {
+    "name": "Shiba Inu",
+    "src": "/images/logos/crypto/shib.svg"
+  },
+  {
+    "name": "SHR",
+    "src": "/images/logos/crypto/shr.svg"
+  },
+  {
+    "name": "SHUF",
+    "src": "/images/logos/crypto/shuf.svg"
+  },
+  {
+    "name": "SIA",
+    "src": "/images/logos/crypto/sia.svg"
+  },
+  {
+    "name": "SKL",
+    "src": "/images/logos/crypto/skl.svg"
+  },
+  {
+    "name": "SKY",
+    "src": "/images/logos/crypto/sky.svg"
+  },
+  {
+    "name": "SLT",
+    "src": "/images/logos/crypto/slt.svg"
+  },
+  {
+    "name": "SMART",
+    "src": "/images/logos/crypto/smart.svg"
+  },
+  {
+    "name": "SNC",
+    "src": "/images/logos/crypto/snc.svg"
+  },
+  {
+    "name": "SNGLS",
+    "src": "/images/logos/crypto/sngls.svg"
+  },
+  {
+    "name": "SNM",
+    "src": "/images/logos/crypto/snm.svg"
+  },
+  {
+    "name": "SNT",
+    "src": "/images/logos/crypto/snt.svg"
+  },
+  {
+    "name": "Solana",
+    "src": "/images/logos/crypto/sol.svg"
+  },
+  {
+    "name": "SOUL",
+    "src": "/images/logos/crypto/soul.svg"
+  },
+  {
+    "name": "SOV",
+    "src": "/images/logos/crypto/sov.svg"
+  },
+  {
+    "name": "SPN",
+    "src": "/images/logos/crypto/spn.svg"
+  },
+  {
+    "name": "SRM",
+    "src": "/images/logos/crypto/srm.svg"
+  },
+  {
+    "name": "STAKE",
+    "src": "/images/logos/crypto/stake.svg"
+  },
+  {
+    "name": "STEEM",
+    "src": "/images/logos/crypto/steem.svg"
+  },
+  {
+    "name": "Stellar",
+    "src": "/images/logos/crypto/xlm.svg"
+  },
+  {
+    "name": "STEP",
+    "src": "/images/logos/crypto/step.svg"
+  },
+  {
+    "name": "STETH",
+    "src": "/images/logos/crypto/steth.svg"
+  },
+  {
+    "name": "STMX",
+    "src": "/images/logos/crypto/stmx.svg"
+  },
+  {
+    "name": "STORJ",
+    "src": "/images/logos/crypto/storj.svg"
+  },
+  {
+    "name": "STORM",
+    "src": "/images/logos/crypto/storm.svg"
+  },
+  {
+    "name": "STPT",
+    "src": "/images/logos/crypto/stpt.svg"
+  },
+  {
+    "name": "STRAT",
+    "src": "/images/logos/crypto/strat.svg"
+  },
+  {
+    "name": "STX",
+    "src": "/images/logos/crypto/stx.svg"
+  },
+  {
+    "name": "SUB",
+    "src": "/images/logos/crypto/sub.svg"
+  },
+  {
+    "name": "SUPER",
+    "src": "/images/logos/crypto/super.svg"
+  },
+  {
+    "name": "SUQA",
+    "src": "/images/logos/crypto/suqa.svg"
+  },
+  {
+    "name": "SushiSwap",
+    "src": "/images/logos/crypto/sushi.svg"
+  },
+  {
+    "name": "SUTER",
+    "src": "/images/logos/crypto/suter.svg"
+  },
+  {
+    "name": "SWAP",
+    "src": "/images/logos/crypto/swap.svg"
+  },
+  {
+    "name": "SWTH",
+    "src": "/images/logos/crypto/swth.svg"
+  },
+  {
+    "name": "SXDT",
+    "src": "/images/logos/crypto/sxdt.svg"
+  },
+  {
+    "name": "SXP",
+    "src": "/images/logos/crypto/sxp.svg"
+  },
+  {
+    "name": "Synthetix",
+    "src": "/images/logos/crypto/snx.svg"
+  },
+  {
+    "name": "SYS",
+    "src": "/images/logos/crypto/sys.svg"
+  },
+  {
+    "name": "TBTC",
+    "src": "/images/logos/crypto/tbtc.svg"
+  },
+  {
+    "name": "TCT",
+    "src": "/images/logos/crypto/tct.svg"
+  },
+  {
+    "name": "TEL",
+    "src": "/images/logos/crypto/tel.svg"
+  },
+  {
+    "name": "Tether",
+    "src": "/images/logos/crypto/usdt.svg"
+  },
+  {
+    "name": "Tezos",
+    "src": "/images/logos/crypto/xtz.svg"
+  },
+  {
+    "name": "TFUEL",
+    "src": "/images/logos/crypto/tfuel.svg"
+  },
+  {
+    "name": "THC",
+    "src": "/images/logos/crypto/thc.svg"
+  },
+  {
+    "name": "THETA",
+    "src": "/images/logos/crypto/theta.svg"
+  },
+  {
+    "name": "THR",
+    "src": "/images/logos/crypto/thr.svg"
+  },
+  {
+    "name": "TIO",
+    "src": "/images/logos/crypto/tio.svg"
+  },
+  {
+    "name": "TITAN",
+    "src": "/images/logos/crypto/titan.svg"
+  },
+  {
+    "name": "TKN",
+    "src": "/images/logos/crypto/tkn.svg"
+  },
+  {
+    "name": "TKY",
+    "src": "/images/logos/crypto/tky.svg"
+  },
+  {
+    "name": "TNB",
+    "src": "/images/logos/crypto/tnb.svg"
+  },
+  {
+    "name": "TNC",
+    "src": "/images/logos/crypto/tnc.svg"
+  },
+  {
+    "name": "TNT",
+    "src": "/images/logos/crypto/tnt.svg"
+  },
+  {
+    "name": "TOMO",
+    "src": "/images/logos/crypto/tomo.svg"
+  },
+  {
+    "name": "TORN",
+    "src": "/images/logos/crypto/torn.svg"
+  },
+  {
+    "name": "TPAY",
+    "src": "/images/logos/crypto/tpay.svg"
+  },
+  {
+    "name": "TRAC",
+    "src": "/images/logos/crypto/trac.svg"
+  },
+  {
+    "name": "TRB",
+    "src": "/images/logos/crypto/trb.svg"
+  },
+  {
+    "name": "TRIBE",
+    "src": "/images/logos/crypto/tribe.svg"
+  },
+  {
+    "name": "TRIG",
+    "src": "/images/logos/crypto/trig.svg"
+  },
+  {
+    "name": "Tron",
+    "src": "/images/logos/crypto/trx.svg"
+  },
+  {
+    "name": "TRTL",
+    "src": "/images/logos/crypto/trtl.svg"
+  },
+  {
+    "name": "TRU",
+    "src": "/images/logos/crypto/tru.svg"
+  },
+  {
+    "name": "TRUST-WALLET",
+    "src": "/images/logos/crypto/trust-wallet.svg"
+  },
+  {
+    "name": "TRYB",
+    "src": "/images/logos/crypto/tryb.svg"
+  },
+  {
+    "name": "TUBE",
+    "src": "/images/logos/crypto/tube.svg"
+  },
+  {
+    "name": "TUSD",
+    "src": "/images/logos/crypto/tusd.svg"
+  },
+  {
+    "name": "TWT",
+    "src": "/images/logos/crypto/twt.svg"
+  },
+  {
+    "name": "UBQ",
+    "src": "/images/logos/crypto/ubq.svg"
+  },
+  {
+    "name": "UBT",
+    "src": "/images/logos/crypto/ubt.svg"
+  },
+  {
+    "name": "UFT",
+    "src": "/images/logos/crypto/uft.svg"
+  },
+  {
+    "name": "ULT",
+    "src": "/images/logos/crypto/ult.svg"
+  },
+  {
+    "name": "UMA",
+    "src": "/images/logos/crypto/uma.svg"
+  },
+  {
+    "name": "UNCX",
+    "src": "/images/logos/crypto/uncx.svg"
+  },
+  {
+    "name": "UNFI",
+    "src": "/images/logos/crypto/unfi.svg"
+  },
+  {
+    "name": "Uniswap",
+    "src": "/images/logos/crypto/uni.svg"
+  },
+  {
+    "name": "UNN",
+    "src": "/images/logos/crypto/unn.svg"
+  },
+  {
+    "name": "UOS",
+    "src": "/images/logos/crypto/uos.svg"
+  },
+  {
+    "name": "UPP",
+    "src": "/images/logos/crypto/upp.svg"
+  },
+  {
+    "name": "USD Coin",
+    "src": "/images/logos/crypto/usdc.svg"
+  },
+  {
+    "name": "USDP",
+    "src": "/images/logos/crypto/usdp.svg"
+  },
+  {
+    "name": "USDS",
+    "src": "/images/logos/crypto/usds.svg"
+  },
+  {
+    "name": "UTK",
+    "src": "/images/logos/crypto/utk.svg"
+  },
+  {
+    "name": "UUU",
+    "src": "/images/logos/crypto/uuu.svg"
+  },
+  {
+    "name": "VALUE",
+    "src": "/images/logos/crypto/value.svg"
+  },
+  {
+    "name": "VeChain",
+    "src": "/images/logos/crypto/vet.svg"
+  },
+  {
+    "name": "VERI",
+    "src": "/images/logos/crypto/veri.svg"
+  },
+  {
+    "name": "VEST",
+    "src": "/images/logos/crypto/vest.svg"
+  },
+  {
+    "name": "VGX",
+    "src": "/images/logos/crypto/vgx.svg"
+  },
+  {
+    "name": "VIA",
+    "src": "/images/logos/crypto/via.svg"
+  },
+  {
+    "name": "VIB",
+    "src": "/images/logos/crypto/vib.svg"
+  },
+  {
+    "name": "VIBE",
+    "src": "/images/logos/crypto/vibe.svg"
+  },
+  {
+    "name": "VIDT",
+    "src": "/images/logos/crypto/vidt.svg"
+  },
+  {
+    "name": "VIKKY",
+    "src": "/images/logos/crypto/vikky.svg"
+  },
+  {
+    "name": "VIN",
+    "src": "/images/logos/crypto/vin.svg"
+  },
+  {
+    "name": "VITE",
+    "src": "/images/logos/crypto/vite.svg"
+  },
+  {
+    "name": "VIU",
+    "src": "/images/logos/crypto/viu.svg"
+  },
+  {
+    "name": "VLX",
+    "src": "/images/logos/crypto/vlx.svg"
+  },
+  {
+    "name": "VRS",
+    "src": "/images/logos/crypto/vrs.svg"
+  },
+  {
+    "name": "VSP",
+    "src": "/images/logos/crypto/vsp.svg"
+  },
+  {
+    "name": "VSYS",
+    "src": "/images/logos/crypto/vsys.svg"
+  },
+  {
+    "name": "VTC",
+    "src": "/images/logos/crypto/vtc.svg"
+  },
+  {
+    "name": "WABI",
+    "src": "/images/logos/crypto/wabi.svg"
+  },
+  {
+    "name": "WAN",
+    "src": "/images/logos/crypto/wan.svg"
+  },
+  {
+    "name": "WAVES",
+    "src": "/images/logos/crypto/waves.svg"
+  },
+  {
+    "name": "WBTC",
+    "src": "/images/logos/crypto/wbtc.svg"
+  },
+  {
+    "name": "WCT",
+    "src": "/images/logos/crypto/wct.svg"
+  },
+  {
+    "name": "WEXPOLY",
+    "src": "/images/logos/crypto/wexpoly.svg"
+  },
+  {
+    "name": "WHALE",
+    "src": "/images/logos/crypto/whale.svg"
+  },
+  {
+    "name": "WIB",
+    "src": "/images/logos/crypto/wib.svg"
+  },
+  {
+    "name": "WING",
+    "src": "/images/logos/crypto/wing.svg"
+  },
+  {
+    "name": "WINGS",
+    "src": "/images/logos/crypto/wings.svg"
+  },
+  {
+    "name": "WOO",
+    "src": "/images/logos/crypto/woo.svg"
+  },
+  {
+    "name": "WPR",
+    "src": "/images/logos/crypto/wpr.svg"
+  },
+  {
+    "name": "WRX",
+    "src": "/images/logos/crypto/wrx.svg"
+  },
+  {
+    "name": "WTC",
+    "src": "/images/logos/crypto/wtc.svg"
+  },
+  {
+    "name": "WXT",
+    "src": "/images/logos/crypto/wxt.svg"
+  },
+  {
+    "name": "XAS",
+    "src": "/images/logos/crypto/xas.svg"
+  },
+  {
+    "name": "XCHF",
+    "src": "/images/logos/crypto/xchf.svg"
+  },
+  {
+    "name": "XEM",
+    "src": "/images/logos/crypto/xem.svg"
+  },
+  {
+    "name": "XHV",
+    "src": "/images/logos/crypto/xhv.svg"
+  },
+  {
+    "name": "XIN",
+    "src": "/images/logos/crypto/xin.svg"
+  },
+  {
+    "name": "XLQ",
+    "src": "/images/logos/crypto/xlq.svg"
+  },
+  {
+    "name": "XMARK",
+    "src": "/images/logos/crypto/xmark.svg"
+  },
+  {
+    "name": "XMX",
+    "src": "/images/logos/crypto/xmx.svg"
+  },
+  {
+    "name": "XNK",
+    "src": "/images/logos/crypto/xnk.svg"
+  },
+  {
+    "name": "XNS",
+    "src": "/images/logos/crypto/xns.svg"
+  },
+  {
+    "name": "XOR",
+    "src": "/images/logos/crypto/xor.svg"
+  },
+  {
+    "name": "XRD",
+    "src": "/images/logos/crypto/xrd.svg"
+  },
+  {
+    "name": "XSN",
+    "src": "/images/logos/crypto/xsn.svg"
+  },
+  {
+    "name": "XSR",
+    "src": "/images/logos/crypto/xsr.svg"
+  },
+  {
+    "name": "XVG",
+    "src": "/images/logos/crypto/xvg.svg"
+  },
+  {
+    "name": "XYO",
+    "src": "/images/logos/crypto/xyo.svg"
+  },
+  {
+    "name": "XZC",
+    "src": "/images/logos/crypto/xzc.svg"
+  },
+  {
+    "name": "yearn.finance",
+    "src": "/images/logos/crypto/yfi.svg"
+  },
+  {
+    "name": "YOYO",
+    "src": "/images/logos/crypto/yoyo.svg"
+  },
+  {
+    "name": "ZAI",
+    "src": "/images/logos/crypto/zai.svg"
+  },
+  {
+    "name": "ZB",
+    "src": "/images/logos/crypto/zb.svg"
+  },
+  {
+    "name": "ZCO",
+    "src": "/images/logos/crypto/zco.svg"
+  },
+  {
+    "name": "ZEC",
+    "src": "/images/logos/crypto/zec.svg"
+  },
+  {
+    "name": "ZEN",
+    "src": "/images/logos/crypto/zen.svg"
+  },
+  {
+    "name": "ZIL",
+    "src": "/images/logos/crypto/zil.svg"
+  },
+  {
+    "name": "ZKS",
+    "src": "/images/logos/crypto/zks.svg"
+  },
+  {
+    "name": "ZRX",
+    "src": "/images/logos/crypto/zrx.svg"
+  }
+];

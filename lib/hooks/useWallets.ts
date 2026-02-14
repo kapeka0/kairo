@@ -1,9 +1,12 @@
 import { useQuery } from "@tanstack/react-query";
+import axios from "axios";
+import { devLog } from "../utils";
 
 interface Wallet {
   id: string;
   name: string;
   gradientUrl: string;
+  icon: string | null;
   publicKey: string;
   derivationPath: string;
   portfolioId: string;
@@ -18,13 +21,15 @@ interface UseWalletsResult {
 }
 
 async function fetchWallets(portfolioId: string): Promise<UseWalletsResult> {
-  const response = await fetch(`/api/wallets/${portfolioId}`);
-
-  if (!response.ok) {
-    throw new Error("Failed to fetch wallets");
+  try {
+    const { data } = await axios.get<UseWalletsResult>(
+      `/api/wallets/${portfolioId}`,
+    );
+    return data;
+  } catch (error) {
+    devLog("Error fetching wallets:", error);
+    throw error;
   }
-
-  return response.json();
 }
 
 export function useWallets(portfolioId: string) {
@@ -32,5 +37,6 @@ export function useWallets(portfolioId: string) {
     queryKey: ["wallets", portfolioId],
     queryFn: () => fetchWallets(portfolioId),
     enabled: !!portfolioId,
+    staleTime: 60 * 60 * 1000, // 1 hour
   });
 }

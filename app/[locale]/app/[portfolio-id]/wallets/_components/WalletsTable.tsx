@@ -7,8 +7,12 @@ import { useFormatter, useTranslations } from "next-intl";
 //eslint-disable-next-line
 import { useParams } from "next/navigation";
 import { toast } from "sonner";
+import { useEffect, useState } from "react";
+import { useQueryClient } from "@tanstack/react-query";
 
 import { PrivacyValue } from "@/components/privacy-value";
+import WalletIconPicker from "./WalletIconPicker";
+import { updateWalletIcon } from "@/lib/actions/wallet";
 import { Button } from "@/components/ui/button";
 import {
   DropdownMenu,
@@ -39,7 +43,31 @@ export default function WalletsTable() {
   const portfolioId = params["portfolio-id"] as string;
   const tTable = useTranslations("Wallets.table");
   const format = useFormatter();
+  const queryClient = useQueryClient();
   const { data, isLoading, error } = useWallets(portfolioId);
+  const [editingWalletId, setEditingWalletId] = useState<string | null>(null);
+
+  const handleIconChange = async (walletId: string, icon: string | null) => {
+    const result = await updateWalletIcon({ walletId, icon });
+    if (result?.data?.success) {
+      await queryClient.invalidateQueries({ queryKey: ["wallets", portfolioId] });
+      toast.success(tTable("iconUpdated"));
+      setEditingWalletId(null);
+    }
+  };
+
+  useEffect(() => {
+    const handleClickOutside = () => {
+      if (editingWalletId) {
+        setEditingWalletId(null);
+      }
+    };
+
+    if (editingWalletId) {
+      document.addEventListener("click", handleClickOutside);
+      return () => document.removeEventListener("click", handleClickOutside);
+    }
+  }, [editingWalletId]);
 
   const copyToClipboard = async (text: string) => {
     try {
@@ -162,13 +190,48 @@ export default function WalletsTable() {
               <TableRow key={wallet.id}>
                 <TableCell>
                   <div className="flex items-center gap-3">
-                    <Image
-                      src={wallet.gradientUrl}
-                      alt={wallet.name}
-                      width={32}
-                      height={32}
-                      className="rounded-lg"
-                    />
+                    {editingWalletId === wallet.id ? (
+                      <div onClick={(e) => e.stopPropagation()}>
+                        <WalletIconPicker
+                          value={wallet.icon}
+                          gradientUrl={wallet.gradientUrl}
+                          onValueChange={(icon) =>
+                            handleIconChange(wallet.id, icon)
+                          }
+                        />
+                      </div>
+                    ) : (
+                      <button
+                        onClick={() => setEditingWalletId(wallet.id)}
+                        className="relative group cursor-pointer"
+                      >
+                        <Image
+                          src={wallet.icon || wallet.gradientUrl}
+                          alt={wallet.name}
+                          width={32}
+                          height={32}
+                          className="rounded-lg transition-opacity group-hover:opacity-80"
+                        />
+                        <div className="absolute inset-0 flex items-center justify-center opacity-0 group-hover:opacity-100 transition-opacity">
+                          <div className="size-4 rounded-full bg-background/90 flex items-center justify-center">
+                            <svg
+                              xmlns="http://www.w3.org/2000/svg"
+                              width="10"
+                              height="10"
+                              viewBox="0 0 24 24"
+                              fill="none"
+                              stroke="currentColor"
+                              strokeWidth="2"
+                              strokeLinecap="round"
+                              strokeLinejoin="round"
+                            >
+                              <path d="M12 20h9" />
+                              <path d="M16.5 3.5a2.12 2.12 0 0 1 3 3L7 19l-4 1 1-4Z" />
+                            </svg>
+                          </div>
+                        </div>
+                      </button>
+                    )}
                     <div className="flex flex-col">
                       <span className="font-medium">{wallet.name}</span>
                       {crypto && (

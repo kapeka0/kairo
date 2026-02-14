@@ -2,6 +2,7 @@
 
 import { and, eq } from "drizzle-orm";
 import { returnValidationErrors } from "next-safe-action";
+import { z } from "zod";
 
 import { db } from "@/lib/db/db";
 import { bitcoinWallet, portfolio } from "@/lib/db/schema";
@@ -57,4 +58,34 @@ export const createBitcoinWallet = authActionClient
       .returning();
 
     return { success: true, wallet: newWallet[0], bipType: derivationPath };
+  });
+
+export const updateWalletIcon = authActionClient
+  .metadata({ actionName: "updateWalletIcon" })
+  .inputSchema(
+    z.object({
+      walletId: z.string().uuid(),
+      icon: z.string().nullable(),
+    })
+  )
+  .action(async ({ parsedInput, ctx }) => {
+    const { walletId, icon } = parsedInput;
+
+    const wallet = await db.query.bitcoinWallet.findFirst({
+      where: eq(bitcoinWallet.id, walletId),
+      with: {
+        portfolio: true,
+      },
+    });
+
+    if (!wallet || wallet.portfolio.userId !== ctx.user.id) {
+      throw new Error("Wallet not found or does not belong to the user");
+    }
+
+    await db
+      .update(bitcoinWallet)
+      .set({ icon })
+      .where(eq(bitcoinWallet.id, walletId));
+
+    return { success: true };
   });

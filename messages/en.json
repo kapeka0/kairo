@@ -81,7 +81,9 @@
     "lang": "Language",
     "es": "Spanish",
     "en": "English",
-    "privacyMode": "Privacy Mode"
+    "privacyMode": "Privacy Mode",
+    "noIcons": "No icons found",
+    "search": "Search..."
   },
   "Wallets": {
     "title": "My Wallets",
@@ -136,7 +138,8 @@
       "noWalletsDescription": "Click 'Add Wallet' to get started",
       "viewDetails": "View Details",
       "refreshBalance": "Refresh Balance",
-      "deleteWallet": "Delete Wallet"
+      "deleteWallet": "Delete Wallet",
+      "iconUpdated": "Wallet icon updated successfully"
     }
   },
   "LandingPage": {

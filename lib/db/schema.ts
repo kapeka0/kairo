@@ -130,19 +130,13 @@ export const portfolio = pgTable("portfolio", {
     .notNull(),
 });
 
-export const portfolioRelations = relations(portfolio, ({ one }) => ({
-  user: one(user, {
-    fields: [portfolio.userId],
-    references: [user.id],
-  }),
-}));
-
 export const bitcoinWallet = pgTable("bitcoin_wallet", {
   id: text("id")
     .primaryKey()
     .$default(() => generateUUID()),
   name: text("name").notNull(),
   gradientUrl: text("gradient_url").notNull(),
+  icon: text("icon"),
   publicKey: text("public_key").notNull(),
   derivationPath: text("derivation_path").notNull(),
   portfolioId: text("portfolio_id")
@@ -156,3 +150,18 @@ export const bitcoinWallet = pgTable("bitcoin_wallet", {
     .$onUpdate(() => /* @__PURE__ */ new Date())
     .notNull(),
 });
+
+export const portfolioRelations = relations(portfolio, ({ one, many }) => ({
+  user: one(user, {
+    fields: [portfolio.userId],
+    references: [user.id],
+  }),
+  bitcoinWallets: many(bitcoinWallet),
+}));
+
+export const bitcoinWalletRelations = relations(bitcoinWallet, ({ one }) => ({
+  portfolio: one(portfolio, {
+    fields: [bitcoinWallet.portfolioId],
+    references: [portfolio.id],
+  }),
+}));
