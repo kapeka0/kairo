@@ -2,17 +2,15 @@
 
 import Image from "next/image";
 
+import { useQueryClient } from "@tanstack/react-query";
 import { Copy, MoreHorizontal, RefreshCcw } from "lucide-react";
 import { useFormatter, useTranslations } from "next-intl";
 //eslint-disable-next-line
 import { useParams } from "next/navigation";
-import { toast } from "sonner";
 import { useEffect, useState } from "react";
-import { useQueryClient } from "@tanstack/react-query";
+import { toast } from "sonner";
 
 import { PrivacyValue } from "@/components/privacy-value";
-import WalletIconPicker from "./WalletIconPicker";
-import { updateWalletIcon } from "@/lib/actions/wallet";
 import { Button } from "@/components/ui/button";
 import {
   DropdownMenu,
@@ -35,8 +33,11 @@ import {
   TooltipProvider,
   TooltipTrigger,
 } from "@/components/ui/tooltip";
+import { updateWalletIcon } from "@/lib/actions/wallet";
 import { useWallets } from "@/lib/hooks/useWallets";
 import { SUPPORTED_CRYPTOCURRENCIES } from "@/lib/utils/constants";
+import { useAction } from "next-safe-action/hooks";
+import WalletIconPicker from "./WalletIconPicker";
 
 export default function WalletsTable() {
   const params = useParams();
@@ -46,14 +47,18 @@ export default function WalletsTable() {
   const queryClient = useQueryClient();
   const { data, isLoading, error } = useWallets(portfolioId);
   const [editingWalletId, setEditingWalletId] = useState<string | null>(null);
-
-  const handleIconChange = async (walletId: string, icon: string | null) => {
-    const result = await updateWalletIcon({ walletId, icon });
-    if (result?.data?.success) {
-      await queryClient.invalidateQueries({ queryKey: ["wallets", portfolioId] });
+  const { execute } = useAction(updateWalletIcon, {
+    onSuccess: async () => {
+      await queryClient.invalidateQueries({
+        queryKey: ["wallets", portfolioId],
+      });
       toast.success(tTable("iconUpdated"));
       setEditingWalletId(null);
-    }
+    },
+  });
+
+  const handleIconChange = async (walletId: string, icon: string | null) => {
+    execute({ walletId, icon });
   };
 
   useEffect(() => {

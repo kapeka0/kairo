@@ -17,6 +17,8 @@ export interface IconDefinition {
   name: string;
   /** Image path (e.g. "/icons/home.svg") — this is the value stored/returned */
   src: string;
+  /** Optional tags/acronyms for additional search terms (e.g. ["BTC"] for Bitcoin) */
+  tags?: string[];
 }
 
 interface IconPickerProps {
@@ -44,9 +46,14 @@ export function IconPicker({
   const tGlobal = useTranslations("Global");
   const filtered = useMemo(() => {
     if (!search) return icons;
-    return icons.filter((icon) =>
-      icon.name.toLowerCase().includes(search.toLowerCase()),
-    );
+    const searchLower = search.toLowerCase();
+    return icons.filter((icon) => {
+      const nameMatch = icon.name.toLowerCase().includes(searchLower);
+      const tagsMatch = icon.tags?.some(tag =>
+        tag.toLowerCase().includes(searchLower)
+      );
+      return nameMatch || tagsMatch;
+    });
   }, [icons, search]);
 
   const selected = useMemo(
