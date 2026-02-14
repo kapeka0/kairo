@@ -142,7 +142,7 @@ export function PortfolioSwitcher() {
               <PrivacyValue>
                 <span className="truncate text-xs text-muted-foreground">
                   {getCurrencySymbol(activePortfolio.currency)}
-                  {activePortfolio.lastBalance}
+                  {activePortfolio.lastBalanceInCurrency}
                 </span>{" "}
               </PrivacyValue>
             </div>
@@ -187,7 +187,7 @@ export function PortfolioSwitcher() {
                     <PrivacyValue>
                       <span className="text-xs text-muted-foreground">
                         {getCurrencySymbol(portfolio.currency)}
-                        {portfolio.lastBalance}
+                        {portfolio.lastBalanceInCurrency}
                       </span>
                     </PrivacyValue>
                   </div>

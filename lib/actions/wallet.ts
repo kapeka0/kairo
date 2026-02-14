@@ -9,6 +9,7 @@ import { bitcoinWallet, portfolio } from "@/lib/db/schema";
 import { authActionClient } from "@/lib/safe-actions";
 import { createBitcoinWalletSchema } from "@/lib/validations/wallet";
 import { generateUUID } from "@/lib/utils";
+import { fetchBlockbookBalance, fetchAndStoreTransactions } from "@/lib/services/blockbook";
 
 export const createBitcoinWallet = authActionClient
   .metadata({ actionName: "createBitcoinWallet" })
@@ -42,6 +43,14 @@ export const createBitcoinWallet = authActionClient
       });
     }
 
+    let balance = "0";
+    try {
+      const blockbookData = await fetchBlockbookBalance(publicKey);
+      balance = blockbookData.balance;
+    } catch (error) {
+      console.error("Failed to fetch initial balance:", error);
+    }
+
     const walletId = generateUUID();
     const gradientUrl = `https://avatar.vercel.sh/${walletId}.svg?gradient=true`;
 
@@ -54,8 +63,16 @@ export const createBitcoinWallet = authActionClient
         publicKey,
         derivationPath,
         portfolioId,
+        lastBalanceInSatoshis: balance,
+        lastBalanceInSatoshisUpdatedAt: new Date(),
       })
       .returning();
+
+    if (balance !== "0") {
+      fetchAndStoreTransactions(walletId, publicKey).catch((error) => {
+        console.error("Failed to fetch initial transactions:", error);
+      });
+    }
 
     return { success: true, wallet: newWallet[0], bipType: derivationPath };
   });
@@ -88,4 +105,44 @@ export const updateWalletIcon = authActionClient
       .where(eq(bitcoinWallet.id, walletId));
 
     return { success: true };
+  });
+
+export const refreshWalletBalance = authActionClient
+  .metadata({ actionName: "refreshWalletBalance" })
+  .inputSchema(z.object({ walletId: z.string().uuid() }))
+  .action(async ({ parsedInput, ctx }) => {
+    const { walletId } = parsedInput;
+
+    const wallet = await db.query.bitcoinWallet.findFirst({
+      where: eq(bitcoinWallet.id, walletId),
+      with: { portfolio: true },
+    });
+
+    if (!wallet || wallet.portfolio.userId !== ctx.user.id) {
+      throw new Error("Wallet not found");
+    }
+
+    const blockbookData = await fetchBlockbookBalance(wallet.publicKey);
+
+    await db
+      .update(bitcoinWallet)
+      .set({
+        lastBalanceInSatoshis: blockbookData.balance,
+        lastBalanceInSatoshisUpdatedAt: new Date(),
+      })
+      .where(eq(bitcoinWallet.id, walletId));
+
+    let page = 1;
+    let hasMore = true;
+    while (hasMore) {
+      const result = await fetchAndStoreTransactions(
+        walletId,
+        wallet.publicKey,
+        page
+      );
+      hasMore = result.hasMore;
+      page++;
+    }
+
+    return { success: true, balance: blockbookData.balance };
   });

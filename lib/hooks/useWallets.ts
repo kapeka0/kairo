@@ -1,5 +1,6 @@
 import { useQuery } from "@tanstack/react-query";
 import axios from "axios";
+import { useEffect } from "react";
 import { devLog } from "../utils";
 
 interface Wallet {
@@ -10,8 +11,8 @@ interface Wallet {
   publicKey: string;
   derivationPath: string;
   portfolioId: string;
-  lastBalance: string;
-  balanceUpdatedAt: Date;
+  lastBalanceInSatoshis: string;
+  lastBalanceInSatoshisUpdatedAt: Date;
   createdAt: Date;
   updatedAt: Date;
 }
@@ -32,11 +33,37 @@ async function fetchWallets(portfolioId: string): Promise<UseWalletsResult> {
   }
 }
 
+async function refreshWalletBalance(walletId: string) {
+  try {
+    await axios.post(`/api/bitcoin/balance/${walletId}`);
+  } catch (error) {
+    console.error("Failed to refresh wallet balance:", error);
+  }
+}
+
 export function useWallets(portfolioId: string) {
-  return useQuery({
+  const query = useQuery({
     queryKey: ["wallets", portfolioId],
     queryFn: () => fetchWallets(portfolioId),
     enabled: !!portfolioId,
-    staleTime: 60 * 60 * 1000, // 1 hour
+    staleTime: 60 * 60 * 1000,
   });
+
+  useEffect(() => {
+    if (query.data?.wallets) {
+      const now = Date.now();
+      const FIVE_MINUTES = 5 * 60 * 1000;
+
+      query.data.wallets.forEach((wallet) => {
+        const lastUpdate = new Date(wallet.lastBalanceInSatoshisUpdatedAt).getTime();
+        const isStale = now - lastUpdate > FIVE_MINUTES;
+
+        if (isStale) {
+          refreshWalletBalance(wallet.id);
+        }
+      });
+    }
+  }, [query.data]);
+
+  return query;
 }

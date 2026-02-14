@@ -145,7 +145,11 @@
       "noWalletsDescription": "Haz clic en 'Agregar Billetera' para comenzar",
       "viewDetails": "Ver Detalles",
       "refreshBalance": "Actualizar Balance",
-      "deleteWallet": "Eliminar Billetera"
+      "refreshing": "Actualizando...",
+      "balanceRefreshed": "Balance actualizado exitosamente",
+      "refreshFailed": "Error al actualizar el balance",
+      "deleteWallet": "Eliminar Billetera",
+      "iconUpdated": "Ícono de billetera actualizado exitosamente"
     }
   }
 }

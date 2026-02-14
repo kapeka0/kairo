@@ -17,8 +17,22 @@ export type Portfolio = {
   gradientUrl: string;
   userId: string;
   currency: "USD" | "EUR" | "GBP" | "JPY" | "CNY";
-  lastBalance: string;
-  balanceUpdatedAt: Date;
+  lastBalanceInCurrency: string;
+  lastBalanceInCurrencyUpdatedAt: Date;
+  createdAt: Date;
+  updatedAt: Date;
+};
+
+export type BitcoinWallet = {
+  id: string;
+  name: string;
+  gradientUrl: string;
+  icon: string | null;
+  publicKey: string;
+  derivationPath: string;
+  portfolioId: string;
+  lastBalanceInSatoshis: string;
+  lastBalanceInSatoshisUpdatedAt: Date;
   createdAt: Date;
   updatedAt: Date;
 };

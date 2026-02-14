@@ -122,8 +122,12 @@ export const portfolio = pgTable("portfolio", {
     .references(() => user.id, { onDelete: "cascade" }),
   currency: currenciesEnum("currency").notNull().default("USD"),
   createdAt: timestamp("created_at").defaultNow().notNull(),
-  lastBalance: text("last_balance").notNull().default("0"),
-  balanceUpdatedAt: timestamp("balance_updated_at").defaultNow().notNull(),
+  lastBalanceInCurrency: text("last_balance_in_currency")
+    .notNull()
+    .default("0"),
+  lastBalanceInCurrencyUpdatedAt: timestamp("balance_in_currency_updated_at")
+    .defaultNow()
+    .notNull(),
   updatedAt: timestamp("updated_at")
     .defaultNow()
     .$onUpdate(() => /* @__PURE__ */ new Date())
@@ -142,8 +146,12 @@ export const bitcoinWallet = pgTable("bitcoin_wallet", {
   portfolioId: text("portfolio_id")
     .notNull()
     .references(() => portfolio.id, { onDelete: "cascade" }),
-  lastBalance: text("last_balance").notNull().default("0"),
-  balanceUpdatedAt: timestamp("balance_updated_at").defaultNow().notNull(),
+  lastBalanceInSatoshis: text("last_balance_in_satoshis")
+    .notNull()
+    .default("0"),
+  lastBalanceInSatoshisUpdatedAt: timestamp("balance_in_satoshis_updated_at")
+    .defaultNow()
+    .notNull(),
   createdAt: timestamp("created_at").defaultNow().notNull(),
   updatedAt: timestamp("updated_at")
     .defaultNow()
@@ -159,9 +167,57 @@ export const portfolioRelations = relations(portfolio, ({ one, many }) => ({
   bitcoinWallets: many(bitcoinWallet),
 }));
 
-export const bitcoinWalletRelations = relations(bitcoinWallet, ({ one }) => ({
-  portfolio: one(portfolio, {
-    fields: [bitcoinWallet.portfolioId],
-    references: [portfolio.id],
+export const bitcoinWalletRelations = relations(
+  bitcoinWallet,
+  ({ one, many }) => ({
+    portfolio: one(portfolio, {
+      fields: [bitcoinWallet.portfolioId],
+      references: [portfolio.id],
+    }),
+    transactions: many(bitcoinTransaction),
   }),
-}));
+);
+
+export const bitcoinTransactionTypeEnum = pgEnum("bitcoin_transaction_type", [
+  "received",
+  "sent",
+  "internal",
+]);
+
+export const bitcoinTransaction = pgTable(
+  "bitcoin_transaction",
+  {
+    id: text("id")
+      .primaryKey()
+      .$default(() => generateUUID()),
+    walletId: text("wallet_id")
+      .notNull()
+      .references(() => bitcoinWallet.id, { onDelete: "cascade" }),
+    txid: text("txid").notNull(),
+    blockHeight: text("block_height"),
+    confirmations: text("confirmations").notNull().default("0"),
+    blockTime: timestamp("block_time"),
+    type: bitcoinTransactionTypeEnum("type").notNull(),
+    amountInSatoshis: text("amount_in_satoshis").notNull(),
+    feeInSatoshis: text("fee_in_satoshis"),
+    createdAt: timestamp("created_at").defaultNow().notNull(),
+    updatedAt: timestamp("updated_at")
+      .defaultNow()
+      .$onUpdate(() => new Date())
+      .notNull(),
+  },
+  (table) => [
+    index("bitcoin_transaction_walletId_idx").on(table.walletId),
+    index("bitcoin_transaction_txid_idx").on(table.txid),
+  ],
+);
+
+export const bitcoinTransactionRelations = relations(
+  bitcoinTransaction,
+  ({ one }) => ({
+    wallet: one(bitcoinWallet, {
+      fields: [bitcoinTransaction.walletId],
+      references: [bitcoinWallet.id],
+    }),
+  }),
+);

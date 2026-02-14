@@ -138,6 +138,9 @@
       "noWalletsDescription": "Click 'Add Wallet' to get started",
       "viewDetails": "View Details",
       "refreshBalance": "Refresh Balance",
+      "refreshing": "Refreshing...",
+      "balanceRefreshed": "Balance refreshed successfully",
+      "refreshFailed": "Failed to refresh balance",
       "deleteWallet": "Delete Wallet",
       "iconUpdated": "Wallet icon updated successfully"
     }

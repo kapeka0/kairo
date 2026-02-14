@@ -33,8 +33,9 @@ import {
   TooltipProvider,
   TooltipTrigger,
 } from "@/components/ui/tooltip";
-import { updateWalletIcon } from "@/lib/actions/wallet";
+import { refreshWalletBalance, updateWalletIcon } from "@/lib/actions/wallet";
 import { useWallets } from "@/lib/hooks/useWallets";
+import { formatBtc, satoshisToBtc } from "@/lib/utils/bitcoin";
 import { SUPPORTED_CRYPTOCURRENCIES } from "@/lib/utils/constants";
 import { useAction } from "next-safe-action/hooks";
 import WalletIconPicker from "./WalletIconPicker";
@@ -47,6 +48,7 @@ export default function WalletsTable() {
   const queryClient = useQueryClient();
   const { data, isLoading, error } = useWallets(portfolioId);
   const [editingWalletId, setEditingWalletId] = useState<string | null>(null);
+
   const { execute } = useAction(updateWalletIcon, {
     onSuccess: async () => {
       await queryClient.invalidateQueries({
@@ -57,10 +59,20 @@ export default function WalletsTable() {
     },
   });
 
-  const handleIconChange = async (walletId: string, icon: string | null) => {
-    execute({ walletId, icon });
-  };
-
+  const { execute: executeRefresh, isExecuting: isRefreshing } = useAction(
+    refreshWalletBalance,
+    {
+      onSuccess: async () => {
+        await queryClient.invalidateQueries({
+          queryKey: ["wallets", portfolioId],
+        });
+        toast.success(tTable("balanceRefreshed"));
+      },
+      onError: ({ error }) => {
+        toast.error(error.serverError || tTable("refreshFailed"));
+      },
+    },
+  );
   useEffect(() => {
     const handleClickOutside = () => {
       if (editingWalletId) {
@@ -73,6 +85,10 @@ export default function WalletsTable() {
       return () => document.removeEventListener("click", handleClickOutside);
     }
   }, [editingWalletId]);
+
+  const handleIconChange = async (walletId: string, icon: string | null) => {
+    execute({ walletId, icon });
+  };
 
   const copyToClipboard = async (text: string) => {
     try {
@@ -90,6 +106,7 @@ export default function WalletsTable() {
 
   const formatDate = (date: Date) => {
     const dateObj = new Date(date);
+    if (isNaN(dateObj.getTime())) return "N/A";
     return format.dateTime(dateObj, {
       year: "numeric",
       month: "short",
@@ -191,6 +208,8 @@ export default function WalletsTable() {
             const crypto = SUPPORTED_CRYPTOCURRENCIES.find(
               (c) => c.value === "BTC",
             );
+            const balanceInBTC = satoshisToBtc(wallet.lastBalanceInSatoshis || "0");
+
             return (
               <TableRow key={wallet.id}>
                 <TableCell>
@@ -257,23 +276,16 @@ export default function WalletsTable() {
                   <TooltipProvider>
                     <Tooltip>
                       <TooltipTrigger>
-                        <PrivacyValue className="flex flex-col cursor-help">
+                        <PrivacyValue className="cursor-help">
                           <span className="font-medium">
-                            {wallet.lastBalance} BTC
-                          </span>
-                          {/* TODO: Create a function to fetch the current price of BTC and calculate the user configured currency */}
-                          <span className="text-xs text-muted-foreground">
-                            $
-                            {(parseFloat(wallet.lastBalance) * 100000).toFixed(
-                              2,
-                            )}
+                            {formatBtc(balanceInBTC)} BTC
                           </span>
                         </PrivacyValue>
                       </TooltipTrigger>
                       <TooltipContent>
                         <p className="text-xs flex items-center gap-1">
                           <RefreshCcw className="size-3 " />
-                          {formatDate(wallet.balanceUpdatedAt)}
+                          {formatDate(wallet.lastBalanceInSatoshisUpdatedAt)}
                         </p>
                       </TooltipContent>
                     </Tooltip>
@@ -304,8 +316,13 @@ export default function WalletsTable() {
                       <DropdownMenuItem disabled>
                         {tTable("viewDetails")}
                       </DropdownMenuItem>
-                      <DropdownMenuItem disabled>
-                        {tTable("refreshBalance")}
+                      <DropdownMenuItem
+                        disabled={isRefreshing}
+                        onClick={() => executeRefresh({ walletId: wallet.id })}
+                      >
+                        {isRefreshing
+                          ? tTable("refreshing")
+                          : tTable("refreshBalance")}
                       </DropdownMenuItem>
                       <DropdownMenuItem disabled className="text-destructive">
                         {tTable("deleteWallet")}
