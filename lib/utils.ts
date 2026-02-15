@@ -24,33 +24,22 @@ export function getRealisticUserAgent(): string {
     { type: "tablet", weight: 5 },
   ];
 
-  const pickDevice = (): "desktop" | "mobile" | "tablet" => {
-    const total = deviceDistribution.reduce((a, b) => a + b.weight, 0);
-    const rand = Math.random();
+  const total = deviceDistribution.reduce((a, b) => a + b.weight, 0);
+  const rand = Math.random();
 
-    let acc = 0;
-    for (const entry of deviceDistribution) {
-      acc += entry.weight / total;
-      if (rand <= acc) return entry.type as any;
+  let acc = 0;
+  let deviceCategory: "desktop" | "mobile" | "tablet" = "desktop";
+
+  for (const entry of deviceDistribution) {
+    acc += entry.weight / total;
+    if (rand <= acc) {
+      deviceCategory = entry.type as any;
+      break;
     }
-    return "desktop";
-  };
-
-  const deviceCategory = pickDevice();
-
-  const platformMap = {
-    desktop: ["Win32", "MacIntel", "Linux x86_64"],
-    mobile: ["iPhone", "Android"],
-    tablet: ["iPad", "Android"],
-  };
-
-  const platformOptions = platformMap[deviceCategory];
-  const platform =
-    platformOptions[Math.floor(Math.random() * platformOptions.length)];
+  }
 
   const ua = new UserAgent({
     deviceCategory,
-    platform,
   });
 
   return ua.toString();

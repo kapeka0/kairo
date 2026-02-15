@@ -5,6 +5,7 @@ import { ReactQueryDevtools } from "@tanstack/react-query-devtools";
 import { Provider } from "jotai";
 import { IntlErrorCode, NextIntlClientProvider } from "next-intl";
 import React from "react";
+import { TooltipProvider } from "../ui/tooltip";
 
 type Props = {
   children: React.ReactNode;
@@ -39,7 +40,7 @@ const ClientProviders = ({ children, messages, locale }: Props) => {
             enableSystem
             disableTransitionOnChange
           >
-            {children}
+            <TooltipProvider>{children}</TooltipProvider>
           </ThemeProvider>
         </QueryClientProvider>
       </Provider>

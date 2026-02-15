@@ -34,6 +34,9 @@ export async function fetchBlockbookBalance(xpub: string) {
   try {
     const zpub = convertToZpub(xpub);
     const userAgent = getRealisticUserAgent();
+    devLog(
+      `[Blockbook] Fetching balance for xpub ${xpub} (zpub: ${zpub}) with user agent: ${userAgent}`,
+    );
     const response = await axios.get<BlockbookXpubResponse>(
       `${BLOCKBOOK_BASE_URL}/api/v2/xpub/${zpub}`,
       {

@@ -44,6 +44,7 @@ export async function POST(
       })
       .where(eq(bitcoinWallet.id, walletId));
 
+    // TODO: Optimize this by fetching transactions in batches and using a cursor or timestamp to avoid fetching all transactions every time.
     let page = 1;
     let hasMore = true;
     let totalTxCount = 0;

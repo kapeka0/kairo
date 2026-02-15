@@ -3,7 +3,7 @@
 import Image from "next/image";
 
 import { useQueryClient } from "@tanstack/react-query";
-import { Copy, MoreHorizontal, RefreshCcw } from "lucide-react";
+import { Copy, MoreHorizontal } from "lucide-react";
 import { useFormatter, useTranslations } from "next-intl";
 //eslint-disable-next-line
 import { useParams } from "next/navigation";
@@ -27,13 +27,8 @@ import {
   TableHeader,
   TableRow,
 } from "@/components/ui/table";
-import {
-  Tooltip,
-  TooltipContent,
-  TooltipProvider,
-  TooltipTrigger,
-} from "@/components/ui/tooltip";
 import { refreshWalletBalance, updateWalletIcon } from "@/lib/actions/wallet";
+import { useTokenStats } from "@/lib/hooks/useTokenStats";
 import { useWallets } from "@/lib/hooks/useWallets";
 import { formatBtc, satoshisToBtc } from "@/lib/utils/bitcoin";
 import { SUPPORTED_CRYPTOCURRENCIES } from "@/lib/utils/constants";
@@ -47,6 +42,7 @@ export default function WalletsTable() {
   const format = useFormatter();
   const queryClient = useQueryClient();
   const { data, isLoading, error } = useWallets(portfolioId);
+  const { btcPrice, currency, currencySymbol } = useTokenStats();
   const [editingWalletId, setEditingWalletId] = useState<string | null>(null);
 
   const { execute } = useAction(updateWalletIcon, {
@@ -97,6 +93,18 @@ export default function WalletsTable() {
     } catch (err) {
       toast.error(tTable("copyFailed"));
     }
+  };
+
+  const calculateFiatValue = (satoshis: string): string | null => {
+    if (!btcPrice) return null;
+    const btcAmount = satoshisToBtc(satoshis);
+    const fiatValue = btcAmount * btcPrice;
+    return format.number(fiatValue, {
+      style: "currency",
+      currency: currency || "USD",
+      minimumFractionDigits: 2,
+      maximumFractionDigits: 2,
+    });
   };
 
   const truncatePublicKey = (publicKey: string) => {
@@ -208,7 +216,9 @@ export default function WalletsTable() {
             const crypto = SUPPORTED_CRYPTOCURRENCIES.find(
               (c) => c.value === "BTC",
             );
-            const balanceInBTC = satoshisToBtc(wallet.lastBalanceInSatoshis || "0");
+            const balanceInBTC = satoshisToBtc(
+              wallet.lastBalanceInSatoshis || "0",
+            );
 
             return (
               <TableRow key={wallet.id}>
@@ -273,23 +283,21 @@ export default function WalletsTable() {
                   </div>
                 </TableCell>
                 <TableCell>
-                  <TooltipProvider>
-                    <Tooltip>
-                      <TooltipTrigger>
-                        <PrivacyValue className="cursor-help">
-                          <span className="font-medium">
-                            {formatBtc(balanceInBTC)} BTC
-                          </span>
-                        </PrivacyValue>
-                      </TooltipTrigger>
-                      <TooltipContent>
-                        <p className="text-xs flex items-center gap-1">
-                          <RefreshCcw className="size-3 " />
-                          {formatDate(wallet.lastBalanceInSatoshisUpdatedAt)}
-                        </p>
-                      </TooltipContent>
-                    </Tooltip>
-                  </TooltipProvider>
+                  <div className="flex flex-col gap-1 items-start">
+                    <PrivacyValue className="cursor-help">
+                      <span className="font-medium">
+                        {formatBtc(balanceInBTC)}
+                      </span>
+                    </PrivacyValue>
+
+                    {btcPrice && (
+                      <PrivacyValue>
+                        <span className="text-xs text-muted-foreground">
+                          {calculateFiatValue(wallet.lastBalanceInSatoshis)}
+                        </span>
+                      </PrivacyValue>
+                    )}
+                  </div>
                 </TableCell>
                 <TableCell>
                   <button

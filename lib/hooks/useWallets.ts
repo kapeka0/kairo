@@ -46,19 +46,23 @@ export function useWallets(portfolioId: string) {
     queryKey: ["wallets", portfolioId],
     queryFn: () => fetchWallets(portfolioId),
     enabled: !!portfolioId,
-    staleTime: 60 * 60 * 1000,
+    staleTime: 60 * 60 * 1000, // 1 hour
   });
 
   useEffect(() => {
     if (query.data?.wallets) {
+      // Check if any wallet's balance is stale (older than 1 minute) and refresh it
       const now = Date.now();
-      const FIVE_MINUTES = 5 * 60 * 1000;
+      const ONE_MINUTE = 1 * 60 * 1000;
 
       query.data.wallets.forEach((wallet) => {
-        const lastUpdate = new Date(wallet.lastBalanceInSatoshisUpdatedAt).getTime();
-        const isStale = now - lastUpdate > FIVE_MINUTES;
+        const lastUpdate = new Date(
+          wallet.lastBalanceInSatoshisUpdatedAt,
+        ).getTime();
+        const isStale = now - lastUpdate > ONE_MINUTE;
 
         if (isStale) {
+          devLog(`Wallet ${wallet.name} balance is stale. Refreshing...`);
           refreshWalletBalance(wallet.id);
         }
       });

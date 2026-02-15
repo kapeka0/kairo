@@ -9,6 +9,7 @@ export const server_env = createEnv({
     POSTGRES_PASSWORD: z.string().min(1),
     POSTGRES_DB: z.string().min(1),
     BETTER_AUTH_SECRET: z.string().min(20),
+    COINGECKO_API_KEY: z.string().min(1),
   },
   experimental__runtimeEnv: process.env,
 });

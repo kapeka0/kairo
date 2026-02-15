@@ -5,7 +5,6 @@ import { Kbd, KbdGroup } from "@/components/ui/kbd";
 import {
   Tooltip,
   TooltipContent,
-  TooltipProvider,
   TooltipTrigger,
 } from "@/components/ui/tooltip";
 import { privacyModeAtom } from "@/lib/atoms/PrivacyMode";
@@ -31,27 +30,25 @@ export function PrivacyModeToggle() {
   }, [setPrivacyMode]);
 
   return (
-    <TooltipProvider>
-      <Tooltip>
-        <TooltipTrigger>
-          <IconSwitch
-            onCheckedChange={(checked) => setPrivacyMode(checked)}
-            checked={privacyMode}
-            size="sm"
-            thumbIcon={(checked) =>
-              checked ? <EyeOff className="text-muted-foreground" /> : <Eye />
-            }
-          />
-        </TooltipTrigger>
-        <TooltipContent>
-          <p className="flex gap-1 items-center text-xs ">
-            {tG("privacyMode")}
-            <KbdGroup>
-              <Kbd>⌘+P</Kbd>
-            </KbdGroup>
-          </p>
-        </TooltipContent>
-      </Tooltip>
-    </TooltipProvider>
+    <Tooltip>
+      <TooltipTrigger>
+        <IconSwitch
+          onCheckedChange={(checked) => setPrivacyMode(checked)}
+          checked={privacyMode}
+          size="sm"
+          thumbIcon={(checked) =>
+            checked ? <EyeOff className="text-muted-foreground" /> : <Eye />
+          }
+        />
+      </TooltipTrigger>
+      <TooltipContent>
+        <p className="flex gap-1 items-center text-xs ">
+          {tG("privacyMode")}
+          <KbdGroup>
+            <Kbd>⌘+P</Kbd>
+          </KbdGroup>
+        </p>
+      </TooltipContent>
+    </Tooltip>
   );
 }
