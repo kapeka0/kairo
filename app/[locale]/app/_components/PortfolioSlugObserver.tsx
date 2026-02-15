@@ -1,6 +1,6 @@
 "use client";
 
-import { activePortfolioIdAtom } from "@/lib/atoms/ActivePortfolio";
+import { activePortfolioIdAtom } from "@/lib/atoms/PortfolioAtoms";
 import { devLog } from "@/lib/utils";
 import { useAtom } from "jotai";
 import { usePathname } from "next/navigation";

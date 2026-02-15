@@ -4,6 +4,11 @@ import { and, eq } from "drizzle-orm";
 import { returnValidationErrors } from "next-safe-action";
 import { z } from "zod";
 
+import {
+  getBitcoinWalletById,
+  getWalletByIdAndTokenType,
+  updateBitcoinWalletBalanceById,
+} from "@/lib/db/data/wallet";
 import { db } from "@/lib/db/db";
 import { bitcoinWallet, portfolio } from "@/lib/db/schema";
 import { authActionClient } from "@/lib/safe-actions";
@@ -11,6 +16,7 @@ import {
   fetchAndStoreTransactions,
   fetchBlockbookBalance,
 } from "@/lib/services/blockbook";
+import { TokenType } from "@/lib/types";
 import { generateUUID } from "@/lib/utils";
 import { createBitcoinWalletSchema } from "@/lib/validations/wallet";
 
@@ -147,4 +153,87 @@ export const refreshWalletBalance = authActionClient
     }
 
     return { success: true, balance: blockbookData.balance };
+  });
+
+const updateWalletBalanceSchema = z.object({
+  walletId: z.string().uuid(),
+  tokenType: z.nativeEnum(TokenType),
+  balance: z.string().regex(/^\d+$/),
+});
+
+export const updateWalletBalance = authActionClient
+  .metadata({ actionName: "updateWalletBalance" })
+  .inputSchema(updateWalletBalanceSchema)
+  .action(async ({ parsedInput, ctx }) => {
+    const { walletId, tokenType, balance } = parsedInput;
+
+    const wallet = await getWalletByIdAndTokenType(walletId, tokenType);
+
+    if (!wallet) {
+      throw new Error("Wallet not found");
+    }
+
+    if (wallet.portfolio.userId !== ctx.user.id) {
+      throw new Error("Unauthorized: Wallet does not belong to user");
+    }
+
+    switch (tokenType) {
+      case TokenType.BTC:
+        await updateBitcoinWalletBalanceById(walletId, balance);
+        break;
+      case TokenType.ETH:
+        throw new Error("ETH support coming soon");
+      default:
+        throw new Error(`Unsupported token type: ${tokenType}`);
+    }
+
+    return {
+      success: true,
+      walletId,
+      tokenType,
+      balance,
+      updatedAt: new Date().toISOString(),
+    };
+  });
+
+const syncWalletTransactionsSchema = z.object({
+  walletId: z.string().uuid(),
+});
+
+export const syncWalletTransactions = authActionClient
+  .metadata({ actionName: "syncWalletTransactions" })
+  .inputSchema(syncWalletTransactionsSchema)
+  .action(async ({ parsedInput, ctx }) => {
+    const { walletId } = parsedInput;
+
+    const wallet = await getBitcoinWalletById(walletId);
+
+    if (!wallet) {
+      throw new Error("Wallet not found");
+    }
+
+    if (wallet.portfolio.userId !== ctx.user.id) {
+      throw new Error("Unauthorized: Wallet does not belong to user");
+    }
+
+    let totalTxCount = 0;
+    let page = 1;
+    let hasMore = true;
+
+    while (hasMore) {
+      const result = await fetchAndStoreTransactions(
+        walletId,
+        wallet.publicKey,
+        page,
+      );
+      hasMore = result.hasMore;
+      totalTxCount += result.txCount;
+      page++;
+    }
+
+    return {
+      success: true,
+      walletId,
+      transactionCount: totalTxCount,
+    };
   });

@@ -8,6 +8,7 @@ import Bottleneck from "bottleneck";
 import { eq } from "drizzle-orm";
 import http from "http";
 import https from "https";
+import { insertBitcoinTransactions } from "../db/data/wallet";
 import { devLog, getRealisticUserAgent } from "../utils";
 
 const BLOCKBOOK_BASE_URL = client_env.NEXT_PUBLIC_BTC_HTTP_BLOCKBOOK_URL;
@@ -73,11 +74,12 @@ axiosRetry(blockbookClient, {
   onRetry: (retryCount, error, requestConfig) => {
     devLog(
       `[Blockbook Retry] Attempt ${retryCount} for ${requestConfig.url}`,
-      error.message
+      error.message,
     );
   },
 });
 
+// Rate limit to avoid getting blocked by Satoshi Labs, if user has a self-hosted blockbook instance they can increase the limits
 const rateLimiter = new Bottleneck({
   maxConcurrent: 5,
   minTime: 200,
@@ -86,6 +88,7 @@ const rateLimiter = new Bottleneck({
   reservoirRefreshInterval: 60 * 1000,
 });
 
+// Random User-Agent to avoid getting flagged by Blockbook, we also add some jitter to the rate limiter to make it less predictable
 blockbookClient.interceptors.request.use(async (config) => {
   config.headers["User-Agent"] = getRealisticUserAgent();
 
@@ -108,7 +111,7 @@ function checkCircuitBreaker(): void {
       circuitBreakerState = "half-open";
     } else {
       throw new Error(
-        "Circuit breaker is open. Blockbook service appears down."
+        "Circuit breaker is open. Blockbook service appears down.",
       );
     }
   }
@@ -127,9 +130,7 @@ function recordFailure(): void {
   lastFailureTime = Date.now();
 
   if (failureCount >= FAILURE_THRESHOLD) {
-    devLog(
-      "[Blockbook Circuit] Opening circuit after 5 consecutive failures"
-    );
+    devLog("[Blockbook Circuit] Opening circuit after 5 consecutive failures");
     circuitBreakerState = "open";
   }
 }
@@ -177,7 +178,7 @@ export async function fetchBlockbookBalance(xpub: string) {
         `/api/v2/xpub/${zpub}`,
         {
           params: { details: "basic" },
-        }
+        },
       );
 
       devLog("[Blockbook] Balance fetched successfully");
@@ -211,20 +212,20 @@ export async function fetchBlockbookBalance(xpub: string) {
           throw new Error(
             `Blockbook service temporarily unavailable${
               retryCount > 0 ? ` (tried ${retryCount + 1} times)` : ""
-            }`
+            }`,
           );
         }
         if (error.code === "ECONNABORTED") {
           throw new Error(
             `Request timeout${
               retryCount > 0 ? ` after ${retryCount + 1} attempts` : ""
-            }`
+            }`,
           );
         }
         throw new Error(
           `Blockbook API error: ${error.message}${
             retryCount > 0 ? ` (${retryCount + 1} attempts)` : ""
-          }`
+          }`,
         );
       }
       throw new Error("Failed to fetch balance from Blockbook");
@@ -240,7 +241,7 @@ export async function fetchBlockbookBalance(xpub: string) {
 export async function fetchAndStoreTransactions(
   walletId: string,
   xpub: string,
-  page: number = 1
+  page: number = 1,
 ): Promise<{ hasMore: boolean; txCount: number }> {
   checkCircuitBreaker();
 
@@ -248,7 +249,7 @@ export async function fetchAndStoreTransactions(
 
   if (pendingRequests.has(requestKey)) {
     devLog(
-      `[Blockbook] Reusing pending transaction request for ${xpub} page ${page}`
+      `[Blockbook] Reusing pending transaction request for ${xpub} page ${page}`,
     );
     return pendingRequests.get(requestKey)!;
   }
@@ -266,7 +267,7 @@ export async function fetchAndStoreTransactions(
             pageSize: 1000,
           },
           timeout: 60000,
-        }
+        },
       );
 
       if (
@@ -306,7 +307,7 @@ export async function fetchAndStoreTransactions(
         });
 
       if (newTransactions.length > 0) {
-        await db.insert(bitcoinTransaction).values(newTransactions);
+        await insertBitcoinTransactions(newTransactions);
       }
 
       const totalPages = Math.ceil(response.data.txs / 1000);
@@ -321,8 +322,10 @@ export async function fetchAndStoreTransactions(
       if (axios.isAxiosError(error)) {
         const retryCount = error.config?.["axios-retry"]?.retryCount || 0;
         devLog(
-          `[Blockbook Transactions] Error fetching transactions (attempt ${retryCount + 1}):`,
-          error.message
+          `[Blockbook Transactions] Error fetching transactions (attempt ${
+            retryCount + 1
+          }):`,
+          error.message,
         );
 
         if (error.response?.status === 429) {

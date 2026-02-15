@@ -27,7 +27,8 @@ import { usePathname, useRouter } from "@/i18n/routing";
 import {
   activePortfolioBalanceInUserCurrencyAtom,
   activePortfolioIdAtom,
-} from "@/lib/atoms/ActivePortfolio";
+  portfolioBalancesAtom,
+} from "@/lib/atoms/PortfolioAtoms";
 import { usePortfolios } from "@/lib/hooks/usePortfolios";
 import { CURRENCIES } from "@/lib/utils/constants";
 import { useEffect, useMemo, useState } from "react";
@@ -41,6 +42,7 @@ export function PortfolioSwitcher() {
   const activePortfolioBalance = useAtomValue(
     activePortfolioBalanceInUserCurrencyAtom,
   );
+  const portfolioBalances = useAtomValue(portfolioBalancesAtom);
   const format = useFormatter();
 
   const getCurrencySymbol = (currencyCode: string) => {
@@ -148,7 +150,6 @@ export function PortfolioSwitcher() {
               </span>{" "}
               <PrivacyValue>
                 <span className="truncate text-xs text-muted-foreground">
-                  {/* {activePortfolio.lastBalanceInCurrency} */}
                   {format.number(activePortfolioBalance, {
                     style: "currency",
                     currency: activePortfolio.currency,
@@ -168,42 +169,55 @@ export function PortfolioSwitcher() {
               <DropdownMenuLabel className="text-muted-foreground text-xs">
                 {t("portfolios")}
               </DropdownMenuLabel>
-              {portfolios.map((portfolio, index) => (
-                <DropdownMenuItem
-                  key={portfolio.id}
-                  onClick={() => {
-                    setActivePortfolioId(portfolio.id);
-                    const newPath = pathname.replace(
-                      activePortfolioId ?? "",
-                      portfolio.id,
-                    );
+              {portfolios.map((portfolio, index) => {
+                const balance = portfolioBalances[portfolio.id];
+                const hasBalance = balance !== undefined;
 
-                    router.push(newPath);
-                  }}
-                  className="gap-2 p-2"
-                >
-                  <Avatar size="sm" className="rounded-lg">
-                    <AvatarImage
-                      src={portfolio.gradientUrl}
-                      alt={portfolio.name}
-                      className="rounded-lg"
-                    />
-                    {/* <AvatarFallback className="rounded-lg">
-                      <Wallet className="size-3" />
-                    </AvatarFallback> */}
-                  </Avatar>
-                  <div className="flex flex-col flex-1">
-                    <span className="text-sm">{portfolio.name}</span>
-                    <PrivacyValue>
-                      <span className="text-xs text-muted-foreground">
-                        {getCurrencySymbol(portfolio.currency)}
-                        {portfolio.lastBalanceInCurrency}
-                      </span>
-                    </PrivacyValue>
-                  </div>
-                  <DropdownMenuShortcut>⌘{index + 1}</DropdownMenuShortcut>
-                </DropdownMenuItem>
-              ))}
+                return (
+                  <DropdownMenuItem
+                    key={portfolio.id}
+                    onClick={() => {
+                      setActivePortfolioId(portfolio.id);
+                      const newPath = pathname.replace(
+                        activePortfolioId ?? "",
+                        portfolio.id,
+                      );
+
+                      router.push(newPath);
+                    }}
+                    className="gap-2 p-2"
+                  >
+                    <Avatar size="sm" className="rounded-lg">
+                      <AvatarImage
+                        src={portfolio.gradientUrl}
+                        alt={portfolio.name}
+                        className="rounded-lg"
+                      />
+                    </Avatar>
+                    <div className="flex flex-col flex-1">
+                      <span className="text-sm">{portfolio.name}</span>
+                      <PrivacyValue>
+                        <span className="text-xs text-muted-foreground">
+                          {hasBalance ? (
+                            format.number(balance, {
+                              style: "currency",
+                              currency: portfolio.currency,
+                            })
+                          ) : (
+                            <span className="opacity-50">
+                              {format.number(0, {
+                                style: "currency",
+                                currency: portfolio.currency,
+                              })}
+                            </span>
+                          )}
+                        </span>
+                      </PrivacyValue>
+                    </div>
+                    <DropdownMenuShortcut>⌘{index + 1}</DropdownMenuShortcut>
+                  </DropdownMenuItem>
+                );
+              })}
             </DropdownMenuGroup>
             <DropdownMenuSeparator />
 

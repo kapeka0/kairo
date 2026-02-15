@@ -122,12 +122,6 @@ export const portfolio = pgTable("portfolio", {
     .references(() => user.id, { onDelete: "cascade" }),
   currency: currenciesEnum("currency").notNull().default("USD"),
   createdAt: timestamp("created_at").defaultNow().notNull(),
-  lastBalanceInCurrency: text("last_balance_in_currency")
-    .notNull()
-    .default("0"),
-  lastBalanceInCurrencyUpdatedAt: timestamp("balance_in_currency_updated_at")
-    .defaultNow()
-    .notNull(),
   updatedAt: timestamp("updated_at")
     .defaultNow()
     .$onUpdate(() => /* @__PURE__ */ new Date())

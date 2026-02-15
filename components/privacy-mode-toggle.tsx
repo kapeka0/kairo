@@ -7,7 +7,7 @@ import {
   TooltipContent,
   TooltipTrigger,
 } from "@/components/ui/tooltip";
-import { privacyModeAtom } from "@/lib/atoms/PrivacyMode";
+import { privacyModeAtom } from "@/lib/atoms/LocalSettings";
 import { useAtom } from "jotai";
 import { Eye, EyeOff } from "lucide-react";
 import { useTranslations } from "next-intl";

@@ -36,7 +36,7 @@ import {
 } from "@/components/ui/select";
 import { useRouter } from "@/i18n/routing";
 import { createPortfolio } from "@/lib/actions/portfolio";
-import { activePortfolioIdAtom } from "@/lib/atoms/ActivePortfolio";
+import { activePortfolioIdAtom } from "@/lib/atoms/PortfolioAtoms";
 import { devLog } from "@/lib/utils";
 import { CURRENCIES } from "@/lib/utils/constants";
 import { useSetAtom } from "jotai";

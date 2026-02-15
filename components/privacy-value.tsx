@@ -1,6 +1,6 @@
 "use client";
 
-import { privacyModeAtom } from "@/lib/atoms/PrivacyMode";
+import { privacyModeAtom } from "@/lib/atoms/LocalSettings";
 import { cn } from "@/lib/utils";
 import { useAtom } from "jotai";
 

@@ -1,16 +1,19 @@
+import { updateWalletBalance } from "@/lib/actions/wallet";
 import { useQuery, useQueryClient } from "@tanstack/react-query";
 import axios from "axios";
-import { useSetAtom } from "jotai";
-import { useCallback, useEffect, useState } from "react";
-import { activePortfolioBalanceInUserCurrencyAtom } from "../atoms/ActivePortfolio";
+import { useAction } from "next-safe-action/hooks";
+import { useCallback, useEffect, useRef, useState } from "react";
 import { TokenType, Wallet } from "../types";
 import { devLog } from "../utils";
+import { calculateWalletBalanceInCurrency } from "../utils/balance";
 import { useBlockbookWebSocket } from "./useBlockbookWebSocket";
 import { useTokenStats } from "./useTokenStats";
 
 interface UseWalletsResult {
   wallets: Wallet[];
 }
+
+const WALLETS_BALLANCE_STALE_TIME_IN_MS = 60 * 1000; // 1 minute
 
 async function fetchWallets(portfolioId: string): Promise<UseWalletsResult> {
   try {
@@ -24,24 +27,6 @@ async function fetchWallets(portfolioId: string): Promise<UseWalletsResult> {
   }
 }
 
-async function refreshWalletBalanceWithHTTP(walletId: string) {
-  try {
-    await axios.post(`/api/bitcoin/balance/${walletId}`);
-  } catch (error) {
-    devLog("Failed to refresh wallet balance:", error);
-  }
-}
-
-function getBTCWalletValueInCurrency(
-  wallet: Wallet,
-  tokenPrice: number | undefined,
-): number {
-  if (!tokenPrice) return 0;
-
-  const btcAmount = parseInt(wallet.lastBalanceInTokens || "0") / 1e8;
-  return btcAmount * tokenPrice;
-}
-
 export function useWallets(portfolioId: string) {
   const [walletsSortedByBalance, setWalletsSortedByBalance] = useState<
     Wallet[]
@@ -49,9 +34,6 @@ export function useWallets(portfolioId: string) {
   const [balancesInCurrency, setBalancesInCurrency] = useState<
     Record<string, number>
   >({});
-  const setActivePortfolioBalance = useSetAtom(
-    activePortfolioBalanceInUserCurrencyAtom,
-  );
   const { btcPrice } = useTokenStats();
   const queryClient = useQueryClient();
   const { isConnected, getAccountInfo } = useBlockbookWebSocket();
@@ -59,9 +41,16 @@ export function useWallets(portfolioId: string) {
     queryKey: ["wallets", portfolioId],
     queryFn: () => fetchWallets(portfolioId),
     enabled: !!portfolioId,
-    staleTime: 60 * 60 * 1000,
+    staleTime: 60 * 60 * 1000, // 1 hour
   });
 
+  const { execute: executeUpdateBalance } = useAction(updateWalletBalance, {
+    onError: (e) => {
+      devLog("Failed to update wallet balance:", e.error.serverError);
+      queryClient.invalidateQueries({ queryKey: ["wallets", portfolioId] });
+    },
+  });
+  const walletsRef = useRef<Wallet[]>([]);
   const refreshWalletBalanceWS = useCallback(
     async (wallet: Wallet) => {
       try {
@@ -93,6 +82,8 @@ export function useWallets(portfolioId: string) {
               ),
             };
           });
+
+          return response.balance;
         }
       } catch (error) {
         devLog(
@@ -105,30 +96,75 @@ export function useWallets(portfolioId: string) {
     [getAccountInfo, portfolioId, queryClient],
   );
 
+  const refreshWalletBalanceWithHTTP = useCallback(
+    async (wallet: Wallet) => {
+      try {
+        const { data } = await axios.get(`/api/wallet/${wallet.id}/balance`);
+
+        queryClient.setQueryData(["wallets", portfolioId], (oldData: any) => {
+          if (!oldData?.wallets) return oldData;
+
+          return {
+            ...oldData,
+            wallets: oldData.wallets.map((w: Wallet) =>
+              w.id === wallet.id
+                ? {
+                    ...w,
+                    lastBalanceInTokens: data.balance,
+                    lastBalanceInTokensUpdatedAt: new Date().toISOString(),
+                  }
+                : w,
+            ),
+          };
+        });
+
+        return data.balance;
+      } catch (error) {
+        devLog("Failed to refresh wallet balance:", error);
+        queryClient.invalidateQueries({ queryKey: ["wallets", portfolioId] });
+      }
+    },
+    [portfolioId, queryClient],
+  );
+
   const refreshWalletBalanceWithFallback = useCallback(
     async (wallet: Wallet) => {
+      let newBalance: string | undefined;
       if (isConnected) {
         devLog(
           `[WS] Attempting to refresh balance for wallet ${wallet.name} via WebSocket`,
         );
-        await refreshWalletBalanceWS(wallet);
+        newBalance = await refreshWalletBalanceWS(wallet);
       } else {
         devLog(
           `[WS] Not connected, using API route to refresh balance for wallet ${wallet.name}`,
         );
-        await refreshWalletBalanceWithHTTP(wallet.id);
+        newBalance = await refreshWalletBalanceWithHTTP(wallet);
       }
+      if (newBalance)
+        executeUpdateBalance({
+          walletId: wallet.id,
+          tokenType: wallet.tokenType,
+          balance: newBalance,
+        });
     },
-    [isConnected, refreshWalletBalanceWS],
+    [
+      isConnected,
+      refreshWalletBalanceWS,
+      refreshWalletBalanceWithHTTP,
+      executeUpdateBalance,
+    ],
   );
+
   const getWalletBalanceInCurrency = useCallback(
     (wallet: Wallet): number => {
       if (!wallet) return 0;
 
       switch (wallet.tokenType) {
         case TokenType.BTC:
-          return getBTCWalletValueInCurrency(wallet, btcPrice);
-
+          return calculateWalletBalanceInCurrency(wallet, btcPrice);
+        case TokenType.ETH:
+          return 0;
         default:
           return 0;
       }
@@ -138,13 +174,12 @@ export function useWallets(portfolioId: string) {
 
   useEffect(() => {
     if (query.data?.wallets) {
-      const totalInCurrency = query.data.wallets.reduce(
-        (sum, wallet) => sum + getWalletBalanceInCurrency(wallet),
-        0,
-      );
-      devLog("Total portfolio balance in user currency:", totalInCurrency);
-      setActivePortfolioBalance(totalInCurrency);
+      walletsRef.current = query.data.wallets;
+    }
+  }, [query.data?.wallets]);
 
+  useEffect(() => {
+    if (query.data?.wallets) {
       const sortedWallets = [...query.data.wallets].sort((a, b) => {
         const valueA = getWalletBalanceInCurrency(a);
         const valueB = getWalletBalanceInCurrency(b);
@@ -158,32 +193,32 @@ export function useWallets(portfolioId: string) {
       });
       setBalancesInCurrency(balancesMap);
     }
-  }, [
-    query.data?.wallets,
-    btcPrice,
-    setActivePortfolioBalance,
-    getWalletBalanceInCurrency,
-  ]);
+  }, [query.data?.wallets, btcPrice, getWalletBalanceInCurrency]);
 
   useEffect(() => {
-    if (query.data?.wallets) {
-      // Check if any wallet's balance is stale (older than 1 minute) and refresh it
-      const now = Date.now();
-      const ONE_MINUTE = 1 * 60 * 1000;
+    if (!portfolioId) return;
 
-      query.data.wallets.forEach((wallet) => {
+    const interval = setInterval(() => {
+      const wallets = walletsRef.current;
+      if (!wallets.length) return;
+      devLog("Checking for stale wallet balances...");
+      const now = Date.now();
+
+      wallets.forEach((wallet) => {
         const lastUpdate = new Date(
           wallet.lastBalanceInTokensUpdatedAt,
         ).getTime();
-        const isStale = now - lastUpdate > ONE_MINUTE;
+        const isStale = now - lastUpdate > WALLETS_BALLANCE_STALE_TIME_IN_MS;
 
         if (isStale) {
-          devLog(`Wallet ${wallet.name} balance is stale. Refreshing...`);
+          devLog(`Balance for wallet ${wallet.name} is stale, refreshing...`);
           refreshWalletBalanceWithFallback(wallet);
         }
       });
-    }
-  }, [query.data, refreshWalletBalanceWithFallback]);
+    }, WALLETS_BALLANCE_STALE_TIME_IN_MS);
+
+    return () => clearInterval(interval);
+  }, [portfolioId, refreshWalletBalanceWithFallback]);
 
   return {
     ...query,

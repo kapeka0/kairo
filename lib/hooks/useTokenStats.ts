@@ -1,16 +1,18 @@
 "use client";
 
 import { useQuery } from "@tanstack/react-query";
-import { useAtom } from "jotai";
 import axios from "axios";
+import { useAtom } from "jotai";
 
-import { activePortfolioIdAtom } from "@/lib/atoms/ActivePortfolio";
+import { activePortfolioIdAtom } from "@/lib/atoms/PortfolioAtoms";
+import { TokenType } from "@/lib/types";
 import { CURRENCIES } from "@/lib/utils/constants";
 import { usePortfolios } from "./usePortfolios";
 
 interface TokenStatsResponse {
   price: number;
   currency: string;
+  tokenType: string;
 }
 
 export function useTokenStats() {
@@ -25,16 +27,25 @@ export function useTokenStats() {
   )?.coingeckoValue;
 
   const query = useQuery({
-    queryKey: ["token-stats", coingeckoCurrency],
+    queryKey: ["token-price", TokenType.BTC, coingeckoCurrency],
     queryFn: async () => {
-      const { data } = await axios.get<TokenStatsResponse>(
-        `/api/bitcoin/price?currency=${coingeckoCurrency}`,
-      );
+      if (!coingeckoCurrency) {
+        throw new Error("Currency not available");
+      }
+
+      const { data } = await axios.get<TokenStatsResponse>(`/api/token/price`, {
+        params: {
+          tokenType: TokenType.BTC,
+          currency: coingeckoCurrency,
+        },
+      });
+
       return data;
     },
-    enabled: !!activePortfolioId && !!coingeckoCurrency,
     refetchInterval: 60000,
     staleTime: 30000,
+    refetchIntervalInBackground: true,
+    enabled: !!activePortfolioId && !!coingeckoCurrency,
     retry: (failureCount, error) => {
       if (axios.isAxiosError(error) && error.response?.status === 400) {
         return false;

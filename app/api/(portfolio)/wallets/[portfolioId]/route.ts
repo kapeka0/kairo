@@ -1,33 +1,40 @@
-import { and, eq } from "drizzle-orm";
 import { headers } from "next/headers";
 import { NextRequest, NextResponse } from "next/server";
 
 import { auth } from "@/lib/auth";
-import { db } from "@/lib/db/db";
-import { bitcoinWallet, portfolio } from "@/lib/db/schema";
+import { existsPortfolioByIdAndUserId } from "@/lib/db/data/portfolio";
+import { getWalletsByPortfolioId } from "@/lib/db/data/wallet";
 import { BitcoinWallet, TokenType } from "@/lib/types";
 import { mapBTCWalletToWallet } from "@/lib/utils";
+import { validateRequest } from "@/lib/utils/api-validation";
+import { portfolioIdParamSchema } from "@/lib/validations/api";
 
 export async function GET(
   request: NextRequest,
   { params }: { params: Promise<{ portfolioId: string }> },
 ) {
   try {
-    const { portfolioId } = await params;
     const session = await auth.api.getSession({
       headers: await headers(),
     });
 
-    if (!session) {
+    if (!session?.user?.id) {
       return NextResponse.json({ error: "Unauthorized" }, { status: 401 });
     }
 
-    const portfolioExists = await db.query.portfolio.findFirst({
-      where: and(
-        eq(portfolio.id, portfolioId),
-        eq(portfolio.userId, session.user.id),
-      ),
-    });
+    const rawParams = await params;
+    const validation = validateRequest(portfolioIdParamSchema, rawParams);
+
+    if (!validation.success) {
+      return validation.response;
+    }
+
+    const { portfolioId } = validation.data;
+
+    const portfolioExists = await existsPortfolioByIdAndUserId(
+      portfolioId,
+      session.user.id,
+    );
 
     if (!portfolioExists) {
       return NextResponse.json(
@@ -36,11 +43,7 @@ export async function GET(
       );
     }
 
-    const totalWallets = [];
-    const dbWallets = await db.query.bitcoinWallet.findMany({
-      where: eq(bitcoinWallet.portfolioId, portfolioId),
-      orderBy: (wallet, { desc }) => [desc(wallet.createdAt)],
-    });
+    const dbWallets = await getWalletsByPortfolioId(portfolioId);
 
     const btcWallets: BitcoinWallet[] = dbWallets.map((wallet) => ({
       id: wallet.id,
@@ -56,15 +59,13 @@ export async function GET(
       tokenType: TokenType.BTC,
     }));
 
-    totalWallets.push(...btcWallets.map(mapBTCWalletToWallet));
-    // Add support for other wallet types here in the future
-
-    return NextResponse.json({ wallets: totalWallets });
+    const mappedWallets = btcWallets.map(mapBTCWalletToWallet);
+    // TODO: Add support for other wallet types (e.g. Ethereum) in the future
+    return NextResponse.json({ wallets: mappedWallets });
   } catch (error) {
     console.error("Error fetching wallets:", error);
-    return NextResponse.json(
-      { error: "Internal server error" },
-      { status: 500 },
-    );
+    const message =
+      error instanceof Error ? error.message : "Failed to fetch wallets";
+    return NextResponse.json({ error: message }, { status: 500 });
   }
 }
