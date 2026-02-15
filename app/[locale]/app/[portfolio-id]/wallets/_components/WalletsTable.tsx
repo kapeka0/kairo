@@ -82,6 +82,7 @@ export default function WalletsTable() {
       },
     },
   );
+
   useEffect(() => {
     const handleClickOutside = () => {
       if (editingWalletId) {

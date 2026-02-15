@@ -7,15 +7,18 @@ import { z } from "zod";
 import { db } from "@/lib/db/db";
 import { bitcoinWallet, portfolio } from "@/lib/db/schema";
 import { authActionClient } from "@/lib/safe-actions";
-import { createBitcoinWalletSchema } from "@/lib/validations/wallet";
+import {
+  fetchAndStoreTransactions,
+  fetchBlockbookBalance,
+} from "@/lib/services/blockbook";
 import { generateUUID } from "@/lib/utils";
-import { fetchBlockbookBalance, fetchAndStoreTransactions } from "@/lib/services/blockbook";
+import { createBitcoinWalletSchema } from "@/lib/validations/wallet";
 
 export const createBitcoinWallet = authActionClient
   .metadata({ actionName: "createBitcoinWallet" })
   .inputSchema(createBitcoinWalletSchema)
   .action(async ({ parsedInput, ctx }) => {
-    const { name, publicKey, derivationPath, portfolioId } = parsedInput;
+    const { name, publicKey, portfolioId } = parsedInput;
 
     const portfolioExists = await db.query.portfolio.findFirst({
       where: and(
@@ -61,7 +64,6 @@ export const createBitcoinWallet = authActionClient
         name,
         gradientUrl,
         publicKey,
-        derivationPath,
         portfolioId,
         lastBalanceInSatoshis: balance,
         lastBalanceInSatoshisUpdatedAt: new Date(),
@@ -74,7 +76,7 @@ export const createBitcoinWallet = authActionClient
       });
     }
 
-    return { success: true, wallet: newWallet[0], bipType: derivationPath };
+    return { success: true, wallet: newWallet[0] };
   });
 
 export const updateWalletIcon = authActionClient
@@ -83,7 +85,7 @@ export const updateWalletIcon = authActionClient
     z.object({
       walletId: z.string().uuid(),
       icon: z.string().nullable(),
-    })
+    }),
   )
   .action(async ({ parsedInput, ctx }) => {
     const { walletId, icon } = parsedInput;
@@ -138,7 +140,7 @@ export const refreshWalletBalance = authActionClient
       const result = await fetchAndStoreTransactions(
         walletId,
         wallet.publicKey,
-        page
+        page,
       );
       hasMore = result.hasMore;
       page++;

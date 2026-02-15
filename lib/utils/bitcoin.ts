@@ -2,16 +2,17 @@ import bs58check from "bs58check";
 
 const VERSION_BYTES = {
   mainnet: {
-    xpub: 0x0488b21e,
-    ypub: 0x049d7cb2,
-    zpub: 0x04b24746,
+    xpub: 0x0488b21e, // P2PKH/P2SH
+    ypub: 0x049d7cb2, // P2SH/SegWit
+    zpub: 0x04b24746, // P2WPKH/SegWit native
   },
 };
 
 const SATOSHIS_PER_BTC = 100_000_000;
 
 export function satoshisToBtc(satoshis: string | number): number {
-  const satoshisNum = typeof satoshis === "string" ? parseFloat(satoshis) : satoshis;
+  const satoshisNum =
+    typeof satoshis === "string" ? parseFloat(satoshis) : satoshis;
   return satoshisNum / SATOSHIS_PER_BTC;
 }
 
@@ -30,14 +31,15 @@ export function convertToZpub(extendedKey: string): string {
 
   try {
     const decoded = Buffer.from(bs58check.decode(extendedKey));
-
-    const versionBytes = decoded.slice(0, 4);
-    const payload = decoded.slice(4);
+    // Extract version bytes and payload
+    const versionBytes = decoded.subarray(0, 4);
+    const payload = decoded.subarray(4);
 
     const xpubVersion = VERSION_BYTES.mainnet.xpub;
     const ypubVersion = VERSION_BYTES.mainnet.ypub;
     const zpubVersion = VERSION_BYTES.mainnet.zpub;
 
+    // Read decimal version from the first 4 bytes
     const currentVersion = versionBytes.readUInt32BE(0);
 
     if (
@@ -48,7 +50,7 @@ export function convertToZpub(extendedKey: string): string {
       throw new Error("Invalid extended public key version");
     }
 
-    const zpubVersionBuffer = Buffer.allocUnsafe(4);
+    const zpubVersionBuffer = Buffer.alloc(4);
     zpubVersionBuffer.writeUInt32BE(zpubVersion, 0);
 
     const zpubPayload = Buffer.concat([zpubVersionBuffer, payload]);
@@ -56,7 +58,9 @@ export function convertToZpub(extendedKey: string): string {
     return bs58check.encode(zpubPayload);
   } catch (error) {
     throw new Error(
-      `Failed to convert to zpub: ${error instanceof Error ? error.message : "Unknown error"}`,
+      `Failed to convert to zpub: ${
+        error instanceof Error ? error.message : "Unknown error"
+      }`,
     );
   }
 }

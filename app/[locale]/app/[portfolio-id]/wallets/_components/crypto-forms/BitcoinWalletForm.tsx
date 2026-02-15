@@ -1,10 +1,10 @@
 "use client";
 
 import { zodResolver } from "@hookform/resolvers/zod";
+import { useQueryClient } from "@tanstack/react-query";
 import { useTranslations } from "next-intl";
 import { useAction } from "next-safe-action/hooks";
-import { useQueryClient } from "@tanstack/react-query";
-import { useEffect, useState } from "react";
+import { useState } from "react";
 import { useForm } from "react-hook-form";
 import { toast } from "sonner";
 
@@ -20,18 +20,10 @@ import {
   FormMessage,
 } from "@/components/ui/form";
 import { Input } from "@/components/ui/input";
-import {
-  Select,
-  SelectContent,
-  SelectItem,
-  SelectTrigger,
-  SelectValue,
-} from "@/components/ui/select";
 import { createBitcoinWallet } from "@/lib/actions/wallet";
 import { devLog } from "@/lib/utils";
 import {
   bitcoinWalletSchema,
-  detectBipType,
   type BitcoinWalletData,
 } from "@/lib/validations/wallet";
 
@@ -85,32 +77,32 @@ export default function BitcoinWalletForm({
     resolver: zodResolver(bitcoinWalletSchema),
     defaultValues: {
       publicKey: "",
-      derivationPath: "BIP44",
+      // derivationPath: "BIP44",
     },
   });
 
   const publicKeyValue = form.watch("publicKey");
 
-  useEffect(() => {
-    if (publicKeyValue && publicKeyValue.length > 10) {
-      const bipType = detectBipType(publicKeyValue);
-      setDetectedBipType(bipType);
-      if (bipType) {
-        form.setValue(
-          "derivationPath",
-          bipType as "BIP44" | "BIP49" | "BIP84" | "BIP86",
-        );
-      }
-    } else {
-      setDetectedBipType(null);
-    }
-  }, [publicKeyValue, form]);
+  // useEffect(() => {
+  //   if (publicKeyValue && publicKeyValue.length > 10) {
+  //     const bipType = detectBipType(publicKeyValue);
+  //     setDetectedBipType(bipType);
+  //     if (bipType) {
+  //       form.setValue(
+  //         "derivationPath",
+  //         bipType as "BIP44" | "BIP49" | "BIP84" | "BIP86",
+  //       );
+  //     }
+  //   } else {
+  //     setDetectedBipType(null);
+  //   }
+  // }, [publicKeyValue, form]);
 
   const onSubmit = async (data: BitcoinWalletData) => {
     execute({
       name: walletName,
       publicKey: data.publicKey,
-      derivationPath: data.derivationPath,
+      // derivationPath: data.derivationPath,
       cryptocurrency: "BTC",
       portfolioId,
     });
@@ -154,13 +146,13 @@ export default function BitcoinWalletForm({
                   className="placeholder:text-muted-foreground/50 font-mono text-sm"
                 />
               </FormControl>
-              {detectedBipType && (
+              {/* {detectedBipType && (
                 <FormDescription className="text-xs text-blue-500">
                   {tForm("bipTypeDetected", {
                     bipType: getBipTypeLabel(detectedBipType) || "N/A",
                   })}
                 </FormDescription>
-              )}
+              )} */}
               <FormDescription className="text-xs">
                 {tForm("extendedPublicKeyHelper")}
               </FormDescription>
@@ -168,7 +160,7 @@ export default function BitcoinWalletForm({
             </FormItem>
           )}
         />
-        <FormField
+        {/* <FormField
           control={form.control}
           name="derivationPath"
           render={({ field }) => (
@@ -207,7 +199,7 @@ export default function BitcoinWalletForm({
               <FormMessage />
             </FormItem>
           )}
-        />
+        /> */}
         <div className="flex gap-2">
           <Button
             type="button"

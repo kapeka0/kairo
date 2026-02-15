@@ -33,7 +33,6 @@ export type Wallet = {
   gradientUrl: string;
   icon: string | null;
   publicKey: string;
-  derivationPath: string;
   portfolioId: string;
   lastBalanceInTokens: string;
   lastBalanceInTokensUpdatedAt: Date;
@@ -48,7 +47,6 @@ export type BitcoinWallet = {
   gradientUrl: string;
   icon: string | null;
   publicKey: string;
-  derivationPath: string;
   portfolioId: string;
   lastBalanceInSatoshis: string;
   lastBalanceInSatoshisUpdatedAt: Date;

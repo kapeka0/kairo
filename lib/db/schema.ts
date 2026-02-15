@@ -143,7 +143,7 @@ export const bitcoinWallet = pgTable("bitcoin_wallet", {
   gradientUrl: text("gradient_url").notNull(),
   icon: text("icon"),
   publicKey: text("public_key").notNull(),
-  derivationPath: text("derivation_path").notNull(),
+
   portfolioId: text("portfolio_id")
     .notNull()
     .references(() => portfolio.id, { onDelete: "cascade" }),

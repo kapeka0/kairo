@@ -4,9 +4,52 @@ import { client_env } from "@/lib/env/client";
 import { convertToZpub } from "@/lib/utils/bitcoin";
 import axios from "axios";
 import { eq } from "drizzle-orm";
+import http from "http";
+import https from "https";
 import { devLog, getRealisticUserAgent } from "../utils";
 
-const BLOCKBOOK_BASE_URL = client_env.NEXT_PUBLIC_BTC_BLOCKBOOK_URL;
+const BLOCKBOOK_BASE_URL = client_env.NEXT_PUBLIC_BTC_HTTP_BLOCKBOOK_URL;
+
+const httpAgent = new http.Agent({
+  keepAlive: true,
+  keepAliveMsecs: 1000,
+  maxSockets: 50,
+  maxFreeSockets: 10,
+  timeout: 30000,
+});
+
+const httpsAgent = new https.Agent({
+  keepAlive: true,
+  keepAliveMsecs: 1000,
+  maxSockets: 50,
+  maxFreeSockets: 10,
+  timeout: 30000,
+  rejectUnauthorized: true,
+});
+
+const blockbookClient = axios.create({
+  baseURL: BLOCKBOOK_BASE_URL,
+  timeout: 30000,
+  httpAgent,
+  httpsAgent,
+  headers: {
+    Accept: "application/json, text/plain, */*",
+    "Accept-Language": "en-US,en;q=0.9",
+    "Accept-Encoding": "gzip, deflate, br",
+    Connection: "keep-alive",
+    "Cache-Control": "no-cache",
+    Pragma: "no-cache",
+    DNT: "1",
+    "Sec-Fetch-Dest": "empty",
+    "Sec-Fetch-Mode": "cors",
+    "Sec-Fetch-Site": "cross-site",
+  },
+});
+
+blockbookClient.interceptors.request.use((config) => {
+  config.headers["User-Agent"] = getRealisticUserAgent();
+  return config;
+});
 
 interface BlockbookXpubResponse {
   address: string;
@@ -33,21 +76,16 @@ interface BlockbookTransaction {
 export async function fetchBlockbookBalance(xpub: string) {
   try {
     const zpub = convertToZpub(xpub);
-    const userAgent = getRealisticUserAgent();
-    devLog(
-      `[Blockbook] Fetching balance for xpub ${xpub} (zpub: ${zpub}) with user agent: ${userAgent}`,
-    );
-    const response = await axios.get<BlockbookXpubResponse>(
-      `${BLOCKBOOK_BASE_URL}/api/v2/xpub/${zpub}`,
+    devLog(`[Blockbook] Fetching balance for xpub ${xpub} (zpub: ${zpub})`);
+
+    const response = await blockbookClient.get<BlockbookXpubResponse>(
+      `/api/v2/xpub/${zpub}`,
       {
         params: { details: "basic" },
-        timeout: 30000,
-        headers: {
-          "User-Agent": userAgent,
-          Accept: "application/json",
-        },
       },
     );
+
+    devLog("[Blockbook] Balance fetched successfully");
 
     return {
       balance: response.data.balance,
@@ -65,6 +103,9 @@ export async function fetchBlockbookBalance(xpub: string) {
       if (error.response?.status === 403) {
         throw new Error("Access denied by Blockbook API");
       }
+      if (error.response?.status === 503) {
+        throw new Error("Blockbook service temporarily unavailable");
+      }
       if (error.code === "ECONNABORTED") {
         throw new Error("Blockbook request timeout");
       }
@@ -81,10 +122,9 @@ export async function fetchAndStoreTransactions(
 ): Promise<{ hasMore: boolean; txCount: number }> {
   try {
     const zpub = convertToZpub(xpub);
-    const userAgent = getRealisticUserAgent();
 
-    const response = await axios.get<BlockbookXpubResponse>(
-      `${BLOCKBOOK_BASE_URL}/api/v2/xpub/${zpub}`,
+    const response = await blockbookClient.get<BlockbookXpubResponse>(
+      `/api/v2/xpub/${zpub}`,
       {
         params: {
           details: "txs",
@@ -92,10 +132,6 @@ export async function fetchAndStoreTransactions(
           pageSize: 1000,
         },
         timeout: 60000,
-        headers: {
-          "User-Agent": userAgent,
-          Accept: "application/json",
-        },
       },
     );
 

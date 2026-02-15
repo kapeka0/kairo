@@ -48,7 +48,6 @@ export async function GET(
       gradientUrl: wallet.gradientUrl,
       icon: wallet.icon,
       publicKey: wallet.publicKey,
-      derivationPath: wallet.derivationPath,
       portfolioId: wallet.portfolioId,
       lastBalanceInSatoshis: wallet.lastBalanceInSatoshis,
       lastBalanceInSatoshisUpdatedAt: wallet.lastBalanceInSatoshisUpdatedAt,
