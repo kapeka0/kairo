@@ -139,6 +139,7 @@ export const bitcoinWallet = pgTable("bitcoin_wallet", {
     .primaryKey()
     .$default(() => generateUUID()),
   name: text("name").notNull(),
+  tokenType: text("token_type").notNull().default("BTC"),
   gradientUrl: text("gradient_url").notNull(),
   icon: text("icon"),
   publicKey: text("public_key").notNull(),

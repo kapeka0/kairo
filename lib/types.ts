@@ -22,6 +22,25 @@ export type Portfolio = {
   createdAt: Date;
   updatedAt: Date;
 };
+export enum TokenType {
+  BTC = "BTC",
+  ETH = "ETH",
+}
+
+export type Wallet = {
+  id: string;
+  name: string;
+  gradientUrl: string;
+  icon: string | null;
+  publicKey: string;
+  derivationPath: string;
+  portfolioId: string;
+  lastBalanceInTokens: string;
+  lastBalanceInTokensUpdatedAt: Date;
+  createdAt: Date;
+  updatedAt: Date;
+  tokenType: TokenType;
+};
 
 export type BitcoinWallet = {
   id: string;
@@ -35,6 +54,7 @@ export type BitcoinWallet = {
   lastBalanceInSatoshisUpdatedAt: Date;
   createdAt: Date;
   updatedAt: Date;
+  tokenType: TokenType.BTC;
 };
 
 export type PortfoliosResponse = Portfolio[];

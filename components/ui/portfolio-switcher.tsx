@@ -1,8 +1,8 @@
 "use client";
 
-import { useAtom } from "jotai";
+import { useAtom, useAtomValue } from "jotai";
 import { ChevronsUpDown, Plus } from "lucide-react";
-import { useTranslations } from "next-intl";
+import { useFormatter, useTranslations } from "next-intl";
 
 import CreatePortfolioModal from "@/app/[locale]/app/create/_components/CreatePortfolioModal";
 import { PrivacyValue } from "@/components/privacy-value";
@@ -24,7 +24,10 @@ import {
   useSidebar,
 } from "@/components/ui/sidebar";
 import { usePathname, useRouter } from "@/i18n/routing";
-import { activePortfolioIdAtom } from "@/lib/atoms/ActivePortfolio";
+import {
+  activePortfolioBalanceInUserCurrencyAtom,
+  activePortfolioIdAtom,
+} from "@/lib/atoms/ActivePortfolio";
 import { usePortfolios } from "@/lib/hooks/usePortfolios";
 import { CURRENCIES } from "@/lib/utils/constants";
 import { useEffect, useMemo, useState } from "react";
@@ -35,6 +38,10 @@ export function PortfolioSwitcher() {
   const pathname = usePathname();
   const [isCreateModalOpen, setIsCreateModalOpen] = useState(false);
   const [dropdownOpen, setDropdownOpen] = useState(false);
+  const activePortfolioBalance = useAtomValue(
+    activePortfolioBalanceInUserCurrencyAtom,
+  );
+  const format = useFormatter();
 
   const getCurrencySymbol = (currencyCode: string) => {
     return (
@@ -141,8 +148,11 @@ export function PortfolioSwitcher() {
               </span>{" "}
               <PrivacyValue>
                 <span className="truncate text-xs text-muted-foreground">
-                  {getCurrencySymbol(activePortfolio.currency)}
-                  {activePortfolio.lastBalanceInCurrency}
+                  {/* {activePortfolio.lastBalanceInCurrency} */}
+                  {format.number(activePortfolioBalance, {
+                    style: "currency",
+                    currency: activePortfolio.currency,
+                  })}
                 </span>{" "}
               </PrivacyValue>
             </div>

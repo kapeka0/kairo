@@ -1,21 +1,11 @@
 import { useQuery } from "@tanstack/react-query";
 import axios from "axios";
-import { useEffect } from "react";
+import { useSetAtom } from "jotai";
+import { useCallback, useEffect, useState } from "react";
+import { activePortfolioBalanceInUserCurrencyAtom } from "../atoms/ActivePortfolio";
+import { TokenType, Wallet } from "../types";
 import { devLog } from "../utils";
-
-interface Wallet {
-  id: string;
-  name: string;
-  gradientUrl: string;
-  icon: string | null;
-  publicKey: string;
-  derivationPath: string;
-  portfolioId: string;
-  lastBalanceInSatoshis: string;
-  lastBalanceInSatoshisUpdatedAt: Date;
-  createdAt: Date;
-  updatedAt: Date;
-}
+import { useTokenStats } from "./useTokenStats";
 
 interface UseWalletsResult {
   wallets: Wallet[];
@@ -41,13 +31,77 @@ async function refreshWalletBalance(walletId: string) {
   }
 }
 
+function getBTCWalletValueInCurrency(
+  wallet: Wallet,
+  tokenPrice: number | undefined,
+): number {
+  if (!tokenPrice) return 0;
+
+  const btcAmount = parseInt(wallet.lastBalanceInTokens || "0") / 1e8;
+  return btcAmount * tokenPrice;
+}
+
 export function useWallets(portfolioId: string) {
+  const [walletsSortedByBalance, setWalletsSortedByBalance] = useState<
+    Wallet[]
+  >([]);
+  const [balancesInCurrency, setBalancesInCurrency] = useState<
+    Record<string, number>
+  >({});
+  const setActivePortfolioBalance = useSetAtom(
+    activePortfolioBalanceInUserCurrencyAtom,
+  );
+  const { btcPrice } = useTokenStats();
   const query = useQuery({
     queryKey: ["wallets", portfolioId],
     queryFn: () => fetchWallets(portfolioId),
     enabled: !!portfolioId,
     staleTime: 60 * 60 * 1000, // 1 hour
   });
+
+  const getWalletBalanceInCurrency = useCallback(
+    (wallet: Wallet): number => {
+      if (!wallet) return 0;
+
+      switch (wallet.tokenType) {
+        case TokenType.BTC:
+          return getBTCWalletValueInCurrency(wallet, btcPrice);
+
+        default:
+          return 0;
+      }
+    },
+    [btcPrice],
+  );
+
+  useEffect(() => {
+    if (query.data?.wallets) {
+      const totalInCurrency = query.data.wallets.reduce(
+        (sum, wallet) => sum + getWalletBalanceInCurrency(wallet),
+        0,
+      );
+      devLog("Total portfolio balance in user currency:", totalInCurrency);
+      setActivePortfolioBalance(totalInCurrency);
+
+      const sortedWallets = [...query.data.wallets].sort((a, b) => {
+        const valueA = getWalletBalanceInCurrency(a);
+        const valueB = getWalletBalanceInCurrency(b);
+        return valueB - valueA;
+      });
+      setWalletsSortedByBalance(sortedWallets);
+
+      const balancesMap: Record<string, number> = {};
+      query.data.wallets.forEach((wallet) => {
+        balancesMap[wallet.id] = getWalletBalanceInCurrency(wallet);
+      });
+      setBalancesInCurrency(balancesMap);
+    }
+  }, [
+    query.data?.wallets,
+    btcPrice,
+    setActivePortfolioBalance,
+    getWalletBalanceInCurrency,
+  ]);
 
   useEffect(() => {
     if (query.data?.wallets) {
@@ -57,7 +111,7 @@ export function useWallets(portfolioId: string) {
 
       query.data.wallets.forEach((wallet) => {
         const lastUpdate = new Date(
-          wallet.lastBalanceInSatoshisUpdatedAt,
+          wallet.lastBalanceInTokensUpdatedAt,
         ).getTime();
         const isStale = now - lastUpdate > ONE_MINUTE;
 
@@ -69,5 +123,10 @@ export function useWallets(portfolioId: string) {
     }
   }, [query.data]);
 
-  return query;
+  return {
+    ...query,
+    walletsSortedByBalance,
+    balancesInCurrency,
+    getWalletBalanceInCurrency,
+  };
 }

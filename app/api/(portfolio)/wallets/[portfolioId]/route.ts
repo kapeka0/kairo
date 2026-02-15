@@ -5,6 +5,8 @@ import { NextRequest, NextResponse } from "next/server";
 import { auth } from "@/lib/auth";
 import { db } from "@/lib/db/db";
 import { bitcoinWallet, portfolio } from "@/lib/db/schema";
+import { BitcoinWallet, TokenType } from "@/lib/types";
+import { mapBTCWalletToWallet } from "@/lib/utils";
 
 export async function GET(
   request: NextRequest,
@@ -34,12 +36,13 @@ export async function GET(
       );
     }
 
+    const totalWallets = [];
     const dbWallets = await db.query.bitcoinWallet.findMany({
       where: eq(bitcoinWallet.portfolioId, portfolioId),
       orderBy: (wallet, { desc }) => [desc(wallet.createdAt)],
     });
 
-    const wallets = dbWallets.map((wallet) => ({
+    const btcWallets: BitcoinWallet[] = dbWallets.map((wallet) => ({
       id: wallet.id,
       name: wallet.name,
       gradientUrl: wallet.gradientUrl,
@@ -51,9 +54,13 @@ export async function GET(
       lastBalanceInSatoshisUpdatedAt: wallet.lastBalanceInSatoshisUpdatedAt,
       createdAt: wallet.createdAt,
       updatedAt: wallet.updatedAt,
+      tokenType: TokenType.BTC,
     }));
 
-    return NextResponse.json({ wallets });
+    totalWallets.push(...btcWallets.map(mapBTCWalletToWallet));
+    // Add support for other wallet types here in the future
+
+    return NextResponse.json({ wallets: totalWallets });
   } catch (error) {
     console.error("Error fetching wallets:", error);
     return NextResponse.json(

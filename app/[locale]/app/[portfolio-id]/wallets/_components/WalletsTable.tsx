@@ -1,15 +1,16 @@
 "use client";
 
-import Image from "next/image";
-
+import NumberFlow from "@number-flow/react";
 import { useQueryClient } from "@tanstack/react-query";
-import { Copy, MoreHorizontal } from "lucide-react";
-import { useFormatter, useTranslations } from "next-intl";
+import { Copy, MoreHorizontal, RefreshCcw } from "lucide-react";
+import { useFormatter, useLocale, useTranslations } from "next-intl";
+import Image from "next/image";
 //eslint-disable-next-line
 import { useParams } from "next/navigation";
 import { useEffect, useState } from "react";
 import { toast } from "sonner";
 
+import TimeAgoIntl from "@/components/global/TimeAgoIntl";
 import { PrivacyValue } from "@/components/privacy-value";
 import { Button } from "@/components/ui/button";
 import {
@@ -27,6 +28,11 @@ import {
   TableHeader,
   TableRow,
 } from "@/components/ui/table";
+import {
+  Tooltip,
+  TooltipContent,
+  TooltipTrigger,
+} from "@/components/ui/tooltip";
 import { refreshWalletBalance, updateWalletIcon } from "@/lib/actions/wallet";
 import { useTokenStats } from "@/lib/hooks/useTokenStats";
 import { useWallets } from "@/lib/hooks/useWallets";
@@ -41,9 +47,16 @@ export default function WalletsTable() {
   const tTable = useTranslations("Wallets.table");
   const format = useFormatter();
   const queryClient = useQueryClient();
-  const { data, isLoading, error } = useWallets(portfolioId);
+  const {
+    data,
+    isLoading,
+    error,
+    walletsSortedByBalance,
+    getWalletBalanceInCurrency,
+  } = useWallets(portfolioId);
   const { btcPrice, currency, currencySymbol } = useTokenStats();
   const [editingWalletId, setEditingWalletId] = useState<string | null>(null);
+  const locale = useLocale();
 
   const { execute } = useAction(updateWalletIcon, {
     onSuccess: async () => {
@@ -95,31 +108,9 @@ export default function WalletsTable() {
     }
   };
 
-  const calculateFiatValue = (satoshis: string): string | null => {
-    if (!btcPrice) return null;
-    const btcAmount = satoshisToBtc(satoshis);
-    const fiatValue = btcAmount * btcPrice;
-    return format.number(fiatValue, {
-      style: "currency",
-      currency: currency || "USD",
-      minimumFractionDigits: 2,
-      maximumFractionDigits: 2,
-    });
-  };
-
   const truncatePublicKey = (publicKey: string) => {
     if (publicKey.length <= 12) return publicKey;
     return `${publicKey.slice(0, 8)}...${publicKey.slice(-4)}`;
-  };
-
-  const formatDate = (date: Date) => {
-    const dateObj = new Date(date);
-    if (isNaN(dateObj.getTime())) return "N/A";
-    return format.dateTime(dateObj, {
-      year: "numeric",
-      month: "short",
-      day: "numeric",
-    });
   };
 
   if (isLoading) {
@@ -212,12 +203,12 @@ export default function WalletsTable() {
           </TableRow>
         </TableHeader>
         <TableBody>
-          {data.wallets.map((wallet) => {
+          {walletsSortedByBalance.map((wallet) => {
             const crypto = SUPPORTED_CRYPTOCURRENCIES.find(
               (c) => c.value === "BTC",
             );
             const balanceInBTC = satoshisToBtc(
-              wallet.lastBalanceInSatoshis || "0",
+              wallet.lastBalanceInTokens || "0",
             );
 
             return (
@@ -284,16 +275,39 @@ export default function WalletsTable() {
                 </TableCell>
                 <TableCell>
                   <div className="flex flex-col gap-1 items-start">
-                    <PrivacyValue className="cursor-help">
-                      <span className="font-medium">
-                        {formatBtc(balanceInBTC)}
-                      </span>
-                    </PrivacyValue>
+                    <Tooltip>
+                      <TooltipTrigger>
+                        {" "}
+                        <PrivacyValue className="cursor-help">
+                          <span className="font-medium">
+                            {formatBtc(balanceInBTC)}
+                          </span>
+                        </PrivacyValue>
+                      </TooltipTrigger>
+                      <TooltipContent className={"flex items-center gap-1 "}>
+                        <RefreshCcw className="size-3  inline" />
+                        <TimeAgoIntl
+                          className="text-xs"
+                          date={wallet.lastBalanceInTokensUpdatedAt}
+                        />
+                      </TooltipContent>
+                    </Tooltip>
 
                     {btcPrice && (
                       <PrivacyValue>
                         <span className="text-xs text-muted-foreground">
-                          {calculateFiatValue(wallet.lastBalanceInSatoshis)}
+                          <NumberFlow
+                            locales={locale}
+                            format={{
+                              style: "currency",
+                              currency: currency || "USD",
+                              currencySign: "standard",
+                              minimumFractionDigits: 2,
+                              maximumFractionDigits: 2,
+                              trailingZeroDisplay: "stripIfInteger",
+                            }}
+                            value={getWalletBalanceInCurrency(wallet) ?? 0}
+                          />
                         </span>
                       </PrivacyValue>
                     )}
