@@ -1,12 +1,15 @@
 "use client";
 import { GradientText } from "@/components/global/GradientText";
+import { PrivacyValue } from "@/components/privacy-value";
+import { Skeleton } from "@/components/ui/skeleton";
 import { activePortfolioBalanceInUserCurrencyAtom } from "@/lib/atoms/PortfolioAtoms";
 import { useCurrencyRates } from "@/lib/hooks/useCurrencyRates";
 import { usePortfolios } from "@/lib/hooks/usePortfolios";
 import { CurrencyCode } from "@/lib/types";
 import { CURRENCIES } from "@/lib/utils/constants";
-import NumberFlow, { continuous } from "@number-flow/react";
+import NumberFlow from "@number-flow/react";
 import { useAtomValue } from "jotai";
+import { CircleArrowUp } from "lucide-react";
 import { useLocale } from "next-intl";
 import { useEffect, useState } from "react";
 
@@ -50,29 +53,43 @@ const BalanceTitle = (props: Props) => {
   const displayBalance = displayCurrency
     ? convertAmount(rawBalance, displayCurrency)
     : rawBalance;
+  //TODO: Change this for a balance variation component that shows the variation compared to the previous day, week, month, etc.
+  const balanceVariation = "6,66%";
 
   return (
-    <GradientText
-      variant="fire"
-      className="text-4xl font-bold tracking-tight tabular-nums cursor-pointer"
-      as="h1"
-    >
-      <NumberFlow
-        value={displayBalance}
-        locales={locale}
-        trend={0}
-        plugins={[continuous]}
-        onClick={setNextCurrency}
-        format={{
-          style: "currency",
-          currency: displayCurrency || "USD",
-          currencySign: "standard",
-          minimumFractionDigits: 2,
-          maximumFractionDigits: 2,
-          trailingZeroDisplay: "stripIfInteger",
-        }}
-      />
-    </GradientText>
+    <PrivacyValue>
+      {displayBalance ? (
+        <div className="flex items-end gap-4 ">
+          <GradientText
+            variant="fire"
+            className="text-4xl font-bold tracking-tight tabular-nums cursor-pointer"
+            as="h1"
+          >
+            <NumberFlow
+              value={displayBalance}
+              locales={locale}
+              trend={0}
+              // plugins={[continuous]}
+              onClick={setNextCurrency}
+              format={{
+                style: "currency",
+                currency: displayCurrency || "USD",
+                currencySign: "standard",
+                minimumFractionDigits: 2,
+                maximumFractionDigits: 2,
+                trailingZeroDisplay: "stripIfInteger",
+              }}
+            />
+          </GradientText>
+          <span className="text-base text-green-500 font-medium pb-2 flex items-center gap-0.5">
+            <CircleArrowUp className="size-4" />
+            {balanceVariation}
+          </span>
+        </div>
+      ) : (
+        <Skeleton className="h-10 w-48" />
+      )}
+    </PrivacyValue>
   );
 };
 

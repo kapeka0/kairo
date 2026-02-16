@@ -148,14 +148,15 @@ export function PortfolioSwitcher() {
               <span className="truncate font-medium">
                 {activePortfolio.name}
               </span>{" "}
-              <PrivacyValue>
-                <span className="truncate text-xs text-muted-foreground">
+              <span className="truncate text-xs text-muted-foreground">
+                {" "}
+                <PrivacyValue>
                   {format.number(activePortfolioBalance, {
                     style: "currency",
                     currency: activePortfolio.currency,
-                  })}
-                </span>{" "}
-              </PrivacyValue>
+                  })}{" "}
+                </PrivacyValue>
+              </span>{" "}
             </div>
             <ChevronsUpDown className="ml-auto" />
           </DropdownMenuTrigger>

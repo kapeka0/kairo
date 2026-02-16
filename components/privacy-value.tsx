@@ -20,7 +20,7 @@ export function PrivacyValue({ children, className }: PrivacyValueProps) {
     <span
       className={cn(
         "relative inline-block",
-        "blur-sm select-none",
+        "blur-md select-none pointer-events-none",
         "transition-all duration-200",
         className,
       )}
