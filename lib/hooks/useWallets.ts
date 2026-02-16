@@ -197,10 +197,10 @@ export function useWallets(portfolioId: string) {
 
   useEffect(() => {
     if (!portfolioId) return;
-
-    const interval = setInterval(() => {
+    const checkStaleWallets = () => {
       const wallets = walletsRef.current;
       if (!wallets.length) return;
+
       devLog("Checking for stale wallet balances...");
       const now = Date.now();
 
@@ -208,6 +208,7 @@ export function useWallets(portfolioId: string) {
         const lastUpdate = new Date(
           wallet.lastBalanceInTokensUpdatedAt,
         ).getTime();
+
         const isStale = now - lastUpdate > WALLETS_BALLANCE_STALE_TIME_IN_MS;
 
         if (isStale) {
@@ -215,7 +216,13 @@ export function useWallets(portfolioId: string) {
           refreshWalletBalanceWithFallback(wallet);
         }
       });
-    }, WALLETS_BALLANCE_STALE_TIME_IN_MS);
+    };
+    // Execute immediately and then every minute
+    checkStaleWallets();
+    const interval = setInterval(
+      checkStaleWallets,
+      WALLETS_BALLANCE_STALE_TIME_IN_MS,
+    );
 
     return () => clearInterval(interval);
   }, [portfolioId, refreshWalletBalanceWithFallback]);

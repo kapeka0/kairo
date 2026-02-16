@@ -35,7 +35,7 @@ const fetchPortfolios = async (): Promise<PortfoliosResponse> => {
 };
 
 const portfolioLimiter = new Bottleneck({
-  maxConcurrent: 2, // two portfolios at the same time
+  maxConcurrent: 3, // three portfolios at the same time
   minTime: 500, // at least 500ms between each portfolio processing
 });
 
@@ -47,12 +47,6 @@ export const usePortfolios = () => {
     queryKey: ["portfolios"],
     queryFn: fetchPortfolios,
     staleTime: 1000 * 60 * 5,
-    retry: (failureCount, error) => {
-      if (error.message === "Unauthorized") {
-        return false;
-      }
-      return failureCount < 3;
-    },
   });
 
   const calculatePortfolioBalance = useCallback(
@@ -88,6 +82,7 @@ export const usePortfolios = () => {
           return acc;
         }, {} as Record<TokenType, Wallet[]>);
 
+        // Fetch prices for all token types in parallel, if we add a lot of token types this could be optimized by caching prices or fetching them in batches
         const pricePromises = Object.keys(walletsByTokenType).map((tokenType) =>
           axios.get<TokenPriceResponse>(`/api/token/price`, {
             params: {
