@@ -157,10 +157,13 @@
   "Sidebar": {
     "platform": "Platform",
     "portfolio": "Portfolio",
-    "Overview": "Overview",
-    "Wallets": "Wallets",
-    "Tokens": "Tokens",
-    "Activity": "Activity"
+    "dashboard": "Dashboard",
+    "wallets": "Wallets",
+    "tokens": "Tokens",
+    "activity": "Activity"
+  },
+  "Dashboard": {
+    "title": "Portfolio balance"
   },
   "Portfolio": {
     "portfolios": "Portfolios",

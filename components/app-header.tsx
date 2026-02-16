@@ -13,16 +13,16 @@ import { useTranslations } from "next-intl";
 //eslint-disable-next-line
 import { usePathname } from "next/navigation";
 
-const routeNames: Record<string, string> = {
-  "": "Overview",
-  tokens: "Tokens",
-  wallets: "Wallets",
-  activity: "Activity",
-};
-
 export function AppHeader() {
   const pathname = usePathname();
-  const t = useTranslations("Sidebar");
+  const tSidebar = useTranslations("Sidebar");
+  type SidebarKey = Parameters<typeof tSidebar>[0];
+  const routeNames: Record<string, SidebarKey> = {
+    "": "dashboard",
+    tokens: "tokens",
+    wallets: "wallets",
+    activity: "activity",
+  };
 
   const segments = pathname.split("/").filter(Boolean);
   const lastSegment = segments[segments.length - 1];
@@ -32,7 +32,7 @@ export function AppHeader() {
     );
 
   const currentRoute = isUUID ? "" : lastSegment;
-  const pageName = routeNames[currentRoute] || "Overview";
+  const pageName = routeNames[currentRoute] || "dashboard";
 
   return (
     <header className="flex h-16 shrink-0 items-center gap-2 transition-[width,height] ease-linear group-has-data-[collapsible=icon]/sidebar-wrapper:h-12">
@@ -45,7 +45,7 @@ export function AppHeader() {
         <Breadcrumb>
           <BreadcrumbList>
             <BreadcrumbItem>
-              <BreadcrumbPage>{t(pageName)}</BreadcrumbPage>
+              <BreadcrumbPage>{tSidebar(pageName)}</BreadcrumbPage>
             </BreadcrumbItem>
           </BreadcrumbList>
         </Breadcrumb>

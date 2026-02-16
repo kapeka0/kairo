@@ -9,9 +9,9 @@ export default function WalletsPage() {
   const tWallets = useTranslations("Wallets");
 
   return (
-    <div className="flex flex-1 flex-col space-y-4">
+    <div className="flex flex-1 flex-col space-y-3">
       <PageTitle text={tWallets("title")} />
-      <div className="flex w-full justify-end">
+      <div className="flex w-full justify-end mt-10">
         <AddWalletButton />
       </div>
       <WalletsTable />

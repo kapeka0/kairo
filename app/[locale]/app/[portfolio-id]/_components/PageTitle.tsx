@@ -2,8 +2,8 @@ type Props = {
   text: string;
 };
 
-const PageTitle = (props: Props) => {
-  return <h1 className="text-2xl font-bold">{props.text}</h1>;
+const PageTitle = ({ text }: Props) => {
+  return <h1 className="text-3xl font-bold ">{text}</h1>;
 };
 
 export default PageTitle;

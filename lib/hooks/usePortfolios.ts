@@ -48,6 +48,7 @@ export const usePortfolios = () => {
     queryFn: fetchPortfolios,
     staleTime: 1000 * 60 * 5,
   });
+  const activePortfolio = query.data?.find((p) => p.id === activePortfolioId);
 
   const calculatePortfolioBalance = useCallback(
     async (portfolio: Portfolio) => {
@@ -82,7 +83,7 @@ export const usePortfolios = () => {
           return acc;
         }, {} as Record<TokenType, Wallet[]>);
 
-        // Fetch prices for all token types in parallel, if we add a lot of token types this could be optimized by caching prices or fetching them in batches
+        // Fetch prices for all token types in parallel, if we add a lot of token
         const pricePromises = Object.keys(walletsByTokenType).map((tokenType) =>
           axios.get<TokenPriceResponse>(`/api/token/price`, {
             params: {
@@ -158,5 +159,6 @@ export const usePortfolios = () => {
   return {
     ...query,
     calculatePortfolioBalance,
+    activePortfolio,
   };
 };

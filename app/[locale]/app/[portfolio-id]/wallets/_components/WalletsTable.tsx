@@ -34,6 +34,7 @@ import {
   TooltipTrigger,
 } from "@/components/ui/tooltip";
 import { refreshWalletBalance, updateWalletIcon } from "@/lib/actions/wallet";
+import { usePortfolios } from "@/lib/hooks/usePortfolios";
 import { useTokenStats } from "@/lib/hooks/useTokenStats";
 import { useWallets } from "@/lib/hooks/useWallets";
 import { formatBtc, satoshisToBtc } from "@/lib/utils/bitcoin";
@@ -54,7 +55,9 @@ export default function WalletsTable() {
     walletsSortedByBalance,
     getWalletBalanceInCurrency,
   } = useWallets(portfolioId);
-  const { btcPrice, currency, currencySymbol } = useTokenStats();
+  const { btcPrice } = useTokenStats();
+  const { activePortfolio } = usePortfolios();
+  const currency = activePortfolio?.currency;
   const [editingWalletId, setEditingWalletId] = useState<string | null>(null);
   const locale = useLocale();
 

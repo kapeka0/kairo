@@ -54,3 +54,14 @@ export type BitcoinWallet = {
 };
 
 export type PortfoliosResponse = Portfolio[];
+
+export type CurrencyCode = "USD" | "EUR" | "GBP" | "JPY" | "CNY";
+
+export type ExchangeRates = Record<CurrencyCode, number>;
+
+export interface FrankfurterResponse {
+  amount: number;
+  base: CurrencyCode;
+  date: string;
+  rates: Partial<Record<CurrencyCode, number>>;
+}
