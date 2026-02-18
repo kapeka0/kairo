@@ -238,6 +238,61 @@ export async function fetchBlockbookBalance(xpub: string) {
   return requestPromise;
 }
 
+interface BlockbookBalanceHistoryEntry {
+  time: number;
+  txs: number;
+  received: string;
+  sent: string;
+  sentToSelf: string;
+  rates: { usd: number };
+}
+
+export async function fetchWalletBalanceHistory(
+  zpub: string,
+): Promise<BlockbookBalanceHistoryEntry[]> {
+  checkCircuitBreaker();
+
+  const requestKey = `balancehistory:${zpub}`;
+
+  if (pendingRequests.has(requestKey)) {
+    devLog(`[Blockbook] Reusing pending balance history request for ${zpub}`);
+    return pendingRequests.get(requestKey)!;
+  }
+
+  const requestPromise = (async () => {
+    try {
+      devLog(`[Blockbook] Fetching balance history for ${zpub}`);
+
+      const response = await blockbookClient.get<
+        BlockbookBalanceHistoryEntry[]
+      >(`/api/v2/balancehistory/${zpub}`, {
+        params: { fiatcurrency: "usd", groupBy: 86400 },
+      });
+
+      recordSuccess();
+
+      if (!Array.isArray(response.data)) {
+        return [];
+      }
+
+      return response.data;
+    } catch (error) {
+      if (axios.isAxiosError(error) && error.response?.status === 404) {
+        return [];
+      }
+
+      recordFailure();
+      devLog("[Blockbook Balance History]:", error);
+      throw error;
+    } finally {
+      pendingRequests.delete(requestKey);
+    }
+  })();
+
+  pendingRequests.set(requestKey, requestPromise);
+  return requestPromise;
+}
+
 export async function fetchAndStoreTransactions(
   walletId: string,
   xpub: string,

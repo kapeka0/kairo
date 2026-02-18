@@ -39,3 +39,27 @@ export const getBitcoinPrice = async ({
 }) => {
   return getTokenPrice({ tokenType: TokenType.BTC, currency });
 };
+
+export const getHistoricalTokenPrices = async (
+  tokenType: TokenType,
+  days: number,
+): Promise<Map<string, number>> => {
+  const tokenMetadata = getTokenMetadata(tokenType);
+  const response = await coingeckoClient.coins.marketChart.get(
+    tokenMetadata.coingeckoId,
+    {
+      vs_currency: "usd",
+      days: days.toString(),
+    },
+  );
+
+  const prices = response.prices ?? [];
+  const dailyMap = new Map<string, number>();
+
+  for (const [timestamp, price] of prices) {
+    const date = new Date(timestamp).toISOString().slice(0, 10);
+    dailyMap.set(date, price);
+  }
+
+  return dailyMap;
+};

@@ -44,14 +44,7 @@ export function NavMain({ items }: { items: NavItem[] }) {
               >
                 <SidebarMenuItem>
                   <CollapsibleTrigger>
-                    <SidebarMenuButton
-                      tooltip={item.title}
-                      className={cn("font-medium", {
-                        "text-sidebar-foreground/70!": !item.isActive,
-                        "bg-accent  text-primary hover:text-primary!":
-                          item.isActive,
-                      })}
-                    >
+                    <SidebarMenuButton tooltip={item.title}>
                       {item.icon}
                       <span>{item.title}</span>
                       <ChevronRight className="ml-auto transition-transform duration-200 group-data-[state=open]/collapsible:rotate-90" />
@@ -92,7 +85,7 @@ export function NavMain({ items }: { items: NavItem[] }) {
                 className={cn("font-medium p-0", {
                   "p-0": open,
                   "text-sidebar-foreground/70!": !item.isActive,
-                  "bg-sidebar-accent text-primary hover:text-primary!":
+                  "bg-linear-to-l from-primary/15 to-transparent text-primary hover:text-primary!":
                     item.isActive,
                 })}
               >
@@ -103,8 +96,8 @@ export function NavMain({ items }: { items: NavItem[] }) {
                   })}
                 >
                   {item.icon}
-                  <span>{item.title}</span>
-                </Link>
+                  <span>{item.title}</span>{" "}
+                </Link>{" "}
               </SidebarMenuButton>
             </SidebarMenuItem>
           );

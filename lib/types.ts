@@ -55,6 +55,8 @@ export type BitcoinWallet = {
 
 export type PortfoliosResponse = Portfolio[];
 
+export type Period = "7d" | "30d" | "90d" | "180d" | "365d";
+
 export type CurrencyCode = "USD" | "EUR" | "GBP" | "JPY" | "CNY";
 
 export type ExchangeRates = Record<CurrencyCode, number>;

@@ -17,7 +17,7 @@ import {
   fetchBlockbookBalance,
 } from "@/lib/services/blockbook";
 import { TokenType } from "@/lib/types";
-import { generateUUID } from "@/lib/utils";
+import { devLog, generateUUID } from "@/lib/utils";
 import { createBitcoinWalletSchema } from "@/lib/validations/wallet";
 
 export const createBitcoinWallet = authActionClient
@@ -77,8 +77,9 @@ export const createBitcoinWallet = authActionClient
       .returning();
 
     if (balance !== "0") {
+      devLog("Initial balance is non-zero, fetching transactions");
       fetchAndStoreTransactions(walletId, publicKey).catch((error) => {
-        console.error("Failed to fetch initial transactions:", error);
+        console.error("Failed to fetch transactions:", error);
       });
     }
 

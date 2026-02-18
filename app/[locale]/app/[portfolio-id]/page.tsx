@@ -1,6 +1,7 @@
 import { useTranslations } from "next-intl";
 import BalanceTitle from "./_components/BalanceTitle";
 import PageTitle from "./_components/PageTitle";
+import { PortfolioBalanceChart } from "./_components/PortfolioBalanceChart";
 
 export default function DashboardPage({
   params,
@@ -14,6 +15,7 @@ export default function DashboardPage({
         <PageTitle text={tDashboard("title")} />
         <BalanceTitle />
       </div>
+      <PortfolioBalanceChart />
       <div className="grid auto-rows-min gap-4 md:grid-cols-3">
         <div className="bg-muted/50 aspect-video rounded-xl" />
         <div className="bg-muted/50 aspect-video rounded-xl" />

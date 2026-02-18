@@ -50,7 +50,8 @@
       "passwordSpecial": "Password must contain at least one special character",
       "usernameLength": "Username must be between 3 and 20 characters.",
       "usernameMaxLength": "Username cannot be more than 20 characters.",
-      "usernameInvalid": "Username can only contain letters, numbers, and underscores."
+      "usernameInvalid": "Username can only contain letters, numbers, and underscores.",
+      "nameLength": "Name must be between 3 and 50 characters."
     }
   },
   "New": {
@@ -174,5 +175,13 @@
     "getStarted": "Get started",
     "portfolios": "Portfolios",
     "addPortfolio": "Add portfolio"
+  },
+  "BalanceChart": {
+    "noHistory": "No balance history yet",
+    "7d": "7 days",
+    "30d": "30 days",
+    "90d": "3 months",
+    "180d": "6 months",
+    "365d": "1 year"
   }
 }

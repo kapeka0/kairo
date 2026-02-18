@@ -92,6 +92,14 @@
     "portfolios": "Portafolios",
     "addPortfolio": "Agregar portafolio"
   },
+  "BalanceChart": {
+    "noHistory": "Aún no hay historial de balance",
+    "7d": "7 días",
+    "30d": "30 días",
+    "90d": "3 meses",
+    "180d": "6 meses",
+    "365d": "1 año"
+  },
   "Wallets": {
     "title": "Mis Billeteras",
     "description": "Agrega tus billeteras para comenzar a rastrear tus activos cripto.",

@@ -9,7 +9,6 @@ import { CurrencyCode } from "@/lib/types";
 import { CURRENCIES } from "@/lib/utils/constants";
 import NumberFlow from "@number-flow/react";
 import { useAtomValue } from "jotai";
-import { CircleArrowUp } from "lucide-react";
 import { useLocale } from "next-intl";
 import { useEffect, useState } from "react";
 
@@ -53,8 +52,6 @@ const BalanceTitle = (props: Props) => {
   const displayBalance = displayCurrency
     ? convertAmount(rawBalance, displayCurrency)
     : rawBalance;
-  //TODO: Change this for a balance variation component that shows the variation compared to the previous day, week, month, etc.
-  const balanceVariation = "6,66%";
 
   return (
     <PrivacyValue>
@@ -81,10 +78,6 @@ const BalanceTitle = (props: Props) => {
               }}
             />
           </GradientText>
-          <span className="text-base text-green-500 font-medium pb-2 flex items-center gap-0.5">
-            <CircleArrowUp className="size-4" />
-            {balanceVariation}
-          </span>
         </div>
       ) : (
         <Skeleton className="h-10 w-48" />
