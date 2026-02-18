@@ -4,6 +4,7 @@ import { QueryClient, QueryClientProvider } from "@tanstack/react-query";
 import { ReactQueryDevtools } from "@tanstack/react-query-devtools";
 import { Provider } from "jotai";
 import { IntlErrorCode, NextIntlClientProvider } from "next-intl";
+import { NuqsAdapter } from "nuqs/adapters/next/app";
 import React from "react";
 import { TooltipProvider } from "../ui/tooltip";
 
@@ -19,6 +20,7 @@ const queryClient = new QueryClient({
 
 const ClientProviders = ({ children, messages, locale }: Props) => {
   return (
+    <NuqsAdapter>
     <NextIntlClientProvider
       messages={messages}
       locale={locale}
@@ -45,6 +47,7 @@ const ClientProviders = ({ children, messages, locale }: Props) => {
         </QueryClientProvider>
       </Provider>
     </NextIntlClientProvider>
+    </NuqsAdapter>
   );
 };
 

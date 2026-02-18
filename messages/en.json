@@ -164,7 +164,15 @@
     "activity": "Activity"
   },
   "Dashboard": {
-    "title": "Portfolio balance"
+    "title": "Portfolio balance",
+    "balanceChange": "Balance change ({period})",
+    "balanceChangeExplanation": "Shows how your portfolio balance has changed over the selected period compared to the start.",
+    "oneWeek": "1 week",
+    "oneMonth": "1 month",
+    "threeMonths": "3 months",
+    "sixMonths": "6 months",
+    "oneYear": "1 year",
+    "unrealizedGainsOrLosses": "Unrealized gains/losses"
   },
   "Portfolio": {
     "portfolios": "Portfolios",

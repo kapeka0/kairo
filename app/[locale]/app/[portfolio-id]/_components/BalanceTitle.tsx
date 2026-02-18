@@ -10,7 +10,10 @@ import { CURRENCIES } from "@/lib/utils/constants";
 import NumberFlow from "@number-flow/react";
 import { useAtomValue } from "jotai";
 import { useLocale } from "next-intl";
+import { parseAsStringEnum, useQueryState } from "nuqs";
 import { useEffect, useState } from "react";
+
+const CURRENCY_VALUES: CurrencyCode[] = ["USD", "EUR", "GBP", "JPY", "CNY"];
 
 type Props = {};
 
@@ -19,9 +22,6 @@ const BalanceTitle = (props: Props) => {
     activePortfolioBalanceInUserCurrencyAtom,
   );
 
-  const [displayCurrency, setDisplayCurrency] = useState<CurrencyCode | null>(
-    null,
-  );
   const [displayValue, setdisplayValue] = useState<number>(0);
   const locale = useLocale();
   const { activePortfolio } = usePortfolios();
@@ -29,11 +29,12 @@ const BalanceTitle = (props: Props) => {
 
   const { convertAmount } = useCurrencyRates(currency);
 
-  useEffect(() => {
-    if (currency) {
-      setDisplayCurrency(currency);
-    }
-  }, [currency]);
+  const [urlCurrency, setUrlCurrency] = useQueryState(
+    "currency",
+    parseAsStringEnum<CurrencyCode>(CURRENCY_VALUES),
+  );
+
+  const displayCurrency: CurrencyCode = urlCurrency ?? ((currency ?? "USD") as CurrencyCode);
 
   useEffect(() => {
     if (activePortfolioBalance !== 0) {
@@ -42,16 +43,14 @@ const BalanceTitle = (props: Props) => {
   }, [activePortfolioBalance]);
 
   const setNextCurrency = () => {
-    const currencies = CURRENCIES.map((c) => c.value);
-    const currentIndex = currencies.indexOf(displayCurrency || "USD");
+    const currencies = CURRENCIES.map((c) => c.value as CurrencyCode);
+    const currentIndex = currencies.indexOf(displayCurrency);
     const nextIndex = (currentIndex + 1) % currencies.length;
-    setDisplayCurrency(currencies[nextIndex] as CurrencyCode);
+    setUrlCurrency(currencies[nextIndex]);
   };
 
   const rawBalance = displayValue;
-  const displayBalance = displayCurrency
-    ? convertAmount(rawBalance, displayCurrency)
-    : rawBalance;
+  const displayBalance = convertAmount(rawBalance, displayCurrency);
 
   return (
     <PrivacyValue>
@@ -70,7 +69,7 @@ const BalanceTitle = (props: Props) => {
               onClick={setNextCurrency}
               format={{
                 style: "currency",
-                currency: displayCurrency || "USD",
+                currency: displayCurrency,
                 currencySign: "standard",
                 minimumFractionDigits: 2,
                 maximumFractionDigits: 2,

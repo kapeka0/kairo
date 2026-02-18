@@ -24,7 +24,7 @@ import { useCurrencyRates } from "@/lib/hooks/useCurrencyRates";
 import { usePortfolios } from "@/lib/hooks/usePortfolios";
 import { CurrencyCode, Period } from "@/lib/types";
 import { useLocale, useTranslations } from "next-intl";
-import { useState } from "react";
+import { parseAsStringEnum, useQueryState } from "nuqs";
 import { Area, AreaChart, CartesianGrid, XAxis } from "recharts";
 
 const chartConfig = {
@@ -43,8 +43,13 @@ function formatDate(
   return new Date(year, month - 1, day).toLocaleDateString(locale, options);
 }
 
+const PERIOD_VALUES: Period[] = ["7d", "30d", "90d", "180d", "365d"];
+
 export function PortfolioBalanceChart() {
-  const [period, setPeriod] = useState<Period>("30d");
+  const [period, setPeriod] = useQueryState<Period>(
+    "period",
+    parseAsStringEnum<Period>(PERIOD_VALUES).withDefault("30d"),
+  );
   const locale = useLocale();
   const t = useTranslations("BalanceChart");
   const PERIODS: { value: Period; label: string }[] = [
@@ -153,7 +158,7 @@ export function PortfolioBalanceChart() {
               />
               <Area
                 dataKey="value"
-                type="natural"
+                type="basis"
                 fill="url(#fillValue)"
                 fillOpacity={1}
                 stroke="var(--color-value)"
