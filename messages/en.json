@@ -172,7 +172,9 @@
     "threeMonths": "3 months",
     "sixMonths": "6 months",
     "oneYear": "1 year",
-    "unrealizedGainsOrLosses": "Unrealized gains/losses"
+    "unrealizedGainsOrLosses": "Unrealized gains/losses",
+    "unrealizedPnl": "Unrealized PnL",
+    "unrealizedPnlExplanation": "Difference between the current value and your cost basis, computed using the weighted average purchase price (WAP)."
   },
   "Portfolio": {
     "portfolios": "Portfolios",

@@ -23,8 +23,10 @@ import { useBalanceHistory } from "@/lib/hooks/useBalanceHistory";
 import { useCurrencyRates } from "@/lib/hooks/useCurrencyRates";
 import { usePortfolios } from "@/lib/hooks/usePortfolios";
 import { CurrencyCode, Period } from "@/lib/types";
+import { CURRENCIES } from "@/lib/utils/constants";
 import { useLocale, useTranslations } from "next-intl";
 import { parseAsStringEnum, useQueryState } from "nuqs";
+import { useEffect, useState } from "react";
 import { Area, AreaChart, CartesianGrid, XAxis } from "recharts";
 
 const chartConfig = {
@@ -44,7 +46,7 @@ function formatDate(
 }
 
 const PERIOD_VALUES: Period[] = ["7d", "30d", "90d", "180d", "365d"];
-
+const CURRENCY_VALUES: CurrencyCode[] = CURRENCIES.map((c) => c.value);
 export function PortfolioBalanceChart() {
   const [period, setPeriod] = useQueryState<Period>(
     "period",
@@ -62,12 +64,28 @@ export function PortfolioBalanceChart() {
   const { activePortfolio } = usePortfolios();
   const portfolioCurrency = (activePortfolio?.currency ??
     "USD") as CurrencyCode;
+  const [urlCurrency] = useQueryState(
+    "currency",
+    parseAsStringEnum<CurrencyCode>(CURRENCY_VALUES),
+  );
+  const displayCurrency: CurrencyCode = urlCurrency ?? portfolioCurrency;
   const { data, isLoading, isError } = useBalanceHistory(period);
   const { convertAmount } = useCurrencyRates("USD");
 
+  const [chartDisplayCurrency, setChartDisplayCurrency] =
+    useState(displayCurrency);
+
+  useEffect(() => {
+    // Delay so Rechart detects the change and animates the chart update instead of doing a hard switch
+    const timer = setTimeout(() => {
+      setChartDisplayCurrency(displayCurrency);
+    }, 1);
+    return () => clearTimeout(timer);
+  }, [displayCurrency]);
+
   const chartData = data.map((entry) => ({
     date: entry.date,
-    value: convertAmount(entry.totalUsd, portfolioCurrency),
+    value: convertAmount(entry.totalUsd, chartDisplayCurrency),
   }));
 
   if (isLoading) {
@@ -149,7 +167,7 @@ export function PortfolioBalanceChart() {
                       <p className="text-foreground font-mono font-medium tabular-nums">
                         {new Intl.NumberFormat(locale, {
                           style: "currency",
-                          currency: portfolioCurrency,
+                          currency: displayCurrency,
                         }).format(value)}
                       </p>
                     </div>

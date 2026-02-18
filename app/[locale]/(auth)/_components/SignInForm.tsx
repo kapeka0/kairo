@@ -18,10 +18,10 @@ import {
 } from "@/components/ui/form";
 import { Input } from "@/components/ui/input";
 import { ShinyButton } from "@/components/ui/shiny-button";
+import { useRouter } from "@/i18n/routing";
 import { signIn } from "@/lib/actions/auth";
 import { activePortfolioIdAtom } from "@/lib/atoms/PortfolioAtoms";
 import { useAtomValue } from "jotai";
-import { useRouter } from "next/router";
 import { toast } from "sonner";
 
 const formSchema = z.object({

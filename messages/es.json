@@ -92,6 +92,19 @@
     "portfolios": "Portafolios",
     "addPortfolio": "Agregar portafolio"
   },
+  "Dashboard": {
+    "title": "Balance del portafolio",
+    "balanceChange": "Cambio de balance ({period})",
+    "balanceChangeExplanation": "Muestra cómo ha cambiado el balance de tu portafolio durante el período seleccionado en comparación con el inicio.",
+    "oneWeek": "1 semana",
+    "oneMonth": "1 mes",
+    "threeMonths": "3 meses",
+    "sixMonths": "6 meses",
+    "oneYear": "1 año",
+    "unrealizedGainsOrLosses": "Ganancias/pérdidas no realizadas",
+    "unrealizedPnl": "PnL no realizado",
+    "unrealizedPnlExplanation": "Diferencia entre el valor actual y tu base de coste, calculada usando el precio medio ponderado (PMP)."
+  },
   "BalanceChart": {
     "noHistory": "Aún no hay historial de balance",
     "7d": "7 días",
