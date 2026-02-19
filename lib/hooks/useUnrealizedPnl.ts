@@ -8,7 +8,6 @@ import { activePortfolioIdAtom } from "../atoms/PortfolioAtoms";
 export type UnrealizedPnlData = {
   unrealizedPnlUsd: number;
   unrealizedPnlPercent: number;
-  pmp: number;
   costBasisUsd: number;
   currentValueUsd: number;
 } | null;

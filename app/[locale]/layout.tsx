@@ -102,7 +102,7 @@ export default async function RootLayout({
         {/* icon */}
         <link
           rel="icon"
-          href="/images/logos/logo-square.svg"
+          href="/images/logos/logo-square-light.svg"
           type="image/svg+xml"
           sizes="any"
         />

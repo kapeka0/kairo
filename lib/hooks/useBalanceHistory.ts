@@ -1,8 +1,8 @@
 "use client";
 
-import { useAtom } from "jotai";
 import { useQuery } from "@tanstack/react-query";
 import axios from "axios";
+import { useAtom } from "jotai";
 import { activePortfolioIdAtom } from "../atoms/PortfolioAtoms";
 import { Period } from "../types";
 
@@ -30,6 +30,7 @@ export function useBalanceHistory(period: Period) {
   return {
     data: query.data ?? [],
     isLoading: query.isLoading,
+    isPending: query.isPending,
     isError: query.isError,
   };
 }

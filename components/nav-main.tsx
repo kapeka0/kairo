@@ -19,13 +19,12 @@ import {
   SidebarMenuSubItem,
   useSidebar,
 } from "@/components/ui/sidebar";
-import { Link, usePathname } from "@/i18n/routing";
+import { Link } from "@/i18n/routing";
 import { cn } from "@/lib/utils";
 import { NavItem } from "./app-sidebar";
 
 export function NavMain({ items }: { items: NavItem[] }) {
   const tS = useTranslations("Sidebar");
-  const pathname = usePathname();
   const { open } = useSidebar();
   return (
     <SidebarGroup>
@@ -45,7 +44,7 @@ export function NavMain({ items }: { items: NavItem[] }) {
                 <SidebarMenuItem>
                   <CollapsibleTrigger>
                     <SidebarMenuButton tooltip={item.title}>
-                      {item.icon}
+                      {item.icon && <item.icon />}
                       <span>{item.title}</span>
                       <ChevronRight className="ml-auto transition-transform duration-200 group-data-[state=open]/collapsible:rotate-90" />
                     </SidebarMenuButton>
@@ -95,9 +94,15 @@ export function NavMain({ items }: { items: NavItem[] }) {
                     "px-2": open,
                   })}
                 >
-                  {item.icon}
+                  {item.icon && (
+                    <item.icon
+                      className={cn("", {
+                        "fill-primary": item.isActive,
+                      })}
+                    />
+                  )}
                   <span>{item.title}</span>{" "}
-                </Link>{" "}
+                </Link>
               </SidebarMenuButton>
             </SidebarMenuItem>
           );

@@ -2,6 +2,7 @@ import { useTranslations } from "next-intl";
 import { BalancePeriodChange } from "./_components/BalancePeriodChange";
 import BalanceTitle from "./_components/BalanceTitle";
 import PageTitle from "./_components/PageTitle";
+import { PeriodTabs } from "./_components/PeriodTabs";
 import { PortfolioBalanceChart } from "./_components/PortfolioBalanceChart";
 
 export default function DashboardPage({
@@ -15,7 +16,10 @@ export default function DashboardPage({
       <div className="flex flex-col items-start gap-1">
         <PageTitle text={tDashboard("title")} />
         <BalanceTitle />
-        <BalancePeriodChange />
+        <div className="flex w-full items-end justify-between">
+          <BalancePeriodChange />
+          <PeriodTabs />
+        </div>
       </div>
       <PortfolioBalanceChart />
       <div className="grid auto-rows-min gap-4 md:grid-cols-3">

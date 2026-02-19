@@ -174,7 +174,7 @@
     "oneYear": "1 year",
     "unrealizedGainsOrLosses": "Unrealized gains/losses",
     "unrealizedPnl": "Unrealized PnL",
-    "unrealizedPnlExplanation": "Difference between the current value and your cost basis, computed using the weighted average purchase price (WAP)."
+    "unrealizedPnlExplanation": "Estimated profit or loss if you sold your assets right now, calculated as the difference between your average purchase price (WAP) and the current market price."
   },
   "Portfolio": {
     "portfolios": "Portfolios",

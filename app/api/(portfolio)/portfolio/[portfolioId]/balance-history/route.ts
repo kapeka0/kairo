@@ -1,11 +1,10 @@
 import { auth } from "@/lib/auth";
 import { existsPortfolioByIdAndUserId } from "@/lib/db/data/portfolio";
 import { getWalletsByPortfolioId } from "@/lib/db/data/wallet";
-import { fetchWalletBalanceHistory } from "@/lib/services/blockbook";
 import { getHistoricalTokenPrices } from "@/lib/services/coingecko";
+import { computeWalletDayMap } from "@/lib/services/wallet-history";
 import { Period, TokenType } from "@/lib/types";
 import { validateRequest, parseSearchParams } from "@/lib/utils/api-validation";
-import { convertToZpub } from "@/lib/utils/bitcoin";
 import { portfolioIdParamSchema } from "@/lib/validations/api";
 import { headers } from "next/headers";
 import { NextRequest, NextResponse } from "next/server";
@@ -75,51 +74,44 @@ export async function GET(
       return NextResponse.json([]);
     }
 
-    const walletDayMaps = await Promise.all(
-      wallets.map(async (wallet) => {
-        const zpub = convertToZpub(wallet.publicKey);
-        const entries = await fetchWalletBalanceHistory(zpub);
+    const walletResults = await Promise.all(wallets.map(computeWalletDayMap));
 
-        entries.sort((a, b) => a.time - b.time);
-
-        const dayMap = new Map<string, bigint>();
-        let runningBalance = BigInt(0);
-
-        for (const entry of entries) {
-          runningBalance += BigInt(entry.received) - BigInt(entry.sent);
-          const date = new Date(entry.time * 1000).toISOString().slice(0, 10);
-          dayMap.set(date, runningBalance);
-        }
-
-        return dayMap;
-      }),
-    );
+    const byType = new Map<
+      TokenType,
+      { dayMap: Map<string, bigint>; decimals: number }[]
+    >();
+    for (const r of walletResults) {
+      if (!byType.has(r.tokenType)) byType.set(r.tokenType, []);
+      byType.get(r.tokenType)!.push({ dayMap: r.dayMap, decimals: r.decimals });
+    }
 
     const allDates = new Set<string>();
-    for (const dayMap of walletDayMaps) {
-      for (const date of dayMap.keys()) {
+    for (const r of walletResults) {
+      for (const date of r.dayMap.keys()) {
         allDates.add(date);
       }
     }
 
     const sortedDates = Array.from(allDates).sort();
 
-    const lastKnownBalance: bigint[] = walletDayMaps.map(() => BigInt(0));
-    const aggregatedSatoshis = new Map<string, bigint>();
+    const aggregatedByType = new Map<TokenType, Map<string, bigint>>();
+    for (const [type, typeWallets] of byType) {
+      const dayMaps = typeWallets.map((w) => w.dayMap);
+      const lastKnownBalance: bigint[] = dayMaps.map(() => BigInt(0));
+      const typeAggMap = new Map<string, bigint>();
 
-    for (const date of sortedDates) {
-      for (let i = 0; i < walletDayMaps.length; i++) {
-        const entry = walletDayMaps[i].get(date);
-        if (entry !== undefined) {
-          lastKnownBalance[i] = entry;
+      for (const date of sortedDates) {
+        for (let i = 0; i < dayMaps.length; i++) {
+          const entry = dayMaps[i].get(date);
+          if (entry !== undefined) {
+            lastKnownBalance[i] = entry;
+          }
         }
+        const total = lastKnownBalance.reduce((sum, b) => sum + b, BigInt(0));
+        typeAggMap.set(date, total);
       }
 
-      const totalSatoshis = lastKnownBalance.reduce(
-        (sum, b) => sum + b,
-        BigInt(0),
-      );
-      aggregatedSatoshis.set(date, totalSatoshis);
+      aggregatedByType.set(type, typeAggMap);
     }
 
     const days = PERIOD_DAYS[period];
@@ -129,15 +121,36 @@ export async function GET(
     const startDateStr = startDate.toISOString().slice(0, 10);
     const todayStr = now.toISOString().slice(0, 10);
 
-    const sortedAggregated = Array.from(aggregatedSatoshis.entries()).sort(
-      ([a], [b]) => a.localeCompare(b),
+    const priceMapByType = new Map<TokenType, Map<string, number>>();
+    await Promise.all(
+      Array.from(byType.keys()).map(async (type) => {
+        priceMapByType.set(type, await getHistoricalTokenPrices(type, days));
+      }),
     );
 
-    let carryForwardSatoshis = BigInt(0);
-    for (const [date, satoshis] of sortedAggregated) {
-      if (date < startDateStr) {
-        carryForwardSatoshis = satoshis;
+    const sortedAggByType = new Map<TokenType, [string, bigint][]>();
+    for (const [type, typeAggMap] of aggregatedByType) {
+      sortedAggByType.set(
+        type,
+        Array.from(typeAggMap.entries()).sort(([a], [b]) =>
+          a.localeCompare(b),
+        ),
+      );
+    }
+
+    const carryForwardByType = new Map<TokenType, bigint>();
+    const aggIdxByType = new Map<TokenType, number>();
+    for (const [type, sortedAgg] of sortedAggByType) {
+      let cf = BigInt(0);
+      for (const [date, val] of sortedAgg) {
+        if (date < startDateStr) {
+          cf = val;
+        }
       }
+      carryForwardByType.set(type, cf);
+      let idx = sortedAgg.findIndex(([d]) => d >= startDateStr);
+      if (idx === -1) idx = sortedAgg.length;
+      aggIdxByType.set(type, idx);
     }
 
     const periodDates: string[] = [];
@@ -147,28 +160,28 @@ export async function GET(
       current.setDate(current.getDate() + 1);
     }
 
-    const dailyPriceMap = await getHistoricalTokenPrices(TokenType.BTC, days);
-
     const result: { date: string; totalUsd: number }[] = [];
-    let aggIdx = sortedAggregated.findIndex(([d]) => d >= startDateStr);
-    if (aggIdx === -1) aggIdx = sortedAggregated.length;
 
     for (let i = 0; i < periodDates.length; i++) {
       const dateStr = periodDates[i];
 
-      if (
-        aggIdx < sortedAggregated.length &&
-        sortedAggregated[aggIdx][0] === dateStr
-      ) {
-        carryForwardSatoshis = sortedAggregated[aggIdx][1];
-        aggIdx++;
+      for (const [type, sortedAgg] of sortedAggByType) {
+        const idx = aggIdxByType.get(type)!;
+        if (idx < sortedAgg.length && sortedAgg[idx][0] === dateStr) {
+          carryForwardByType.set(type, sortedAgg[idx][1]);
+          aggIdxByType.set(type, idx + 1);
+        }
       }
 
-      const dailyRate = dailyPriceMap.get(dateStr) ?? 0;
-      const totalUsd =
-        dailyRate > 0
-          ? (Number(carryForwardSatoshis) / 100_000_000) * dailyRate
-          : 0;
+      let totalUsd = 0;
+      for (const [type, typeWallets] of byType) {
+        const { decimals } = typeWallets[0];
+        const balance = carryForwardByType.get(type) ?? BigInt(0);
+        const price = priceMapByType.get(type)?.get(dateStr) ?? 0;
+        if (price > 0) {
+          totalUsd += (Number(balance) / Math.pow(10, decimals)) * price;
+        }
+      }
 
       result.push({ date: dateStr, totalUsd });
     }

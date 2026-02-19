@@ -67,3 +67,10 @@ export interface FrankfurterResponse {
   date: string;
   rates: Partial<Record<CurrencyCode, number>>;
 }
+
+export interface FrankfurterTimeSeriesResponse {
+  base: CurrencyCode;
+  start_date: string;
+  end_date: string;
+  rates: Record<string, Partial<Record<CurrencyCode, number>>>;
+}

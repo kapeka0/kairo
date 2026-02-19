@@ -1,14 +1,20 @@
 import { auth } from "@/lib/auth";
 import { existsPortfolioByIdAndUserId } from "@/lib/db/data/portfolio";
 import { getWalletsByPortfolioId } from "@/lib/db/data/wallet";
-import { fetchWalletBalanceHistory } from "@/lib/services/blockbook";
 import { getTokenPrice } from "@/lib/services/coingecko";
+import { computeWalletPnlData } from "@/lib/services/wallet-history";
 import { TokenType } from "@/lib/types";
 import { validateRequest } from "@/lib/utils/api-validation";
-import { convertToZpub } from "@/lib/utils/bitcoin";
 import { portfolioIdParamSchema } from "@/lib/validations/api";
 import { headers } from "next/headers";
 import { NextRequest, NextResponse } from "next/server";
+
+type TypeAgg = {
+  totalCostUsd: number;
+  totalTokensReceived: number;
+  currentTokenBalance: number;
+  decimals: number;
+};
 
 export async function GET(
   _request: NextRequest,
@@ -50,48 +56,59 @@ export async function GET(
       return NextResponse.json(null);
     }
 
-    let totalCostUsd = 0;
-    let totalBtcReceived = 0;
-    let currentBtcBalance = 0;
+    const walletResults = await Promise.all(wallets.map(computeWalletPnlData));
 
-    for (const wallet of wallets) {
-      const zpub = convertToZpub(wallet.publicKey);
-      const entries = await fetchWalletBalanceHistory(zpub);
-
-      for (const entry of entries) {
-        const receivedSatoshis = Number(entry.received);
-        if (receivedSatoshis > 0 && entry.rates?.usd > 0) {
-          const btcReceived = receivedSatoshis / 1e8;
-          totalBtcReceived += btcReceived;
-          totalCostUsd += btcReceived * entry.rates.usd;
-        }
+    const byType = new Map<TokenType, TypeAgg>();
+    for (const r of walletResults) {
+      const existing = byType.get(r.tokenType);
+      if (existing) {
+        existing.totalCostUsd += r.totalCostUsd;
+        existing.totalTokensReceived += r.totalTokensReceived;
+        existing.currentTokenBalance += r.currentTokenBalance;
+      } else {
+        byType.set(r.tokenType, {
+          totalCostUsd: r.totalCostUsd,
+          totalTokensReceived: r.totalTokensReceived,
+          currentTokenBalance: r.currentTokenBalance,
+          decimals: r.decimals,
+        });
       }
-
-      currentBtcBalance += Number(wallet.lastBalanceInSatoshis) / 1e8;
     }
 
-    if (totalBtcReceived === 0) {
+    const totalReceived = Array.from(byType.values()).reduce(
+      (sum, agg) => sum + agg.totalTokensReceived,
+      0,
+    );
+
+    if (totalReceived === 0) {
       return NextResponse.json(null);
     }
 
-    const pmp = totalCostUsd / totalBtcReceived;
+    let totalCostBasisUsd = 0;
+    let totalCurrentValueUsd = 0;
 
-    const currentBtcPrice = await getTokenPrice({
-      tokenType: TokenType.BTC,
-      currency: "usd",
-    });
+    await Promise.all(
+      Array.from(byType.entries()).map(async ([type, agg]) => {
+        if (agg.totalTokensReceived === 0) return;
+        const currentPrice = await getTokenPrice({
+          tokenType: type,
+          currency: "usd",
+        });
+        const pmp = agg.totalCostUsd / agg.totalTokensReceived;
+        totalCurrentValueUsd += agg.currentTokenBalance * currentPrice;
+        totalCostBasisUsd += agg.currentTokenBalance * pmp;
+      }),
+    );
 
-    const currentValueUsd = currentBtcBalance * currentBtcPrice;
-    const costBasisUsd = currentBtcBalance * pmp;
-    const unrealizedPnlUsd = currentValueUsd - costBasisUsd;
-    const unrealizedPnlPercent = costBasisUsd !== 0 ? unrealizedPnlUsd / costBasisUsd : 0;
+    const unrealizedPnlUsd = totalCurrentValueUsd - totalCostBasisUsd;
+    const unrealizedPnlPercent =
+      totalCostBasisUsd !== 0 ? unrealizedPnlUsd / totalCostBasisUsd : 0;
 
     return NextResponse.json({
       unrealizedPnlUsd,
       unrealizedPnlPercent,
-      pmp,
-      costBasisUsd,
-      currentValueUsd,
+      costBasisUsd: totalCostBasisUsd,
+      currentValueUsd: totalCurrentValueUsd,
     });
   } catch (error) {
     console.error("Error computing unrealized PnL:", error);

@@ -9,35 +9,26 @@ import {
 } from "@/components/ui/tooltip";
 import { useBalanceHistory } from "@/lib/hooks/useBalanceHistory";
 import { useCurrencyRates } from "@/lib/hooks/useCurrencyRates";
-import { usePortfolios } from "@/lib/hooks/usePortfolios";
+import { useDisplayCurrency } from "@/lib/hooks/useDisplayCurrency";
+import { usePeriod } from "@/lib/hooks/usePeriod";
 import { useUnrealizedPnl } from "@/lib/hooks/useUnrealizedPnl";
-import { CurrencyCode, Period } from "@/lib/types";
 import { cn, devLog } from "@/lib/utils";
-import { CURRENCIES } from "@/lib/utils/constants";
 import NumberFlow, { NumberFlowGroup } from "@number-flow/react";
-import { ArrowDownRight, ArrowUpLeft } from "lucide-react";
+import { TrendingDown, TrendingUp } from "lucide-react";
 import { useLocale, useTranslations } from "next-intl";
-import { parseAsStringEnum, useQueryState } from "nuqs";
-const PERIOD_VALUES: Period[] = ["7d", "30d", "90d", "180d", "365d"];
-const CURRENCY_VALUES: CurrencyCode[] = CURRENCIES.map((c) => c.value);
+import { useMemo } from "react";
 
 export function BalancePeriodChange() {
-  const [period] = useQueryState<Period>(
-    "period",
-    parseAsStringEnum<Period>(PERIOD_VALUES).withDefault("30d"),
-  );
+  const [period] = usePeriod();
   const tDashboard = useTranslations("Dashboard");
-  const { activePortfolio } = usePortfolios();
-  const portfolioCurrency = (activePortfolio?.currency ??
-    "USD") as CurrencyCode;
-  const [urlCurrency] = useQueryState(
-    "currency",
-    parseAsStringEnum<CurrencyCode>(CURRENCY_VALUES),
-  );
-  const displayCurrency: CurrencyCode = urlCurrency ?? portfolioCurrency;
+  const [displayCurrency] = useDisplayCurrency();
   const { data, isLoading } = useBalanceHistory(period);
   const { data: pnlData } = useUnrealizedPnl();
-  const { convertAmount } = useCurrencyRates("USD");
+  const dateRange = useMemo(() => {
+    if (data.length < 2) return undefined;
+    return { startDate: data[0].date, endDate: data[data.length - 1].date };
+  }, [data]);
+  const { convertAmount } = useCurrencyRates("USD", dateRange);
   const locale = useLocale();
 
   if (isLoading) {
@@ -60,7 +51,9 @@ export function BalancePeriodChange() {
     changePercent,
   });
 
-  const changeInCurrency = convertAmount(changeUsd, displayCurrency);
+  const firstInCurrency = convertAmount(firstEntry.totalUsd, displayCurrency, firstEntry.date);
+  const lastInCurrency = convertAmount(lastEntry.totalUsd, displayCurrency, lastEntry.date);
+  const changeInCurrency = lastInCurrency - firstInCurrency;
   const isPositive = changeInCurrency >= 0;
 
   const balanceChangeText = tDashboard("balanceChange", {
@@ -121,9 +114,9 @@ export function BalancePeriodChange() {
                 <span className="flex items-center gap-1">
                   (
                   {isPositive ? (
-                    <ArrowUpLeft className="size-4" />
+                    <TrendingUp className="size-4" />
                   ) : (
-                    <ArrowDownRight className="size-4" />
+                    <TrendingDown className="size-4" />
                   )}{" "}
                   <NumberFlow
                     value={changePercent}
@@ -178,9 +171,9 @@ export function BalancePeriodChange() {
                   <span className="flex items-center gap-1">
                     (
                     {isPnlPositive ? (
-                      <ArrowUpLeft className="size-4" />
+                      <TrendingUp className="size-4" />
                     ) : (
-                      <ArrowDownRight className="size-4" />
+                      <TrendingDown className="size-4" />
                     )}{" "}
                     <NumberFlow
                       value={pnlData.unrealizedPnlPercent}

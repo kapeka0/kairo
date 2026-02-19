@@ -1,32 +1,18 @@
 "use client";
 
-import {
-  Card,
-  CardAction,
-  CardContent,
-  CardHeader,
-} from "@/components/ui/card";
+import { Card, CardContent } from "@/components/ui/card";
 import {
   ChartConfig,
   ChartContainer,
   ChartTooltip,
 } from "@/components/ui/chart";
-import {
-  Select,
-  SelectContent,
-  SelectItem,
-  SelectTrigger,
-  SelectValue,
-} from "@/components/ui/select";
 import { Skeleton } from "@/components/ui/skeleton";
 import { useBalanceHistory } from "@/lib/hooks/useBalanceHistory";
 import { useCurrencyRates } from "@/lib/hooks/useCurrencyRates";
-import { usePortfolios } from "@/lib/hooks/usePortfolios";
-import { CurrencyCode, Period } from "@/lib/types";
-import { CURRENCIES } from "@/lib/utils/constants";
+import { useDisplayCurrency } from "@/lib/hooks/useDisplayCurrency";
+import { usePeriod } from "@/lib/hooks/usePeriod";
 import { useLocale, useTranslations } from "next-intl";
-import { parseAsStringEnum, useQueryState } from "nuqs";
-import { useEffect, useState } from "react";
+import { useEffect, useMemo, useState } from "react";
 import { Area, AreaChart, CartesianGrid, XAxis } from "recharts";
 
 const chartConfig = {
@@ -45,32 +31,24 @@ function formatDate(
   return new Date(year, month - 1, day).toLocaleDateString(locale, options);
 }
 
-const PERIOD_VALUES: Period[] = ["7d", "30d", "90d", "180d", "365d"];
-const CURRENCY_VALUES: CurrencyCode[] = CURRENCIES.map((c) => c.value);
 export function PortfolioBalanceChart() {
-  const [period, setPeriod] = useQueryState<Period>(
-    "period",
-    parseAsStringEnum<Period>(PERIOD_VALUES).withDefault("30d"),
-  );
+  const [period] = usePeriod();
   const locale = useLocale();
   const t = useTranslations("BalanceChart");
-  const PERIODS: { value: Period; label: string }[] = [
-    { value: "7d", label: t("7d") },
-    { value: "30d", label: t("30d") },
-    { value: "90d", label: t("90d") },
-    { value: "180d", label: t("180d") },
-    { value: "365d", label: t("365d") },
-  ];
-  const { activePortfolio } = usePortfolios();
-  const portfolioCurrency = (activePortfolio?.currency ??
-    "USD") as CurrencyCode;
-  const [urlCurrency] = useQueryState(
-    "currency",
-    parseAsStringEnum<CurrencyCode>(CURRENCY_VALUES),
-  );
-  const displayCurrency: CurrencyCode = urlCurrency ?? portfolioCurrency;
-  const { data, isLoading, isError } = useBalanceHistory(period);
-  const { convertAmount } = useCurrencyRates("USD");
+  const [displayCurrency] = useDisplayCurrency();
+  const {
+    data: balanceHistoryData,
+    isPending,
+    isError,
+  } = useBalanceHistory(period);
+  const dateRange = useMemo(() => {
+    if (balanceHistoryData.length === 0) return undefined;
+    return {
+      startDate: balanceHistoryData[0].date,
+      endDate: balanceHistoryData[balanceHistoryData.length - 1].date,
+    };
+  }, [balanceHistoryData]);
+  const { convertAmount } = useCurrencyRates("USD", dateRange);
 
   const [chartDisplayCurrency, setChartDisplayCurrency] =
     useState(displayCurrency);
@@ -83,12 +61,14 @@ export function PortfolioBalanceChart() {
     return () => clearTimeout(timer);
   }, [displayCurrency]);
 
-  const chartData = data.map((entry) => ({
-    date: entry.date,
-    value: convertAmount(entry.totalUsd, chartDisplayCurrency),
-  }));
+  const chartData = useMemo(() => {
+    return balanceHistoryData.map((entry) => ({
+      date: entry.date,
+      value: convertAmount(entry.totalUsd, chartDisplayCurrency, entry.date),
+    }));
+  }, [balanceHistoryData, convertAmount, chartDisplayCurrency]);
 
-  if (isLoading) {
+  if (isPending) {
     return <Skeleton className="h-75 w-full rounded-xl" />;
   }
 
@@ -98,22 +78,6 @@ export function PortfolioBalanceChart() {
 
   return (
     <Card>
-      <CardHeader>
-        <CardAction>
-          <Select value={period} onValueChange={(v) => setPeriod(v as Period)}>
-            <SelectTrigger className="w-32.5">
-              <SelectValue />
-            </SelectTrigger>
-            <SelectContent>
-              {PERIODS.map((p) => (
-                <SelectItem key={p.value} value={p.value}>
-                  {p.label}
-                </SelectItem>
-              ))}
-            </SelectContent>
-          </Select>
-        </CardAction>
-      </CardHeader>
       <CardContent>
         {chartData.length === 0 ? (
           <div className="h-75 flex items-center justify-center text-muted-foreground text-sm">
@@ -121,7 +85,12 @@ export function PortfolioBalanceChart() {
           </div>
         ) : (
           <ChartContainer config={chartConfig} className="h-75 w-full">
-            <AreaChart data={chartData} margin={{ left: 0, right: 0 }}>
+            {/* NOTE: We use Math.random to ensure Rechart detects the data changed and animates the update https://github.com/recharts/recharts/issues/846#issuecomment-1030392228, it's a workaround that will make React rerender all the time, but I have not see any UI issues so I will fix it in another time */}
+            <AreaChart
+              key={Math.random()}
+              data={chartData}
+              margin={{ left: 0, right: 0 }}
+            >
               <defs>
                 <linearGradient id="fillValue" x1="0" y1="0" x2="0" y2="1">
                   <stop
@@ -176,7 +145,7 @@ export function PortfolioBalanceChart() {
               />
               <Area
                 dataKey="value"
-                type="basis"
+                type="monotone"
                 fill="url(#fillValue)"
                 fillOpacity={1}
                 stroke="var(--color-value)"

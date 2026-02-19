@@ -26,7 +26,7 @@ import { PortfolioSwitcher } from "./ui/portfolio-switcher";
 export interface NavItem {
   title: string;
   url: string;
-  icon?: React.ReactElement;
+  icon?: React.ComponentType<any>;
   isActive: boolean;
   items?: NavItem[];
 }
@@ -57,26 +57,26 @@ export function AppSidebar({ ...props }: React.ComponentProps<typeof Sidebar>) {
       {
         title: tSidebar("dashboard"),
         url: `/app/${portfolioId}`,
-        icon: <LayoutDashboard />,
+        icon: LayoutDashboard,
         isActive: pathname.endsWith(`/${portfolioId}`),
       },
       {
         title: tSidebar("wallets"),
         url: `/app/${portfolioId}/wallets`,
-        icon: <WalletMinimal />,
+        icon: WalletMinimal,
         isActive: pathname.includes(`/${portfolioId}/wallets`),
       },
       {
         title: tSidebar("tokens"),
         url: `/app/${portfolioId}/tokens`,
         isActive: pathname.includes(`/${portfolioId}/tokens`),
-        icon: <Package />,
+        icon: Package,
       },
       {
         title: tSidebar("activity"),
         url: `/app/${portfolioId}/activity`,
         isActive: pathname.includes(`/${portfolioId}/activity`),
-        icon: <Activity />,
+        icon: Activity,
       },
     ],
     // projects: [
