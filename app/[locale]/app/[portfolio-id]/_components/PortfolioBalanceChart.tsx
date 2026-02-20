@@ -1,5 +1,4 @@
 "use client";
-
 import { Card, CardContent } from "@/components/ui/card";
 import {
   ChartConfig,
@@ -12,7 +11,7 @@ import { useCurrencyRates } from "@/lib/hooks/useCurrencyRates";
 import { useDisplayCurrency } from "@/lib/hooks/useDisplayCurrency";
 import { usePeriod } from "@/lib/hooks/usePeriod";
 import { useLocale, useTranslations } from "next-intl";
-import { useEffect, useMemo, useState } from "react";
+import { useMemo } from "react";
 import { Area, AreaChart, CartesianGrid, XAxis } from "recharts";
 
 const chartConfig = {
@@ -35,7 +34,7 @@ export function PortfolioBalanceChart() {
   const [period] = usePeriod();
   const locale = useLocale();
   const t = useTranslations("BalanceChart");
-  const [displayCurrency] = useDisplayCurrency();
+  const { displayCurrency } = useDisplayCurrency();
   const {
     data: balanceHistoryData,
     isPending,
@@ -50,23 +49,12 @@ export function PortfolioBalanceChart() {
   }, [balanceHistoryData]);
   const { convertAmount } = useCurrencyRates("USD", dateRange);
 
-  const [chartDisplayCurrency, setChartDisplayCurrency] =
-    useState(displayCurrency);
-
-  useEffect(() => {
-    // Delay so Rechart detects the change and animates the chart update instead of doing a hard switch
-    const timer = setTimeout(() => {
-      setChartDisplayCurrency(displayCurrency);
-    }, 1);
-    return () => clearTimeout(timer);
-  }, [displayCurrency]);
-
   const chartData = useMemo(() => {
     return balanceHistoryData.map((entry) => ({
       date: entry.date,
-      value: convertAmount(entry.totalUsd, chartDisplayCurrency, entry.date),
+      value: convertAmount(entry.totalUsd, displayCurrency, entry.date),
     }));
-  }, [balanceHistoryData, convertAmount, chartDisplayCurrency]);
+  }, [balanceHistoryData, convertAmount, displayCurrency]);
 
   if (isPending) {
     return <Skeleton className="h-75 w-full rounded-xl" />;
@@ -85,12 +73,7 @@ export function PortfolioBalanceChart() {
           </div>
         ) : (
           <ChartContainer config={chartConfig} className="h-75 w-full">
-            {/* NOTE: We use Math.random to ensure Rechart detects the data changed and animates the update https://github.com/recharts/recharts/issues/846#issuecomment-1030392228, it's a workaround that will make React rerender all the time, but I have not see any UI issues so I will fix it in another time */}
-            <AreaChart
-              key={Math.random()}
-              data={chartData}
-              margin={{ left: 0, right: 0 }}
-            >
+            <AreaChart data={chartData} margin={{ left: 0, right: 0 }}>
               <defs>
                 <linearGradient id="fillValue" x1="0" y1="0" x2="0" y2="1">
                   <stop

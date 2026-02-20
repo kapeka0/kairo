@@ -5,6 +5,20 @@ import { TokenType } from "../types";
 import { Currency } from "../utils/constants";
 import { getTokenMetadata } from "../utils/token-metadata";
 
+export interface CoinMarketItem {
+  id: string;
+  symbol: string;
+  name: string;
+  image: string;
+  current_price: number | null;
+  market_cap: number | null;
+  total_volume: number | null;
+  price_change_percentage_1h_in_currency: number | null;
+  price_change_percentage_24h_in_currency: number | null;
+  price_change_percentage_7d_in_currency: number | null;
+  sparkline_in_7d: { price: number[] } | null;
+}
+
 const coingeckoClient = new Coingecko({
   demoAPIKey: server_env.COINGECKO_API_KEY,
   environment: "demo",
@@ -38,6 +52,32 @@ export const getBitcoinPrice = async ({
   currency: Currency;
 }) => {
   return getTokenPrice({ tokenType: TokenType.BTC, currency });
+};
+
+export const getCoinsMarkets = async ({
+  currency,
+  portfolioCoinIds,
+}: {
+  currency: string;
+  portfolioCoinIds: string[];
+}): Promise<CoinMarketItem[]> => {
+  const response = await coingeckoClient.coins.markets.get({
+    vs_currency: currency,
+    category: "layer-1",
+    order: "market_cap_desc",
+    per_page: 15,
+    page: 1,
+    sparkline: true,
+    price_change_percentage: "1h,24h,7d",
+  }) as unknown as CoinMarketItem[];
+
+  const portfolioSet = new Set(portfolioCoinIds);
+  const portfolioCoins = response
+    .filter((c) => portfolioSet.has(c.id))
+    .sort((a, b) => (b.total_volume ?? 0) - (a.total_volume ?? 0));
+  const otherCoins = response.filter((c) => !portfolioSet.has(c.id));
+
+  return [...portfolioCoins, ...otherCoins].slice(0, 10);
 };
 
 export const getHistoricalTokenPrices = async (

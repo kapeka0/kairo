@@ -1,6 +1,7 @@
 import { useTranslations } from "next-intl";
 import { BalancePeriodChange } from "./_components/BalancePeriodChange";
 import BalanceTitle from "./_components/BalanceTitle";
+import { MarketOverview } from "./_components/MarketOverview";
 import PageTitle from "./_components/PageTitle";
 import { PeriodTabs } from "./_components/PeriodTabs";
 import { PortfolioBalanceChart } from "./_components/PortfolioBalanceChart";
@@ -11,6 +12,7 @@ export default function DashboardPage({
   params: Promise<{ "portfolio-id": string; locale: string }>;
 }) {
   const tDashboard = useTranslations("Dashboard");
+
   return (
     <div className="flex flex-1 flex-col space-y-3">
       <div className="flex flex-col items-start gap-1">
@@ -22,12 +24,7 @@ export default function DashboardPage({
         </div>
       </div>
       <PortfolioBalanceChart />
-      <div className="grid auto-rows-min gap-4 md:grid-cols-3">
-        <div className="bg-muted/50 aspect-video rounded-xl" />
-        <div className="bg-muted/50 aspect-video rounded-xl" />
-        <div className="bg-muted/50 aspect-video rounded-xl" />
-      </div>
-      <div className="bg-muted/50 min-h-screen flex-1 rounded-xl md:min-h-min" />
+      <MarketOverview />
     </div>
   );
 }

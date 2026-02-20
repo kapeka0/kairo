@@ -160,8 +160,8 @@
     "portfolio": "Portfolio",
     "dashboard": "Dashboard",
     "wallets": "Wallets",
-    "tokens": "Tokens",
-    "activity": "Activity"
+    "settings": "Settings",
+    "transactions": "Transactions"
   },
   "Dashboard": {
     "title": "Portfolio balance",
@@ -193,5 +193,16 @@
     "90d": "3 months",
     "180d": "6 months",
     "365d": "1 year"
+  },
+  "MarketOverview": {
+    "title": "Market",
+    "coin": "Coin",
+    "price": "Price",
+    "change1h": "1h",
+    "change24h": "24h",
+    "change7d": "7d",
+    "volume": "Volume",
+    "marketCap": "Mkt Cap",
+    "chart7d": "7d"
   }
 }

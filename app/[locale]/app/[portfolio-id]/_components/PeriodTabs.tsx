@@ -1,13 +1,15 @@
 "use client";
 
-import { cn } from "@/lib/utils";
-import { PERIOD_VALUES, usePeriod } from "@/lib/hooks/usePeriod";
-import { Period } from "@/lib/types";
+import { Skeleton } from "@/components/ui/skeleton";
 import {
   Tooltip,
   TooltipContent,
   TooltipTrigger,
 } from "@/components/ui/tooltip";
+import { useBalanceHistory } from "@/lib/hooks/useBalanceHistory";
+import { PERIOD_VALUES, usePeriod } from "@/lib/hooks/usePeriod";
+import { Period } from "@/lib/types";
+import { cn } from "@/lib/utils";
 import { useTranslations } from "next-intl";
 
 interface PeriodTabsProps {
@@ -17,7 +19,7 @@ interface PeriodTabsProps {
 export function PeriodTabs({ className }: PeriodTabsProps) {
   const [period, setPeriod] = usePeriod();
   const t = useTranslations("BalanceChart");
-
+  const { isPending } = useBalanceHistory(period);
   const getPeriodLabel = (p: Period): string => {
     switch (p) {
       case "7d":
@@ -35,7 +37,9 @@ export function PeriodTabs({ className }: PeriodTabsProps) {
     }
   };
 
-  return (
+  return isPending ? (
+    <Skeleton className="h-6 w-52" />
+  ) : (
     <div className={cn("inline-flex items-center gap-0.5", className)}>
       {PERIOD_VALUES.map((p) => (
         <Tooltip key={p}>

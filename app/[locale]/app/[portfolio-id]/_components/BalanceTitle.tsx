@@ -4,7 +4,7 @@ import { PrivacyValue } from "@/components/privacy-value";
 import { Skeleton } from "@/components/ui/skeleton";
 import { activePortfolioBalanceInUserCurrencyAtom } from "@/lib/atoms/PortfolioAtoms";
 import { useCurrencyRates } from "@/lib/hooks/useCurrencyRates";
-import { CURRENCY_VALUES, useDisplayCurrency } from "@/lib/hooks/useDisplayCurrency";
+import { useDisplayCurrency } from "@/lib/hooks/useDisplayCurrency";
 import { usePortfolios } from "@/lib/hooks/usePortfolios";
 import NumberFlow from "@number-flow/react";
 import { useAtomValue } from "jotai";
@@ -25,19 +25,13 @@ const BalanceTitle = (props: Props) => {
 
   const { convertAmount } = useCurrencyRates(currency);
 
-  const [displayCurrency, setUrlCurrency] = useDisplayCurrency();
+  const { displayCurrency } = useDisplayCurrency();
 
   useEffect(() => {
     if (activePortfolioBalance !== 0) {
       setdisplayValue(activePortfolioBalance);
     }
   }, [activePortfolioBalance]);
-
-  const setNextCurrency = () => {
-    const currentIndex = CURRENCY_VALUES.indexOf(displayCurrency);
-    const nextIndex = (currentIndex + 1) % CURRENCY_VALUES.length;
-    setUrlCurrency(CURRENCY_VALUES[nextIndex]);
-  };
 
   const rawBalance = displayValue;
   const displayBalance = convertAmount(rawBalance, displayCurrency);
@@ -48,15 +42,13 @@ const BalanceTitle = (props: Props) => {
         <div className="flex items-end gap-4 ">
           <GradientText
             variant="fire"
-            className="text-4xl font-bold tracking-tight tabular-nums cursor-pointer"
+            className="text-4xl font-bold tracking-tight tabular-nums"
             as="h1"
           >
             <NumberFlow
               value={displayBalance}
               locales={locale}
               trend={0}
-              // plugins={[continuous]}
-              onClick={setNextCurrency}
               format={{
                 style: "currency",
                 currency: displayCurrency,

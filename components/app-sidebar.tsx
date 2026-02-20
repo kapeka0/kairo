@@ -13,9 +13,9 @@ import {
 } from "@/components/ui/sidebar";
 import { usePathname } from "@/i18n/routing";
 import {
-  Activity,
+  ArrowRightLeft,
   LayoutDashboard,
-  Package,
+  Settings,
   WalletMinimal,
 } from "lucide-react";
 import { useTranslations } from "next-intl";
@@ -66,17 +66,18 @@ export function AppSidebar({ ...props }: React.ComponentProps<typeof Sidebar>) {
         icon: WalletMinimal,
         isActive: pathname.includes(`/${portfolioId}/wallets`),
       },
+
       {
-        title: tSidebar("tokens"),
-        url: `/app/${portfolioId}/tokens`,
-        isActive: pathname.includes(`/${portfolioId}/tokens`),
-        icon: Package,
+        title: tSidebar("transactions"),
+        url: `/app/${portfolioId}/transactions`,
+        isActive: pathname.includes(`/${portfolioId}/transactions`),
+        icon: ArrowRightLeft,
       },
       {
-        title: tSidebar("activity"),
-        url: `/app/${portfolioId}/activity`,
-        isActive: pathname.includes(`/${portfolioId}/activity`),
-        icon: Activity,
+        title: tSidebar("settings"),
+        url: `/app/${portfolioId}/settings`,
+        isActive: pathname.includes(`/${portfolioId}/settings`),
+        icon: Settings,
       },
     ],
     // projects: [

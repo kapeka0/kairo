@@ -21,8 +21,8 @@ import { useMemo } from "react";
 export function BalancePeriodChange() {
   const [period] = usePeriod();
   const tDashboard = useTranslations("Dashboard");
-  const [displayCurrency] = useDisplayCurrency();
-  const { data, isLoading } = useBalanceHistory(period);
+  const { displayCurrency } = useDisplayCurrency();
+  const { data, isPending } = useBalanceHistory(period);
   const { data: pnlData } = useUnrealizedPnl();
   const dateRange = useMemo(() => {
     if (data.length < 2) return undefined;
@@ -31,8 +31,8 @@ export function BalancePeriodChange() {
   const { convertAmount } = useCurrencyRates("USD", dateRange);
   const locale = useLocale();
 
-  if (isLoading) {
-    return <Skeleton className="h-4 w-40" />;
+  if (isPending) {
+    return <Skeleton className="h-12 w-64" />;
   }
 
   if (data.length < 2) {
@@ -51,8 +51,16 @@ export function BalancePeriodChange() {
     changePercent,
   });
 
-  const firstInCurrency = convertAmount(firstEntry.totalUsd, displayCurrency, firstEntry.date);
-  const lastInCurrency = convertAmount(lastEntry.totalUsd, displayCurrency, lastEntry.date);
+  const firstInCurrency = convertAmount(
+    firstEntry.totalUsd,
+    displayCurrency,
+    firstEntry.date,
+  );
+  const lastInCurrency = convertAmount(
+    lastEntry.totalUsd,
+    displayCurrency,
+    lastEntry.date,
+  );
   const changeInCurrency = lastInCurrency - firstInCurrency;
   const isPositive = changeInCurrency >= 0;
 

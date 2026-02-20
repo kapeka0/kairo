@@ -19,9 +19,9 @@ export function AppHeader() {
   type SidebarKey = Parameters<typeof tSidebar>[0];
   const routeNames: Record<string, SidebarKey> = {
     "": "dashboard",
-    tokens: "tokens",
     wallets: "wallets",
-    activity: "activity",
+    transactions: "transactions",
+    settings: "settings",
   };
 
   const segments = pathname.split("/").filter(Boolean);
