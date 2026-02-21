@@ -55,7 +55,7 @@ export default function WalletsTable() {
     walletsSortedByBalance,
     getWalletBalanceInCurrency,
   } = useWallets(portfolioId);
-  const { btcPrice } = useTokenStats();
+  const { getPriceByTokenType } = useTokenStats();
   const { activePortfolio } = usePortfolios();
   const currency = activePortfolio?.currency;
   const [editingWalletId, setEditingWalletId] = useState<string | null>(null);
@@ -297,7 +297,7 @@ export default function WalletsTable() {
                       </TooltipContent>
                     </Tooltip>
 
-                    {btcPrice && (
+                    {getPriceByTokenType(wallet.tokenType) !== undefined && (
                       <PrivacyValue>
                         <span className="text-xs text-muted-foreground">
                           <NumberFlow

@@ -1,8 +1,9 @@
 "use client";
 
-import { useQuery } from "@tanstack/react-query";
+import { useQueries } from "@tanstack/react-query";
 import axios from "axios";
 import { useAtom } from "jotai";
+import { useCallback, useMemo } from "react";
 
 import { activePortfolioIdAtom } from "@/lib/atoms/PortfolioAtoms";
 import { TokenType } from "@/lib/types";
@@ -15,6 +16,8 @@ interface TokenStatsResponse {
   tokenType: string;
 }
 
+const tokenTypes = Object.values(TokenType);
+
 export function useTokenStats() {
   const [activePortfolioId] = useAtom(activePortfolioIdAtom);
   const { data: portfolios } = usePortfolios();
@@ -26,42 +29,56 @@ export function useTokenStats() {
     (c) => c.value === portfolioCurrency,
   )?.coingeckoValue;
 
-  const query = useQuery({
-    queryKey: ["token-price", TokenType.BTC, coingeckoCurrency],
-    queryFn: async () => {
-      if (!coingeckoCurrency) {
-        throw new Error("Currency not available");
-      }
-
-      const { data } = await axios.get<TokenStatsResponse>(`/api/token/price`, {
-        params: {
-          tokenType: TokenType.BTC,
-          currency: coingeckoCurrency,
-        },
-      });
-
-      return data;
-    },
-    refetchInterval: 60000,
-    staleTime: 30000,
-    refetchIntervalInBackground: true,
-    enabled: !!activePortfolioId && !!coingeckoCurrency,
-    retry: (failureCount, error) => {
-      if (axios.isAxiosError(error) && error.response?.status === 400) {
-        return false;
-      }
-      return failureCount < 3;
-    },
+  const queries = useQueries({
+    queries: tokenTypes.map((tokenType) => ({
+      queryKey: ["token-price", tokenType, coingeckoCurrency],
+      queryFn: async () => {
+        if (!coingeckoCurrency) throw new Error("Currency not available");
+        const { data } = await axios.get<TokenStatsResponse>(
+          `/api/token/price`,
+          {
+            params: { tokenType, currency: coingeckoCurrency },
+          },
+        );
+        return data;
+      },
+      refetchInterval: 60_000,
+      staleTime: 30_000,
+      refetchIntervalInBackground: true,
+      enabled: !!activePortfolioId && !!coingeckoCurrency,
+      retry: (failureCount: number, error: unknown) => {
+        if (axios.isAxiosError(error) && error.response?.status === 400)
+          return false;
+        return failureCount < 3;
+      },
+    })),
   });
+
+  const pricesMap = useMemo(() => {
+    const map: Partial<Record<TokenType, number>> = {};
+
+    tokenTypes.forEach((tokenType, i) => {
+      const price = queries[i]?.data?.price;
+      if (price !== undefined) {
+        map[tokenType] = price;
+      }
+    });
+
+    return map;
+  }, [queries]);
+
+  const getPriceByTokenType = useCallback(
+    (tokenType: TokenType): number | undefined => pricesMap[tokenType],
+    [pricesMap],
+  );
 
   const currencyInfo = CURRENCIES.find((c) => c.value === portfolioCurrency);
 
   return {
-    btcPrice: query.data?.price,
+    getPriceByTokenType,
     currency: portfolioCurrency,
     currencySymbol: currencyInfo?.symbol,
-    isLoading: query.isLoading,
-    isError: query.isError,
-    error: query.error,
+    isLoading: queries.some((q) => q.isLoading),
+    isError: queries.some((q) => q.isError),
   };
 }

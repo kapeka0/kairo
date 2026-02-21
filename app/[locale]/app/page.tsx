@@ -1,9 +1,10 @@
-import { auth } from '@/lib/auth';
-import { getUserPortfoliosById } from '@/lib/db/data/portfolio';
-import { headers } from 'next/headers';
-import { redirect } from 'next/navigation';
+import { auth } from "@/lib/auth";
+import { getUserPortfoliosById } from "@/lib/db/data/portfolio";
+import { headers } from "next/headers";
+// eslint-disable-next-line
+import { redirect } from "next/navigation";
 
-type Props = {}
+type Props = {};
 
 const AppPage = async (props: Props) => {
   const session = await auth.api.getSession({
@@ -21,6 +22,6 @@ const AppPage = async (props: Props) => {
   const firstPortfolioId = userPortfolios[0].id;
 
   redirect(`/app/${firstPortfolioId}`);
-}
+};
 
-export default AppPage
+export default AppPage;

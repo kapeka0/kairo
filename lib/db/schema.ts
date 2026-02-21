@@ -155,47 +155,17 @@ export const bitcoinWallet = pgTable("bitcoin_wallet", {
     .notNull(),
 });
 
-export const portfolioRelations = relations(portfolio, ({ one, many }) => ({
-  user: one(user, {
-    fields: [portfolio.userId],
-    references: [user.id],
-  }),
-  bitcoinWallets: many(bitcoinWallet),
-}));
-
-export const bitcoinWalletRelations = relations(
-  bitcoinWallet,
-  ({ one, many }) => ({
-    portfolio: one(portfolio, {
-      fields: [bitcoinWallet.portfolioId],
-      references: [portfolio.id],
-    }),
-    transactions: many(bitcoinTransaction),
-  }),
-);
-
-export const bitcoinTransactionTypeEnum = pgEnum("bitcoin_transaction_type", [
-  "received",
-  "sent",
-  "internal",
-]);
-
-export const bitcoinTransaction = pgTable(
-  "bitcoin_transaction",
+export const addressTag = pgTable(
+  "address_tag",
   {
     id: text("id")
       .primaryKey()
       .$default(() => generateUUID()),
-    walletId: text("wallet_id")
+    portfolioId: text("portfolio_id")
       .notNull()
-      .references(() => bitcoinWallet.id, { onDelete: "cascade" }),
-    txid: text("txid").notNull(),
-    blockHeight: text("block_height"),
-    confirmations: text("confirmations").notNull().default("0"),
-    blockTime: timestamp("block_time"),
-    type: bitcoinTransactionTypeEnum("type").notNull(),
-    amountInSatoshis: text("amount_in_satoshis").notNull(),
-    feeInSatoshis: text("fee_in_satoshis"),
+      .references(() => portfolio.id, { onDelete: "cascade" }),
+    address: text("address").notNull(),
+    tag: text("tag").notNull(),
     createdAt: timestamp("created_at").defaultNow().notNull(),
     updatedAt: timestamp("updated_at")
       .defaultNow()
@@ -203,17 +173,33 @@ export const bitcoinTransaction = pgTable(
       .notNull(),
   },
   (table) => [
-    index("bitcoin_transaction_walletId_idx").on(table.walletId),
-    index("bitcoin_transaction_txid_idx").on(table.txid),
+    unique("address_tag_portfolio_address_unique").on(
+      table.portfolioId,
+      table.address,
+    ),
+    index("address_tag_portfolioId_idx").on(table.portfolioId),
   ],
 );
 
-export const bitcoinTransactionRelations = relations(
-  bitcoinTransaction,
-  ({ one }) => ({
-    wallet: one(bitcoinWallet, {
-      fields: [bitcoinTransaction.walletId],
-      references: [bitcoinWallet.id],
-    }),
+export const portfolioRelations = relations(portfolio, ({ one, many }) => ({
+  user: one(user, {
+    fields: [portfolio.userId],
+    references: [user.id],
   }),
-);
+  bitcoinWallets: many(bitcoinWallet),
+  addressTags: many(addressTag),
+}));
+
+export const bitcoinWalletRelations = relations(bitcoinWallet, ({ one }) => ({
+  portfolio: one(portfolio, {
+    fields: [bitcoinWallet.portfolioId],
+    references: [portfolio.id],
+  }),
+}));
+
+export const addressTagRelations = relations(addressTag, ({ one }) => ({
+  portfolio: one(portfolio, {
+    fields: [addressTag.portfolioId],
+    references: [portfolio.id],
+  }),
+}));

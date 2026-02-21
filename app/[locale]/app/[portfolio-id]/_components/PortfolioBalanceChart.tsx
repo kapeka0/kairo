@@ -10,6 +10,7 @@ import { useBalanceHistory } from "@/lib/hooks/useBalanceHistory";
 import { useCurrencyRates } from "@/lib/hooks/useCurrencyRates";
 import { useDisplayCurrency } from "@/lib/hooks/useDisplayCurrency";
 import { usePeriod } from "@/lib/hooks/usePeriod";
+import { formatDate } from "@/lib/utils";
 import { useLocale, useTranslations } from "next-intl";
 import { useMemo } from "react";
 import { Area, AreaChart, CartesianGrid, XAxis } from "recharts";
@@ -20,15 +21,6 @@ const chartConfig = {
     color: "var(--chart-1)",
   },
 } satisfies ChartConfig;
-
-function formatDate(
-  dateStr: string,
-  options: Intl.DateTimeFormatOptions,
-  locale: string,
-) {
-  const [year, month, day] = dateStr.split("-").map(Number);
-  return new Date(year, month - 1, day).toLocaleDateString(locale, options);
-}
 
 export function PortfolioBalanceChart() {
   const [period] = usePeriod();
@@ -107,7 +99,7 @@ export function PortfolioBalanceChart() {
                     <div className="border-border/50 bg-background rounded-lg border px-2.5 py-1.5 text-xs shadow-xl">
                       <p className="font-medium mb-1">
                         {formatDate(
-                          label,
+                          label as string,
                           {
                             year: "numeric",
                             month: "long",

@@ -58,3 +58,12 @@ export const mapBTCWalletToWallet = (wallet: BitcoinWallet): Wallet => ({
   updatedAt: wallet.updatedAt,
   tokenType: wallet.tokenType,
 });
+
+export function formatDate(
+  dateStr: string,
+  options: Intl.DateTimeFormatOptions,
+  locale: string,
+) {
+  const [year, month, day] = dateStr.split("-").map(Number);
+  return new Date(year, month - 1, day).toLocaleDateString(locale, options);
+}

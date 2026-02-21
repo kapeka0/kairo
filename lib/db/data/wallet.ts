@@ -1,7 +1,7 @@
 import { TokenType } from "@/lib/types";
 import { eq } from "drizzle-orm";
 import { db } from "../db";
-import { bitcoinTransaction, bitcoinWallet } from "../schema";
+import { bitcoinWallet } from "../schema";
 
 export const getWalletsByPortfolioId = async (portfolioId: string) => {
   return await db.query.bitcoinWallet.findMany({
@@ -30,10 +30,6 @@ export const updateBitcoinWalletBalanceById = async function (
       lastBalanceInSatoshisUpdatedAt: new Date(),
     })
     .where(eq(bitcoinWallet.id, walletId));
-};
-
-export const insertBitcoinTransactions = async function (transactions: any[]) {
-  await db.insert(bitcoinTransaction).values(transactions);
 };
 
 export const getWalletByIdAndTokenType = async (

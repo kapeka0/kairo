@@ -154,7 +154,7 @@ export function PortfolioSwitcher() {
                   {format.number(activePortfolioBalance, {
                     style: "currency",
                     currency: activePortfolio.currency,
-                  })}{" "}
+                  })}
                 </PrivacyValue>
               </span>{" "}
             </div>

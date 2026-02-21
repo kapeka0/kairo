@@ -204,5 +204,22 @@
     "volume": "Volume",
     "marketCap": "Mkt Cap",
     "chart7d": "7d"
+  },
+  "Transactions": {
+    "title": "Transactions",
+    "received": "Received",
+    "sent": "Sent",
+    "internal": "Internal",
+    "pending": "Pending",
+    "wallet": "Wallet",
+    "labelAddress": "Label this address...",
+    "editTag": "Edit tag",
+    "removeTag": "Remove tag",
+    "error": "Failed to load transactions. Please try again.",
+    "noWallets": "No wallets added yet.",
+    "noWalletsDesc": "Add a wallet to start tracking your transactions.",
+    "noTransactions": "No transactions found.",
+    "noTransactionsDesc": "Your transactions will appear here once your wallets have activity.",
+    "loadMore": "Load more"
   }
 }

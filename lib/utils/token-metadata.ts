@@ -5,6 +5,7 @@ export interface TokenMetadata {
   decimals: number;
   symbol: string;
   name: string;
+  logoPath: string;
 }
 
 export const TOKEN_METADATA: Record<TokenType, TokenMetadata> = {
@@ -13,12 +14,14 @@ export const TOKEN_METADATA: Record<TokenType, TokenMetadata> = {
     decimals: 8,
     symbol: "BTC",
     name: "Bitcoin",
+    logoPath: "/images/logos/crypto/btc.svg",
   },
   [TokenType.ETH]: {
     coingeckoId: "ethereum",
     decimals: 18,
     symbol: "ETH",
     name: "Ethereum",
+    logoPath: "/images/logos/crypto/eth.svg",
   },
 };
 

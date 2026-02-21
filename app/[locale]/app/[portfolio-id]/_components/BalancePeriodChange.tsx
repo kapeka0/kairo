@@ -32,7 +32,11 @@ export function BalancePeriodChange() {
   const locale = useLocale();
 
   if (isPending) {
-    return <Skeleton className="h-12 w-64" />;
+    return (
+      <div className="flex flex-col gap-1 pt-2">
+        <Skeleton className="h-10 w-64" />
+      </div>
+    );
   }
 
   if (data.length < 2) {

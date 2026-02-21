@@ -29,6 +29,13 @@
       "when": 1771058960079,
       "tag": "0003_sturdy_marvex",
       "breakpoints": true
+    },
+    {
+      "idx": 4,
+      "version": "7",
+      "when": 1740096000000,
+      "tag": "0004_add_address_tag",
+      "breakpoints": true
     }
   ]
 }

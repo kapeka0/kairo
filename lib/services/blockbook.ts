@@ -1,14 +1,10 @@
-import { db } from "@/lib/db/db";
-import { bitcoinTransaction } from "@/lib/db/schema";
 import { client_env } from "@/lib/env/client";
 import { convertToZpub } from "@/lib/utils/bitcoin";
 import axios from "axios";
 import axiosRetry, { exponentialDelay } from "axios-retry";
 import Bottleneck from "bottleneck";
-import { eq } from "drizzle-orm";
 import http from "http";
 import https from "https";
-import { insertBitcoinTransactions } from "../db/data/wallet";
 import { devLog, getRealisticUserAgent } from "../utils";
 
 const BLOCKBOOK_BASE_URL = client_env.NEXT_PUBLIC_BTC_HTTP_BLOCKBOOK_URL;
@@ -155,8 +151,29 @@ interface BlockbookTransaction {
   confirmations: number;
   value: string;
   fees?: string;
-  vin: Array<{ addresses?: string[]; isAddress: boolean }>;
-  vout: Array<{ addresses?: string[]; value: string }>;
+  vin: Array<{
+    addresses?: string[];
+    isAddress: boolean;
+    isOwn?: boolean;
+    value?: string;
+  }>;
+  vout: Array<{ addresses?: string[]; value: string; isOwn?: boolean }>;
+}
+
+export interface FormattedTransaction {
+  txid: string;
+  type: "received" | "sent" | "internal";
+  amountInSatoshis: string;
+  feeInSatoshis: string | null;
+  blockTime: number;
+  confirmations: number;
+  externalAddresses: string[];
+  walletId?: string;
+  walletName?: string;
+  walletIcon?: string | null;
+  walletGradientUrl?: string;
+  historicalPriceUsd?: number | null;
+  tokenType?: string;
 }
 
 export async function fetchBlockbookBalance(xpub: string) {
@@ -293,14 +310,67 @@ export async function fetchWalletBalanceHistory(
   return requestPromise;
 }
 
-export async function fetchAndStoreTransactions(
-  walletId: string,
+export function formatBlockbookTransactions(
+  rawTxs: BlockbookTransaction[],
+): FormattedTransaction[] {
+  return rawTxs.map((tx) => {
+    const ownVoutSum = tx.vout
+      .filter((v) => v.isOwn)
+      .reduce((sum, v) => sum + BigInt(v.value), BigInt(0));
+    const ownVinSum = tx.vin
+      .filter((v) => v.isOwn && v.value)
+      .reduce((sum, v) => sum + BigInt(v.value!), BigInt(0));
+
+    let type: "received" | "sent" | "internal";
+    let netAmount: bigint;
+    if (ownVinSum > BigInt(0)) {
+      type = "sent";
+      netAmount = ownVinSum - ownVoutSum;
+    } else if (ownVoutSum > BigInt(0)) {
+      type = "received";
+      netAmount = ownVoutSum;
+    } else {
+      type = "internal";
+      netAmount = BigInt(0);
+    }
+
+    let externalAddresses: string[];
+    if (type === "received") {
+      externalAddresses = tx.vin
+        .filter((v) => !v.isOwn)
+        .flatMap((v) => v.addresses ?? []);
+    } else if (type === "sent") {
+      externalAddresses = tx.vout
+        .filter((v) => !v.isOwn)
+        .flatMap((v) => v.addresses ?? []);
+    } else {
+      externalAddresses = [];
+    }
+
+    return {
+      txid: tx.txid,
+      type,
+      amountInSatoshis: netAmount.toString(),
+      feeInSatoshis: tx.fees ?? null,
+      blockTime: tx.blockTime ?? 0,
+      confirmations: tx.confirmations,
+      externalAddresses,
+    };
+  });
+}
+
+export async function fetchTransactions(
   xpub: string,
   page: number = 1,
-): Promise<{ hasMore: boolean; txCount: number }> {
+  pageSize: number = 25,
+): Promise<{
+  transactions: FormattedTransaction[];
+  totalPages: number;
+  txCount: number;
+}> {
   checkCircuitBreaker();
 
-  const requestKey = `transactions:${xpub}:${page}`;
+  const requestKey = `transactions:${xpub}:${page}:${pageSize}`;
 
   if (pendingRequests.has(requestKey)) {
     devLog(
@@ -316,11 +386,7 @@ export async function fetchAndStoreTransactions(
       const response = await blockbookClient.get<BlockbookXpubResponse>(
         `/api/v2/xpub/${zpub}`,
         {
-          params: {
-            details: "txs",
-            page,
-            pageSize: 1000,
-          },
+          params: { details: "txs", page, pageSize },
           timeout: 60000,
         },
       );
@@ -330,47 +396,18 @@ export async function fetchAndStoreTransactions(
         response.data.transactions.length === 0
       ) {
         recordSuccess();
-        return { hasMore: false, txCount: 0 };
+        return { transactions: [], totalPages: 1, txCount: 0 };
       }
 
-      const existingTxids = await db
-        .select({ txid: bitcoinTransaction.txid })
-        .from(bitcoinTransaction)
-        .where(eq(bitcoinTransaction.walletId, walletId));
+      const transactions = formatBlockbookTransactions(
+        response.data.transactions,
+      );
 
-      const existingSet = new Set(existingTxids.map((t) => t.txid));
-
-      const newTransactions = response.data.transactions
-        .filter((tx) => !existingSet.has(tx.txid))
-        .map((tx) => {
-          const value = BigInt(tx.value);
-          let type: "received" | "sent" | "internal";
-          if (value > BigInt(0)) type = "received";
-          else if (value < BigInt(0)) type = "sent";
-          else type = "internal";
-
-          return {
-            walletId,
-            txid: tx.txid,
-            blockHeight: tx.blockHeight?.toString() || null,
-            confirmations: tx.confirmations.toString(),
-            blockTime: tx.blockTime ? new Date(tx.blockTime * 1000) : null,
-            type,
-            amountInSatoshis: tx.value,
-            feeInSatoshis: tx.fees || null,
-          };
-        });
-
-      if (newTransactions.length > 0) {
-        await insertBitcoinTransactions(newTransactions);
-      }
-
-      const totalPages = Math.ceil(response.data.txs / 1000);
-      const hasMore = page < totalPages;
+      const totalPages = Math.ceil(response.data.txs / pageSize);
 
       recordSuccess();
 
-      return { hasMore, txCount: newTransactions.length };
+      return { transactions, totalPages, txCount: response.data.txs };
     } catch (error) {
       recordFailure();
 

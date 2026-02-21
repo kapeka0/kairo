@@ -37,9 +37,12 @@ export const getTokenPrice = async ({
     const response = await coingeckoClient.simple.price.get({
       vs_currencies: currency,
       ids: tokenMetadata.coingeckoId,
+      precision: "full",
     });
 
-    return (response[tokenMetadata.coingeckoId] as Record<Currency, number>)[currency];
+    return (response[tokenMetadata.coingeckoId] as Record<Currency, number>)[
+      currency
+    ];
   } catch (error) {
     console.error(`Error fetching ${tokenType} price from CoinGecko:`, error);
     throw error;
@@ -61,7 +64,7 @@ export const getCoinsMarkets = async ({
   currency: string;
   portfolioCoinIds: string[];
 }): Promise<CoinMarketItem[]> => {
-  const response = await coingeckoClient.coins.markets.get({
+  const response = (await coingeckoClient.coins.markets.get({
     vs_currency: currency,
     category: "layer-1",
     order: "market_cap_desc",
@@ -69,7 +72,7 @@ export const getCoinsMarkets = async ({
     page: 1,
     sparkline: true,
     price_change_percentage: "1h,24h,7d",
-  }) as unknown as CoinMarketItem[];
+  })) as unknown as CoinMarketItem[];
 
   const portfolioSet = new Set(portfolioCoinIds);
   const portfolioCoins = response

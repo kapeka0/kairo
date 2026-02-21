@@ -3,6 +3,7 @@
 import { usePortfolios } from "@/lib/hooks/usePortfolios";
 import { CurrencyCode } from "@/lib/types";
 import { CURRENCIES } from "@/lib/utils/constants";
+import { useFormatter } from "next-intl";
 
 function toCoingeckoCurrency(code: CurrencyCode): string {
   return (
@@ -14,13 +15,23 @@ function toCoingeckoCurrency(code: CurrencyCode): string {
 export function useDisplayCurrency(): {
   displayCurrency: CurrencyCode;
   coingeckoCurrency: string;
+  formatCurrency: (value: number) => string;
 } {
   const { activePortfolio } = usePortfolios();
   const coingeckoCurrency = toCoingeckoCurrency(
     activePortfolio?.currency ?? "USD",
   );
+  const format = useFormatter();
+  const formatCurrency = (value: number) =>
+    format.number(value, {
+      style: "currency",
+      currency: activePortfolio?.currency ?? "USD",
+      minimumFractionDigits: 0,
+      maximumFractionDigits: 2,
+    });
   return {
     displayCurrency: activePortfolio?.currency ?? "USD",
     coingeckoCurrency,
+    formatCurrency,
   };
 }

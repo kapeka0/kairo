@@ -113,6 +113,23 @@
     "180d": "6 meses",
     "365d": "1 año"
   },
+  "Transactions": {
+    "title": "Transacciones",
+    "received": "Recibido",
+    "sent": "Enviado",
+    "internal": "Interno",
+    "pending": "Pendiente",
+    "wallet": "Billetera",
+    "labelAddress": "Etiqueta esta dirección...",
+    "editTag": "Editar etiqueta",
+    "removeTag": "Eliminar etiqueta",
+    "error": "Error al cargar las transacciones. Inténtalo de nuevo.",
+    "noWallets": "No hay billeteras aún.",
+    "noWalletsDesc": "Agrega una billetera para comenzar a rastrear tus transacciones.",
+    "noTransactions": "No se encontraron transacciones.",
+    "noTransactionsDesc": "Tus transacciones aparecerán aquí una vez que tus billeteras tengan actividad.",
+    "loadMore": "Cargar más"
+  },
   "Wallets": {
     "title": "Mis Billeteras",
     "description": "Agrega tus billeteras para comenzar a rastrear tus activos cripto.",

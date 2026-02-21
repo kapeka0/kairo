@@ -5,19 +5,15 @@ import { returnValidationErrors } from "next-safe-action";
 import { z } from "zod";
 
 import {
-  getBitcoinWalletById,
   getWalletByIdAndTokenType,
   updateBitcoinWalletBalanceById,
 } from "@/lib/db/data/wallet";
 import { db } from "@/lib/db/db";
 import { bitcoinWallet, portfolio } from "@/lib/db/schema";
 import { authActionClient } from "@/lib/safe-actions";
-import {
-  fetchAndStoreTransactions,
-  fetchBlockbookBalance,
-} from "@/lib/services/blockbook";
+import { fetchBlockbookBalance } from "@/lib/services/blockbook";
 import { TokenType } from "@/lib/types";
-import { devLog, generateUUID } from "@/lib/utils";
+import { generateUUID } from "@/lib/utils";
 import { createBitcoinWalletSchema } from "@/lib/validations/wallet";
 
 export const createBitcoinWallet = authActionClient
@@ -75,13 +71,6 @@ export const createBitcoinWallet = authActionClient
         lastBalanceInSatoshisUpdatedAt: new Date(),
       })
       .returning();
-
-    if (balance !== "0") {
-      devLog("Initial balance is non-zero, fetching transactions");
-      fetchAndStoreTransactions(walletId, publicKey).catch((error) => {
-        console.error("Failed to fetch transactions:", error);
-      });
-    }
 
     return { success: true, wallet: newWallet[0] };
   });
@@ -141,18 +130,6 @@ export const refreshWalletBalance = authActionClient
       })
       .where(eq(bitcoinWallet.id, walletId));
 
-    let page = 1;
-    let hasMore = true;
-    while (hasMore) {
-      const result = await fetchAndStoreTransactions(
-        walletId,
-        wallet.publicKey,
-        page,
-      );
-      hasMore = result.hasMore;
-      page++;
-    }
-
     return { success: true, balance: blockbookData.balance };
   });
 
@@ -197,44 +174,3 @@ export const updateWalletBalance = authActionClient
     };
   });
 
-const syncWalletTransactionsSchema = z.object({
-  walletId: z.string().uuid(),
-});
-
-export const syncWalletTransactions = authActionClient
-  .metadata({ actionName: "syncWalletTransactions" })
-  .inputSchema(syncWalletTransactionsSchema)
-  .action(async ({ parsedInput, ctx }) => {
-    const { walletId } = parsedInput;
-
-    const wallet = await getBitcoinWalletById(walletId);
-
-    if (!wallet) {
-      throw new Error("Wallet not found");
-    }
-
-    if (wallet.portfolio.userId !== ctx.user.id) {
-      throw new Error("Unauthorized: Wallet does not belong to user");
-    }
-
-    let totalTxCount = 0;
-    let page = 1;
-    let hasMore = true;
-
-    while (hasMore) {
-      const result = await fetchAndStoreTransactions(
-        walletId,
-        wallet.publicKey,
-        page,
-      );
-      hasMore = result.hasMore;
-      totalTxCount += result.txCount;
-      page++;
-    }
-
-    return {
-      success: true,
-      walletId,
-      transactionCount: totalTxCount,
-    };
-  });
