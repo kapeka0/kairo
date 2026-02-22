@@ -30,7 +30,7 @@ export function useTransactions(portfolioId: string, pageSize: number = 25) {
     queryKey: ["transactions", portfolioId, page, pageSize],
     queryFn: () => fetchTransactionsPage(portfolioId, page, pageSize),
     enabled: !!portfolioId,
-    staleTime: 60_000,
+    staleTime: 30_000, // 1/2 minute
   });
 
   return {

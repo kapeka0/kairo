@@ -14,9 +14,10 @@ import { TokenType } from "@/lib/types";
 import { cn } from "@/lib/utils";
 import { getTokenMetadata } from "@/lib/utils/token-metadata";
 import NumberFlow from "@number-flow/react";
-import { ArrowDownLeft, ArrowUpRight } from "lucide-react";
+import { ArrowDownLeft, ArrowUpRight, Triangle } from "lucide-react";
 import { useLocale, useTranslations } from "next-intl";
 import Image from "next/image";
+import { useMemo } from "react";
 import AddressCell from "./AddressCell";
 
 const formatTime = (blockTime: number, locale: string): string =>
@@ -41,7 +42,8 @@ const TransactionCard = ({
 }: TransactionCardProps) => {
   const t = useTranslations("Transactions");
   const locale = useLocale();
-  const { displayCurrency, formatCurrency } = useDisplayCurrency();
+  const { displayCurrency, formatCurrency, formatNumber } =
+    useDisplayCurrency();
   const isReceived = tx.type === "received";
   const isSent = tx.type === "sent";
   const tokenMeta = getTokenMetadata(
@@ -54,19 +56,28 @@ const TransactionCard = ({
   const historicalValue =
     tx.historicalPriceUsd != null ? nativeAmount * tx.historicalPriceUsd : null;
   const primaryAddress = tx.externalAddresses[0];
-
+  const currentValue = useMemo(() => {
+    const currentPrice = getPriceByTokenType(tx.tokenType as TokenType);
+    if (currentPrice == null) return null;
+    return nativeAmount * currentPrice;
+  }, [getPriceByTokenType, tx.tokenType, nativeAmount]);
+  const changePercent = useMemo(() => {
+    if (historicalValue == null || currentValue == null) return null;
+    if (historicalValue === 0) return null;
+    return ((currentValue - historicalValue) / historicalValue) * 100;
+  }, [historicalValue, currentValue]);
   return (
     <div className="flex items-center gap-6 px-5 py-4 rounded-xl border bg-card hover:bg-muted/30 transition-colors">
       <Tooltip>
         <TooltipTrigger>
           <div className="relative w-fit">
-            <Avatar>
+            <Avatar className={"rounded-lg after:rounded-lg"}>
               <AvatarImage
-                src={tx.walletIcon || ""}
+                src={tx.walletIcon || tx.walletGradientUrl || ""}
                 alt={tx.walletName || t("wallet")}
-                className="grayscale"
+                className=" rounded-lg"
               />
-              <AvatarFallback>
+              <AvatarFallback className="rounded-lg">
                 {tx.walletName?.[0]?.toUpperCase() ?? "W"}
               </AvatarFallback>
             </Avatar>
@@ -75,9 +86,9 @@ const TransactionCard = ({
               className={cn(
                 "flex items-center justify-center size-5 rounded-full absolute bottom-0 right-0 translate-x-1/4 translate-y-1/4",
                 isReceived
-                  ? "bg-green-300 text-green-950 dark:bg-green-950 dark:text-green-500 "
+                  ? "bg-green-200 text-green-900 dark:bg-green-950 dark:text-green-500 "
                   : isSent
-                  ? "bg-red-300 text-red-950 dark:bg-red-950 dark:text-red-500"
+                  ? "bg-red-200 text-red-900 dark:bg-red-950 dark:text-red-500"
                   : "bg-muted text-muted-foreground",
               )}
             >
@@ -147,12 +158,27 @@ const TransactionCard = ({
               </p>
             </TooltipTrigger>
             <TooltipContent>
-              <p>
-                {formatCurrency(
-                  (getPriceByTokenType(tx.tokenType as TokenType) || 0) *
-                    nativeAmount,
+              <div className="flex items-center gap-1">
+                {" "}
+                <p>{formatCurrency(currentValue!)}</p>
+                {changePercent && (
+                  <span
+                    className={cn("flex items-center gap-0.5", {
+                      "text-green-500": changePercent > 0,
+                      "text-red-500": changePercent < 0,
+                    })}
+                  >
+                    ({" "}
+                    <Triangle
+                      className={cn(
+                        "size-2 fill-current stroke-none",
+                        changePercent > 0 ? "rotate-0" : "rotate-180",
+                      )}
+                    />
+                    {formatNumber(Math.abs(changePercent))}%)
+                  </span>
                 )}
-              </p>
+              </div>
             </TooltipContent>
           </Tooltip>
         </span>

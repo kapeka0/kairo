@@ -12,6 +12,7 @@ import { toast } from "sonner";
 
 import TimeAgoIntl from "@/components/global/TimeAgoIntl";
 import { PrivacyValue } from "@/components/privacy-value";
+import { Avatar, AvatarFallback, AvatarImage } from "@/components/ui/avatar";
 import { Button } from "@/components/ui/button";
 import {
   DropdownMenu,
@@ -234,13 +235,17 @@ export default function WalletsTable() {
                         onClick={() => setEditingWalletId(wallet.id)}
                         className="relative group cursor-pointer"
                       >
-                        <Image
-                          src={wallet.icon || wallet.gradientUrl}
-                          alt={wallet.name}
-                          width={32}
-                          height={32}
-                          className="rounded-lg transition-opacity group-hover:opacity-80"
-                        />
+                        <Avatar className={"rounded-lg after:rounded-lg"}>
+                          <AvatarImage
+                            src={wallet.icon || wallet.gradientUrl}
+                            alt={wallet.name}
+                            className="rounded-lg transition-opacity group-hover:opacity-80"
+                          />
+                          <AvatarFallback className={"rounded-lg"}>
+                            {wallet.name?.[0]?.toUpperCase() ?? "W"}
+                          </AvatarFallback>
+                        </Avatar>
+
                         <div className="absolute inset-0 flex items-center justify-center opacity-0 group-hover:opacity-100 transition-opacity">
                           <div className="size-4 rounded-full bg-background/90 flex items-center justify-center">
                             <svg

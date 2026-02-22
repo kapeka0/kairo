@@ -16,6 +16,7 @@ export function useDisplayCurrency(): {
   displayCurrency: CurrencyCode;
   coingeckoCurrency: string;
   formatCurrency: (value: number) => string;
+  formatNumber: (value: number) => string;
 } {
   const { activePortfolio } = usePortfolios();
   const coingeckoCurrency = toCoingeckoCurrency(
@@ -29,9 +30,15 @@ export function useDisplayCurrency(): {
       minimumFractionDigits: 0,
       maximumFractionDigits: 2,
     });
+  const formatNumber = (value: number) =>
+    format.number(value, {
+      minimumFractionDigits: 0,
+      maximumFractionDigits: 2,
+    });
   return {
     displayCurrency: activePortfolio?.currency ?? "USD",
     coingeckoCurrency,
     formatCurrency,
+    formatNumber,
   };
 }
