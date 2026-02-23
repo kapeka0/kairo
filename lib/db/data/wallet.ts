@@ -61,3 +61,18 @@ export const updateWalletBalance = async (
       throw new Error(`Unsupported token type: ${tokenType}`);
   }
 };
+
+export const deleteWalletById = async (
+  walletId: string,
+  tokenType: TokenType,
+) => {
+  switch (tokenType) {
+    case TokenType.BTC:
+      await db.delete(bitcoinWallet).where(eq(bitcoinWallet.id, walletId));
+      break;
+    case TokenType.ETH:
+      throw new Error("ETH not yet supported");
+    default:
+      throw new Error(`Unsupported token type: ${tokenType}`);
+  }
+};

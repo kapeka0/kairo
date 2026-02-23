@@ -2,11 +2,12 @@ import { headers } from "next/headers";
 import { NextRequest, NextResponse } from "next/server";
 
 import { auth } from "@/lib/auth";
+import { withCache } from "@/lib/cache";
 import { getTokenPrice } from "@/lib/services/coingecko";
-import { Currency } from "@/lib/utils/constants";
-import { getTokenPriceSchema } from "@/lib/validations/api";
 import { parseSearchParams } from "@/lib/utils/api-validation";
+import { Currency } from "@/lib/utils/constants";
 import { getTokenMetadata } from "@/lib/utils/token-metadata";
+import { getTokenPriceSchema } from "@/lib/validations/api";
 
 export async function GET(request: NextRequest) {
   try {
@@ -19,7 +20,10 @@ export async function GET(request: NextRequest) {
     }
 
     const { searchParams } = new URL(request.url);
-    const validation = await parseSearchParams(getTokenPriceSchema, searchParams);
+    const validation = await parseSearchParams(
+      getTokenPriceSchema,
+      searchParams,
+    );
 
     if (!validation.success) {
       return validation.response;
@@ -28,10 +32,11 @@ export async function GET(request: NextRequest) {
     const { currency, tokenType } = validation.data;
 
     const tokenMetadata = getTokenMetadata(tokenType);
-    const price = await getTokenPrice({
-      tokenType,
-      currency: currency as Currency,
-    });
+    const price = await withCache(
+      `token-price:${tokenType}:${currency}`,
+      60_000,
+      () => getTokenPrice({ tokenType, currency: currency as Currency }),
+    );
 
     return NextResponse.json({
       tokenType,

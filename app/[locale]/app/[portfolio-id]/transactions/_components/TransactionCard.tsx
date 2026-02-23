@@ -7,8 +7,8 @@ import {
   TooltipContent,
   TooltipTrigger,
 } from "@/components/ui/tooltip";
+import { useAddressTags } from "@/lib/hooks/useAddressTags";
 import { useDisplayCurrency } from "@/lib/hooks/useDisplayCurrency";
-import { useTokenStats } from "@/lib/hooks/useTokenStats";
 import { FormattedTransaction } from "@/lib/services/blockbook";
 import { TokenType } from "@/lib/types";
 import { cn } from "@/lib/utils";
@@ -29,43 +29,39 @@ const formatTime = (blockTime: number, locale: string): string =>
 
 interface TransactionCardProps {
   tx: FormattedTransaction;
-  tagMap: Record<string, string>;
-  onUpsertTag: (address: string, tag: string) => void;
-  onDeleteTag: (address: string) => void;
+  tokenPrice: number | null;
 }
 
-const TransactionCard = ({
-  tx,
-  tagMap,
-  onUpsertTag,
-  onDeleteTag,
-}: TransactionCardProps) => {
+const TransactionCard = ({ tx, tokenPrice }: TransactionCardProps) => {
   const t = useTranslations("Transactions");
   const locale = useLocale();
   const { displayCurrency, formatCurrency, formatNumber } =
     useDisplayCurrency();
   const isReceived = tx.type === "received";
   const isSent = tx.type === "sent";
+  const { tagMap } = useAddressTags();
   const tokenMeta = getTokenMetadata(
     (tx.tokenType as TokenType) ?? TokenType.BTC,
   );
-  const { getPriceByTokenType } = useTokenStats();
   const displayDecimals = Math.min(tokenMeta.decimals, 8);
   const nativeAmount =
     parseInt(tx.amountInSatoshis) / Math.pow(10, tokenMeta.decimals);
   const historicalValue =
     tx.historicalPriceUsd != null ? nativeAmount * tx.historicalPriceUsd : null;
   const primaryAddress = tx.externalAddresses[0];
+
   const currentValue = useMemo(() => {
-    const currentPrice = getPriceByTokenType(tx.tokenType as TokenType);
+    const currentPrice = tokenPrice ?? null;
     if (currentPrice == null) return null;
     return nativeAmount * currentPrice;
-  }, [getPriceByTokenType, tx.tokenType, nativeAmount]);
+  }, [tokenPrice, nativeAmount]);
+
   const changePercent = useMemo(() => {
     if (historicalValue == null || currentValue == null) return null;
     if (historicalValue === 0) return null;
     return ((currentValue - historicalValue) / historicalValue) * 100;
   }, [historicalValue, currentValue]);
+
   return (
     <div className="flex items-center gap-6 px-5 py-4 rounded-xl border bg-card hover:bg-muted/30 transition-colors">
       <Tooltip>
@@ -125,12 +121,7 @@ const TransactionCard = ({
 
       <div className="flex-1  hidden md:block">
         {primaryAddress ? (
-          <AddressCell
-            address={primaryAddress}
-            tag={tagMap[primaryAddress]}
-            onUpsert={onUpsertTag}
-            onDelete={onDeleteTag}
-          />
+          <AddressCell address={primaryAddress} tag={tagMap[primaryAddress]} />
         ) : (
           <span className="text-xs text-muted-foreground italic">
             {t("internal")}
@@ -145,7 +136,7 @@ const TransactionCard = ({
               isReceived
                 ? "text-green-500"
                 : isSent
-                ? "text-red-400"
+                ? "text-red-500"
                 : "text-foreground",
             )}
           >

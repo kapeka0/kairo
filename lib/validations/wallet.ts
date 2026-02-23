@@ -18,7 +18,6 @@ export function detectBipType(publicKey: string): string | null {
   return null;
 }
 
-// In practice we are going to convert xpub and ypub to zpub before sending to Blockbook, so we can assume BIP84 for all wallets.
 export const bitcoinWalletSchema = z.object({
   publicKey: z
     .string()
@@ -34,7 +33,7 @@ export const bitcoinWalletSchema = z.object({
       },
     ),
 
-  // derivationPath: z.enum(["BIP44", "BIP49", "BIP84", "BIP86"]),
+  bipType: z.enum(["BIP44", "BIP49", "BIP84", "BIP86"]),
 });
 
 export const createBitcoinWalletSchema = walletStep1Schema

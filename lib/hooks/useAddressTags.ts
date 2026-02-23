@@ -1,14 +1,16 @@
 "use client";
 
-import { useState } from "react";
 import { useQuery, useQueryClient } from "@tanstack/react-query";
 import axios from "axios";
 import { useAction } from "next-safe-action/hooks";
+import { useState } from "react";
 
 import {
   deleteAddressTagAction,
   upsertAddressTagAction,
 } from "@/lib/actions/address-tags";
+import { useAtomValue } from "jotai";
+import { activePortfolioIdAtom } from "../atoms/PortfolioAtoms";
 
 interface TagEntry {
   address: string;
@@ -19,19 +21,19 @@ interface AddressTagsResponse {
   tags: TagEntry[];
 }
 
-export function useAddressTags(portfolioId: string) {
+export function useAddressTags() {
+  const activePortfolioId = useAtomValue(activePortfolioIdAtom);
   const queryClient = useQueryClient();
-  const queryKey = ["address-tags", portfolioId];
-
+  const queryKey = ["address-tags", activePortfolioId];
   const query = useQuery({
     queryKey,
     queryFn: async () => {
       const { data } = await axios.get<AddressTagsResponse>(
-        `/api/portfolio/${portfolioId}/address-tags`,
+        `/api/portfolio/${activePortfolioId}/address-tags`,
       );
       return data.tags;
     },
-    enabled: !!portfolioId,
+    enabled: !!activePortfolioId,
     staleTime: 5 * 60 * 1000,
   });
 
@@ -84,7 +86,8 @@ export function useAddressTags(portfolioId: string) {
     tagMap,
     isLoading: query.isLoading,
     upsertTag: (address: string, tag: string) =>
-      executeUpsert({ portfolioId, address, tag }),
-    deleteTag: (address: string) => executeDelete({ portfolioId, address }),
+      executeUpsert({ portfolioId: activePortfolioId!, address, tag }),
+    deleteTag: (address: string) =>
+      executeDelete({ portfolioId: activePortfolioId!, address }),
   };
 }

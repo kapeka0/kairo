@@ -53,7 +53,7 @@ export function useWallets(portfolioId: string) {
         const { data } = await axios.get(`/api/wallet/${wallet.id}/balance`);
         return data.balance as string;
       },
-      staleTime: 30_000, // 1/2 minute
+      staleTime: 120_000, // 2 minutes
       enabled: !!portfolioId,
     })),
   });

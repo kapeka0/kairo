@@ -1,4 +1,5 @@
 import { cn } from "@/lib/utils";
+import { Loader } from "lucide-react";
 import React from "react";
 
 type Props = {
@@ -13,15 +14,7 @@ const sizeMap = {
 };
 
 const LoadingSpinner: React.FC<Props> = ({ size = "md", className }) => {
-  return (
-    <div
-      className={cn(
-        "animate-spin rounded-full border-4 border-t-blue-500 border-gray-200",
-        sizeMap[size],
-        className,
-      )}
-    />
-  );
+  return <Loader className={cn("animate-spin ", sizeMap[size], className)} />;
 };
 
 export default LoadingSpinner;

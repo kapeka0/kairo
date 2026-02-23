@@ -4,8 +4,8 @@ import { zodResolver } from "@hookform/resolvers/zod";
 import { useQueryClient } from "@tanstack/react-query";
 import { useTranslations } from "next-intl";
 import { useAction } from "next-safe-action/hooks";
-import { useState } from "react";
-import { useForm } from "react-hook-form";
+import { useEffect, useState } from "react";
+import { useForm, useWatch } from "react-hook-form";
 import { toast } from "sonner";
 
 import LoadingSpinner from "@/components/LoadingSpinner";
@@ -20,10 +20,18 @@ import {
   FormMessage,
 } from "@/components/ui/form";
 import { Input } from "@/components/ui/input";
+import {
+  Select,
+  SelectContent,
+  SelectItem,
+  SelectTrigger,
+  SelectValue,
+} from "@/components/ui/select";
 import { createBitcoinWallet } from "@/lib/actions/wallet";
 import { devLog } from "@/lib/utils";
 import {
   bitcoinWalletSchema,
+  detectBipType,
   type BitcoinWalletData,
 } from "@/lib/validations/wallet";
 
@@ -60,13 +68,19 @@ export default function BitcoinWalletForm({
         toast.error(tErrors("unexpected"));
       }
     },
-    onSuccess: ({ data }) => {
+    onSuccess: async ({ data }) => {
+      // Reset wallet query first so the next requests have the correct data, then reset all queries to clear any wallet-related data from the cache
+      await queryClient.refetchQueries({
+        queryKey: ["wallets", portfolioId],
+      });
+      // Reset all app queries to ensure all wallet-related data is cleared from the cache, don't await to avoid blocking the UI
+      queryClient.refetchQueries();
       toast.success(tSuccess("walletAdded"), {
         description: tSuccess("walletAddedDescription", {
           walletName: data.wallet.name,
         }),
       });
-      queryClient.invalidateQueries({ queryKey: ["wallets", portfolioId] });
+
       devLog("[BitcoinWalletForm] Wallet created successfully", data);
       onSuccess();
     },
@@ -77,32 +91,36 @@ export default function BitcoinWalletForm({
     resolver: zodResolver(bitcoinWalletSchema),
     defaultValues: {
       publicKey: "",
-      // derivationPath: "BIP44",
+      bipType: undefined,
     },
   });
 
-  const publicKeyValue = form.watch("publicKey");
+  const publicKeyValue = useWatch({
+    control: form.control,
+    name: "publicKey",
+    defaultValue: "",
+  });
 
-  // useEffect(() => {
-  //   if (publicKeyValue && publicKeyValue.length > 10) {
-  //     const bipType = detectBipType(publicKeyValue);
-  //     setDetectedBipType(bipType);
-  //     if (bipType) {
-  //       form.setValue(
-  //         "derivationPath",
-  //         bipType as "BIP44" | "BIP49" | "BIP84" | "BIP86",
-  //       );
-  //     }
-  //   } else {
-  //     setDetectedBipType(null);
-  //   }
-  // }, [publicKeyValue, form]);
+  useEffect(() => {
+    if (publicKeyValue && publicKeyValue.length > 10) {
+      const bipType = detectBipType(publicKeyValue);
+      setDetectedBipType(bipType);
+      if (bipType) {
+        form.setValue(
+          "bipType",
+          bipType as "BIP44" | "BIP49" | "BIP84" | "BIP86",
+        );
+      }
+    } else {
+      setDetectedBipType(null);
+    }
+  }, [publicKeyValue, form]);
 
   const onSubmit = async (data: BitcoinWalletData) => {
     execute({
       name: walletName,
       publicKey: data.publicKey,
-      // derivationPath: data.derivationPath,
+      bipType: data.bipType,
       cryptocurrency: "BTC",
       portfolioId,
     });
@@ -146,13 +164,13 @@ export default function BitcoinWalletForm({
                   className="placeholder:text-muted-foreground/50 font-mono text-sm"
                 />
               </FormControl>
-              {/* {detectedBipType && (
+              {detectedBipType && (
                 <FormDescription className="text-xs text-blue-500">
                   {tForm("bipTypeDetected", {
                     bipType: getBipTypeLabel(detectedBipType) || "N/A",
                   })}
                 </FormDescription>
-              )} */}
+              )}
               <FormDescription className="text-xs">
                 {tForm("extendedPublicKeyHelper")}
               </FormDescription>
@@ -160,9 +178,9 @@ export default function BitcoinWalletForm({
             </FormItem>
           )}
         />
-        {/* <FormField
+        <FormField
           control={form.control}
-          name="derivationPath"
+          name="bipType"
           render={({ field }) => (
             <FormItem className="space-y-0">
               <FormLabel className="text-sm text-muted-foreground font-normal">
@@ -170,7 +188,7 @@ export default function BitcoinWalletForm({
               </FormLabel>
               <Select
                 onValueChange={field.onChange}
-                value={field.value}
+                value={field.value ?? ""}
                 disabled={isPending}
               >
                 <FormControl>
@@ -178,7 +196,7 @@ export default function BitcoinWalletForm({
                     <SelectValue placeholder={tForm("selectAddressType")} />
                   </SelectTrigger>
                 </FormControl>
-                <SelectContent>
+                <SelectContent className={"w-40"}>
                   <SelectItem value="BIP44">
                     {tForm("bipTypeLegacy")}
                   </SelectItem>
@@ -193,13 +211,13 @@ export default function BitcoinWalletForm({
                   </SelectItem>
                 </SelectContent>
               </Select>
-              <FormDescription className="text-xs">
+              <FormDescription className="text-xs whitespace-pre">
                 {tForm("addressTypeHelper")}
               </FormDescription>
               <FormMessage />
             </FormItem>
           )}
-        /> */}
+        />
         <div className="flex gap-2">
           <Button
             type="button"

@@ -1,10 +1,11 @@
 import bs58check from "bs58check";
+import type { BipType } from "@/lib/types";
 
 const VERSION_BYTES = {
   mainnet: {
-    xpub: 0x0488b21e, // P2PKH/P2SH
-    ypub: 0x049d7cb2, // P2SH/SegWit
-    zpub: 0x04b24746, // P2WPKH/SegWit native
+    xpub: 0x0488b21e,
+    ypub: 0x049d7cb2,
+    zpub: 0x04b24746,
   },
 };
 
@@ -20,27 +21,20 @@ export function formatBtc(btc: number, decimals: number = 8): string {
   return btc.toFixed(decimals);
 }
 
-export function convertToZpub(extendedKey: string): string {
-  if (extendedKey.startsWith("zpub")) {
-    return extendedKey;
-  }
+export function toDescriptor(extendedKey: string, bipType: BipType): string {
+  const prefix = extendedKey.slice(0, 4);
 
-  if (!extendedKey.startsWith("xpub") && !extendedKey.startsWith("ypub")) {
+  if (prefix !== "xpub" && prefix !== "ypub" && prefix !== "zpub") {
     throw new Error("Extended key must be xpub, ypub, or zpub");
   }
 
   try {
     const decoded = Buffer.from(bs58check.decode(extendedKey));
-    // Extract version bytes and payload
-    const versionBytes = decoded.subarray(0, 4);
+    const currentVersion = decoded.readUInt32BE(0);
     const payload = decoded.subarray(4);
 
-    const xpubVersion = VERSION_BYTES.mainnet.xpub;
-    const ypubVersion = VERSION_BYTES.mainnet.ypub;
-    const zpubVersion = VERSION_BYTES.mainnet.zpub;
-
-    // Read decimal version from the first 4 bytes
-    const currentVersion = versionBytes.readUInt32BE(0);
+    const { xpub: xpubVersion, ypub: ypubVersion, zpub: zpubVersion } =
+      VERSION_BYTES.mainnet;
 
     if (
       currentVersion !== xpubVersion &&
@@ -50,15 +44,25 @@ export function convertToZpub(extendedKey: string): string {
       throw new Error("Invalid extended public key version");
     }
 
-    const zpubVersionBuffer = Buffer.alloc(4);
-    zpubVersionBuffer.writeUInt32BE(zpubVersion, 0);
+    const xpubVersionBuffer = Buffer.alloc(4);
+    xpubVersionBuffer.writeUInt32BE(xpubVersion, 0);
+    const normalizedXpub = bs58check.encode(
+      Buffer.concat([xpubVersionBuffer, payload]),
+    );
 
-    const zpubPayload = Buffer.concat([zpubVersionBuffer, payload]);
-
-    return bs58check.encode(zpubPayload);
+    switch (bipType) {
+      case "BIP44":
+        return `pkh(${normalizedXpub})`;
+      case "BIP49":
+        return `sh(wpkh(${normalizedXpub}))`;
+      case "BIP86":
+        return `tr(${normalizedXpub})`;
+      default:
+        return `wpkh(${normalizedXpub})`;
+    }
   } catch (error) {
     throw new Error(
-      `Failed to convert to zpub: ${
+      `Failed to build descriptor: ${
         error instanceof Error ? error.message : "Unknown error"
       }`,
     );

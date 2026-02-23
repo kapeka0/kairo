@@ -1,5 +1,4 @@
 import { client_env } from "@/lib/env/client";
-import { convertToZpub } from "@/lib/utils/bitcoin";
 import axios from "axios";
 import axiosRetry, { exponentialDelay } from "axios-retry";
 import Bottleneck from "bottleneck";
@@ -77,7 +76,7 @@ axiosRetry(blockbookClient, {
 
 // Rate limit to avoid getting blocked by Satoshi Labs, if user has a self-hosted blockbook instance they can increase the limits
 const rateLimiter = new Bottleneck({
-  maxConcurrent: 5,
+  maxConcurrent: 3,
   minTime: 200,
   reservoir: 20,
   reservoirRefreshAmount: 20,
@@ -176,23 +175,22 @@ export interface FormattedTransaction {
   tokenType?: string;
 }
 
-export async function fetchBlockbookBalance(xpub: string) {
+export async function fetchBlockbookBalance(query: string) {
   checkCircuitBreaker();
 
-  const requestKey = `balance:${xpub}`;
+  const requestKey = `balance:${query}`;
 
   if (pendingRequests.has(requestKey)) {
-    devLog(`[Blockbook] Reusing pending request for ${xpub}`);
+    devLog(`[Blockbook] Reusing pending request for ${query}`);
     return pendingRequests.get(requestKey)!;
   }
 
   const requestPromise = (async () => {
     try {
-      const zpub = convertToZpub(xpub);
-      devLog(`[Blockbook] Fetching balance for xpub ${xpub} (zpub: ${zpub})`);
+      devLog(`[Blockbook] Fetching balance for ${query}`);
 
       const response = await blockbookClient.get<BlockbookXpubResponse>(
-        `/api/v2/xpub/${zpub}`,
+        `/api/v2/xpub/${query}`,
         {
           params: { details: "basic" },
         },
@@ -265,24 +263,24 @@ interface BlockbookBalanceHistoryEntry {
 }
 
 export async function fetchWalletBalanceHistory(
-  zpub: string,
+  query: string,
 ): Promise<BlockbookBalanceHistoryEntry[]> {
   checkCircuitBreaker();
 
-  const requestKey = `balancehistory:${zpub}`;
+  const requestKey = `balancehistory:${query}`;
 
   if (pendingRequests.has(requestKey)) {
-    devLog(`[Blockbook] Reusing pending balance history request for ${zpub}`);
+    devLog(`[Blockbook] Reusing pending balance history request for ${query}`);
     return pendingRequests.get(requestKey)!;
   }
 
   const requestPromise = (async () => {
     try {
-      devLog(`[Blockbook] Fetching balance history for ${zpub}`);
+      devLog(`[Blockbook] Fetching balance history for ${query}`);
 
       const response = await blockbookClient.get<
         BlockbookBalanceHistoryEntry[]
-      >(`/api/v2/balancehistory/${zpub}`, {
+      >(`/api/v2/balancehistory/${query}`, {
         params: { fiatcurrency: "usd", groupBy: 86400 },
       });
 
@@ -360,7 +358,7 @@ export function formatBlockbookTransactions(
 }
 
 export async function fetchTransactions(
-  xpub: string,
+  query: string,
   page: number = 1,
   pageSize: number = 25,
 ): Promise<{
@@ -370,21 +368,19 @@ export async function fetchTransactions(
 }> {
   checkCircuitBreaker();
 
-  const requestKey = `transactions:${xpub}:${page}:${pageSize}`;
+  const requestKey = `transactions:${query}:${page}:${pageSize}`;
 
   if (pendingRequests.has(requestKey)) {
     devLog(
-      `[Blockbook] Reusing pending transaction request for ${xpub} page ${page}`,
+      `[Blockbook] Reusing pending transaction request for ${query} page ${page}`,
     );
     return pendingRequests.get(requestKey)!;
   }
 
   const requestPromise = (async () => {
     try {
-      const zpub = convertToZpub(xpub);
-
       const response = await blockbookClient.get<BlockbookXpubResponse>(
-        `/api/v2/xpub/${zpub}`,
+        `/api/v2/xpub/${query}`,
         {
           params: { details: "txs", page, pageSize },
           timeout: 60000,

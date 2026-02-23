@@ -126,9 +126,9 @@ export function BalancePeriodChange() {
                 <span className="flex items-center gap-1">
                   (
                   {isPositive ? (
-                    <TrendingUp className="size-4" />
+                    <TrendingUp className="size-3 rotate-0 " />
                   ) : (
-                    <TrendingDown className="size-4" />
+                    <TrendingDown className="size-3  " />
                   )}{" "}
                   <NumberFlow
                     value={changePercent}
@@ -137,7 +137,7 @@ export function BalancePeriodChange() {
                     format={{
                       style: "percent",
                       maximumFractionDigits: 2,
-                      signDisplay: "always",
+                      signDisplay: "never",
                     }}
                   />
                   )
@@ -183,9 +183,9 @@ export function BalancePeriodChange() {
                   <span className="flex items-center gap-1">
                     (
                     {isPnlPositive ? (
-                      <TrendingUp className="size-4" />
+                      <TrendingUp className="size-3 rotate-0 " />
                     ) : (
-                      <TrendingDown className="size-4" />
+                      <TrendingDown className="size-3  " />
                     )}{" "}
                     <NumberFlow
                       value={pnlData.unrealizedPnlPercent}
@@ -194,7 +194,7 @@ export function BalancePeriodChange() {
                       format={{
                         style: "percent",
                         maximumFractionDigits: 2,
-                        signDisplay: "always",
+                        signDisplay: "never",
                       }}
                     />
                     )

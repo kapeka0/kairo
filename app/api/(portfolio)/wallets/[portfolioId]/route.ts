@@ -4,7 +4,7 @@ import { NextRequest, NextResponse } from "next/server";
 import { auth } from "@/lib/auth";
 import { existsPortfolioByIdAndUserId } from "@/lib/db/data/portfolio";
 import { getWalletsByPortfolioId } from "@/lib/db/data/wallet";
-import { BitcoinWallet, TokenType } from "@/lib/types";
+import { BipType, BitcoinWallet, TokenType } from "@/lib/types";
 import { mapBTCWalletToWallet } from "@/lib/utils";
 import { validateRequest } from "@/lib/utils/api-validation";
 import { portfolioIdParamSchema } from "@/lib/validations/api";
@@ -55,6 +55,7 @@ export async function GET(
       lastBalanceInSatoshis: wallet.lastBalanceInSatoshis,
       lastBalanceInSatoshisUpdatedAt: wallet.lastBalanceInSatoshisUpdatedAt,
       createdAt: wallet.createdAt,
+      bipType: wallet.bipType as BipType,
       updatedAt: wallet.updatedAt,
       tokenType: TokenType.BTC,
     }));

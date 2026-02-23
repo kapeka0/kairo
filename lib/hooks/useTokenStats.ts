@@ -42,8 +42,8 @@ export function useTokenStats() {
         );
         return data;
       },
-      refetchInterval: 60_000,
-      staleTime: 30_000,
+      refetchInterval: 60_000, // 1 minute
+      staleTime: 60_000, // 1 minute
       refetchIntervalInBackground: true,
       enabled: !!activePortfolioId && !!coingeckoCurrency,
       retry: (failureCount: number, error: unknown) => {

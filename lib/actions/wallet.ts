@@ -5,6 +5,7 @@ import { returnValidationErrors } from "next-safe-action";
 import { z } from "zod";
 
 import {
+  deleteWalletById,
   getWalletByIdAndTokenType,
   updateBitcoinWalletBalanceById,
 } from "@/lib/db/data/wallet";
@@ -12,15 +13,16 @@ import { db } from "@/lib/db/db";
 import { bitcoinWallet, portfolio } from "@/lib/db/schema";
 import { authActionClient } from "@/lib/safe-actions";
 import { fetchBlockbookBalance } from "@/lib/services/blockbook";
-import { TokenType } from "@/lib/types";
+import { TokenType, type BipType } from "@/lib/types";
 import { generateUUID } from "@/lib/utils";
+import { toDescriptor } from "@/lib/utils/bitcoin";
 import { createBitcoinWalletSchema } from "@/lib/validations/wallet";
 
 export const createBitcoinWallet = authActionClient
   .metadata({ actionName: "createBitcoinWallet" })
   .inputSchema(createBitcoinWalletSchema)
   .action(async ({ parsedInput, ctx }) => {
-    const { name, publicKey, portfolioId } = parsedInput;
+    const { name, publicKey, bipType, portfolioId } = parsedInput;
 
     const portfolioExists = await db.query.portfolio.findFirst({
       where: and(
@@ -50,7 +52,9 @@ export const createBitcoinWallet = authActionClient
 
     let balance = "0";
     try {
-      const blockbookData = await fetchBlockbookBalance(publicKey);
+      const blockbookData = await fetchBlockbookBalance(
+        toDescriptor(publicKey, bipType as BipType),
+      );
       balance = blockbookData.balance;
     } catch (error) {
       console.error("Failed to fetch initial balance:", error);
@@ -66,6 +70,7 @@ export const createBitcoinWallet = authActionClient
         name,
         gradientUrl,
         publicKey,
+        bipType,
         portfolioId,
         lastBalanceInSatoshis: balance,
         lastBalanceInSatoshisUpdatedAt: new Date(),
@@ -120,7 +125,9 @@ export const refreshWalletBalance = authActionClient
       throw new Error("Wallet not found");
     }
 
-    const blockbookData = await fetchBlockbookBalance(wallet.publicKey);
+    const blockbookData = await fetchBlockbookBalance(
+      toDescriptor(wallet.publicKey, wallet.bipType as BipType),
+    );
 
     await db
       .update(bitcoinWallet)
@@ -174,3 +181,27 @@ export const updateWalletBalance = authActionClient
     };
   });
 
+export const deleteWallet = authActionClient
+  .metadata({ actionName: "deleteWallet" })
+  .inputSchema(
+    z.object({
+      walletId: z.string().uuid(),
+      tokenType: z.nativeEnum(TokenType),
+    }),
+  )
+  .action(async ({ parsedInput, ctx }) => {
+    const { walletId, tokenType } = parsedInput;
+    const wallet = await getWalletByIdAndTokenType(walletId, tokenType);
+
+    if (!wallet) {
+      throw new Error("Wallet not found");
+    }
+
+    if (wallet.portfolio.userId !== ctx.user.id) {
+      throw new Error("Unauthorized: Wallet does not belong to user");
+    }
+
+    await deleteWalletById(walletId, tokenType);
+
+    return { success: true };
+  });

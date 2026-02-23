@@ -5,7 +5,8 @@ import { getBitcoinWalletById } from "@/lib/db/data/wallet";
 import { walletIdParamSchema } from "@/lib/validations/api";
 import { validateRequest } from "@/lib/utils/api-validation";
 import { fetchBlockbookBalance } from "@/lib/services/blockbook";
-import { TokenType } from "@/lib/types";
+import { TokenType, type BipType } from "@/lib/types";
+import { toDescriptor } from "@/lib/utils/bitcoin";
 
 export async function GET(
   request: NextRequest,
@@ -44,7 +45,7 @@ export async function GET(
 
     switch (wallet.tokenType) {
       case TokenType.BTC: {
-        const blockbookData = await fetchBlockbookBalance(wallet.publicKey);
+        const blockbookData = await fetchBlockbookBalance(toDescriptor(wallet.publicKey, wallet.bipType as BipType));
 
         return NextResponse.json({
           walletId,

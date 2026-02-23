@@ -13,6 +13,7 @@ import {
   TooltipContent,
   TooltipTrigger,
 } from "@/components/ui/tooltip";
+import { useAddressTags } from "@/lib/hooks/useAddressTags";
 import { Tag, X } from "lucide-react";
 import { useTranslations } from "next-intl";
 import { useEffect, useRef, useState } from "react";
@@ -20,21 +21,14 @@ import { useEffect, useRef, useState } from "react";
 interface AddressCellProps {
   address: string;
   tag: string | undefined;
-  onUpsert: (address: string, tag: string) => void;
-  onDelete: (address: string) => void;
 }
 
-const AddressCell = ({
-  address,
-  tag,
-  onUpsert,
-  onDelete,
-}: AddressCellProps) => {
+const AddressCell = ({ address, tag }: AddressCellProps) => {
   const t = useTranslations("Transactions");
   const [open, setOpen] = useState(false);
   const [value, setValue] = useState(tag ?? "");
   const inputRef = useRef<HTMLInputElement>(null);
-
+  const { upsertTag, deleteTag } = useAddressTags();
   useEffect(() => {
     setValue(tag ?? "");
   }, [tag]);
@@ -48,7 +42,7 @@ const AddressCell = ({
   const handleSubmit = () => {
     const trimmed = value.trim();
     if (trimmed) {
-      onUpsert(address, trimmed);
+      upsertTag(address, trimmed);
     }
     setOpen(false);
   };
@@ -62,7 +56,7 @@ const AddressCell = ({
   };
 
   const handleDelete = () => {
-    onDelete(address);
+    deleteTag(address);
     setValue("");
     setOpen(false);
   };

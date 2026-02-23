@@ -1,8 +1,12 @@
 "use client";
 
-import { useAtom, useAtomValue } from "jotai";
+import { useQueryClient } from "@tanstack/react-query";
+import axios from "axios";
+import Bottleneck from "bottleneck";
+import { useAtom, useAtomValue, useSetAtom } from "jotai";
 import { ChevronsUpDown, Plus } from "lucide-react";
 import { useFormatter, useTranslations } from "next-intl";
+import { useCallback, useEffect, useMemo, useState } from "react";
 
 import CreatePortfolioModal from "@/app/[locale]/app/create/_components/CreatePortfolioModal";
 import { PrivacyValue } from "@/components/privacy-value";
@@ -30,8 +34,25 @@ import {
   portfolioBalancesAtom,
 } from "@/lib/atoms/PortfolioAtoms";
 import { usePortfolios } from "@/lib/hooks/usePortfolios";
+import { Portfolio, TokenType, Wallet } from "@/lib/types";
+import { devLog } from "@/lib/utils";
+import { calculateWalletBalanceInCurrency } from "@/lib/utils/balance";
 import { CURRENCIES } from "@/lib/utils/constants";
-import { useEffect, useMemo, useState } from "react";
+
+interface WalletsResponse {
+  wallets: Wallet[];
+}
+
+interface TokenPriceResponse {
+  price: number;
+  currency: string;
+  tokenType: string;
+}
+
+const portfolioLimiter = new Bottleneck({
+  maxConcurrent: 3,
+  minTime: 500,
+});
 
 export function PortfolioSwitcher() {
   const t = useTranslations("PortfolioSwitcher");
@@ -43,7 +64,9 @@ export function PortfolioSwitcher() {
     activePortfolioBalanceInUserCurrencyAtom,
   );
   const portfolioBalances = useAtomValue(portfolioBalancesAtom);
+  const setPortfolioBalances = useSetAtom(portfolioBalancesAtom);
   const format = useFormatter();
+  const queryClient = useQueryClient();
 
   const getCurrencySymbol = (currencyCode: string) => {
     return (
@@ -73,6 +96,105 @@ export function PortfolioSwitcher() {
     }
   }, [activePortfolio, activePortfolioId, setActivePortfolioId]);
 
+  const calculatePortfolioBalance = useCallback(
+    async (portfolio: Portfolio) => {
+      try {
+        const coingeckoCurrency = CURRENCIES.find(
+          (c) => c.value === portfolio.currency,
+        )?.coingeckoValue;
+
+        if (!coingeckoCurrency) {
+          devLog(`No coingecko currency mapping for ${portfolio.currency}`);
+          return 0;
+        }
+
+        const { data: walletsData } = await axios.get<WalletsResponse>(
+          `/api/wallets/${portfolio.id}`,
+        );
+        const wallets = walletsData.wallets;
+
+        queryClient.setQueryData(["wallets", portfolio.id], { wallets });
+
+        if (!wallets || wallets.length === 0) {
+          setPortfolioBalances((prev) => ({ ...prev, [portfolio.id]: 0 }));
+          return 0;
+        }
+
+        const walletsByTokenType = wallets.reduce((acc, wallet) => {
+          if (!acc[wallet.tokenType]) acc[wallet.tokenType] = [];
+          acc[wallet.tokenType].push(wallet);
+          return acc;
+        }, {} as Record<TokenType, Wallet[]>);
+
+        const pricePromises = Object.keys(walletsByTokenType).map((tokenType) =>
+          axios.get<TokenPriceResponse>(`/api/token/price`, {
+            params: { tokenType, currency: coingeckoCurrency },
+          }),
+        );
+
+        const priceResponses = await Promise.all(pricePromises);
+        // @ts-expect-error - We know the tokenType will be a valid key in the priceMap
+        const priceMap: Record<TokenType, number> = {};
+
+        priceResponses.forEach((response) => {
+          priceMap[response.data.tokenType as TokenType] = response.data.price;
+        });
+
+        let totalBalance = 0;
+
+        for (const [tokenType, tokenWallets] of Object.entries(
+          walletsByTokenType,
+        )) {
+          const tokenPrice = priceMap[tokenType as TokenType];
+
+          for (const wallet of tokenWallets) {
+            totalBalance += calculateWalletBalanceInCurrency(
+              wallet,
+              tokenPrice,
+            );
+          }
+        }
+
+        setPortfolioBalances((prev) => ({
+          ...prev,
+          [portfolio.id]: totalBalance,
+        }));
+
+        return totalBalance;
+      } catch (error) {
+        devLog(
+          `Error calculating balance for portfolio ${portfolio.id}:`,
+          error,
+        );
+        return 0;
+      }
+    },
+    [setPortfolioBalances, queryClient],
+  );
+
+  useEffect(() => {
+    if (!portfolios || !activePortfolioId) return;
+
+    const active = portfolios.find((p) => p.id === activePortfolioId);
+    if (active) {
+      calculatePortfolioBalance(active);
+    }
+  }, [portfolios, activePortfolioId, calculatePortfolioBalance]);
+
+  useEffect(() => {
+    if (!portfolios || portfolios.length === 0) return;
+
+    const inactivePortfolios = portfolios.filter(
+      (p) => p.id !== activePortfolioId,
+    );
+
+    Promise.all(
+      inactivePortfolios.map((portfolio) =>
+        portfolioLimiter.schedule(() => calculatePortfolioBalance(portfolio)),
+      ),
+    );
+  }, [portfolios, activePortfolioId, calculatePortfolioBalance]);
+
   if (isLoading) {
     return (
       <SidebarMenu>
@@ -89,7 +211,6 @@ export function PortfolioSwitcher() {
     );
   }
 
-  // We should never get here since we check the user has at least one portfolio in the root layout, but this is a fallback just in case
   if (!portfolios || portfolios.length === 0) {
     return (
       <SidebarMenu>
@@ -140,9 +261,6 @@ export function PortfolioSwitcher() {
                 alt={activePortfolio.name}
                 className="rounded-lg"
               />
-              {/* <AvatarFallback className="rounded-lg">
-                <Wallet className="size-4" />
-              </AvatarFallback> */}
             </Avatar>
             <div className="grid flex-1 text-left text-sm leading-tight">
               <span className="truncate font-medium">

@@ -138,6 +138,7 @@ export const bitcoinWallet = pgTable("bitcoin_wallet", {
   gradientUrl: text("gradient_url").notNull(),
   icon: text("icon"),
   publicKey: text("public_key").notNull(),
+  bipType: text("bip_type").notNull().default("BIP84"),
 
   portfolioId: text("portfolio_id")
     .notNull()

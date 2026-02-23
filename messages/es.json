@@ -148,7 +148,7 @@
       "extendedPublicKeyHelper": "Tu xpub es segura de compartir y permite acceso de solo lectura a tu billetera",
       "addressType": "Tipo de Dirección",
       "selectAddressType": "Selecciona el tipo de dirección",
-      "addressTypeHelper": "Detectado automáticamente, pero puedes cambiarlo manualmente si es necesario",
+      "addressTypeHelper": "Detectado automáticamente por el prefijo de la clave. Las billeteras Taproot (BIP86) con claves xpub deben seleccionarse manualmente.",
       "bipTypeDetected": "Detectado: {bipType}",
       "bipTypeLegacy": "Legacy (BIP44) - Direcciones comienzan con 1",
       "bipTypeNestedSegwit": "Nested SegWit (BIP49) - Direcciones comienzan con 3",
@@ -182,12 +182,18 @@
       "noWallets": "Aún no hay billeteras",
       "noWalletsDescription": "Haz clic en 'Agregar Billetera' para comenzar",
       "viewDetails": "Ver Detalles",
-      "refreshBalance": "Actualizar Balance",
+      "refresh": "Actualizar",
       "refreshing": "Actualizando...",
       "balanceRefreshed": "Balance actualizado exitosamente",
       "refreshFailed": "Error al actualizar el balance",
-      "deleteWallet": "Eliminar Billetera",
-      "iconUpdated": "Ícono de billetera actualizado exitosamente"
+      "delete": "Eliminar",
+      "walletDeleted": "Billetera eliminada exitosamente",
+      "deleteFailed": "Error al eliminar la billetera",
+      "iconUpdated": "Ícono de billetera actualizado exitosamente",
+      "deleteConfirmTitle": "Eliminar Billetera",
+      "deleteConfirmDescription": "Esta acción no se puede deshacer. \"{walletName}\" y todos sus datos serán eliminados permanentemente.",
+      "deleteConfirmCancel": "Cancelar",
+      "deleteConfirmAction": "Eliminar"
     }
   }
 }

@@ -25,6 +25,8 @@ export enum TokenType {
   ETH = "ETH",
 }
 
+export type BipType = "BIP44" | "BIP49" | "BIP84" | "BIP86";
+
 export type Wallet = {
   id: string;
   name: string;
@@ -45,6 +47,7 @@ export type BitcoinWallet = {
   gradientUrl: string;
   icon: string | null;
   publicKey: string;
+  bipType: BipType;
   portfolioId: string;
   lastBalanceInSatoshis: string;
   lastBalanceInSatoshisUpdatedAt: Date;

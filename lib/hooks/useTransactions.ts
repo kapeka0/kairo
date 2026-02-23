@@ -1,9 +1,8 @@
 "use client";
 
 import { FormattedTransaction } from "@/lib/services/blockbook";
-import { useQuery } from "@tanstack/react-query";
+import { useInfiniteQuery } from "@tanstack/react-query";
 import axios from "axios";
-import { useState } from "react";
 
 interface TransactionsResponse {
   transactions: FormattedTransaction[];
@@ -23,25 +22,33 @@ async function fetchTransactionsPage(
   return data;
 }
 
-export function useTransactions(portfolioId: string, pageSize: number = 25) {
-  const [page, setPage] = useState(1);
-
-  const query = useQuery({
-    queryKey: ["transactions", portfolioId, page, pageSize],
-    queryFn: () => fetchTransactionsPage(portfolioId, page, pageSize),
+export function useTransactions(portfolioId: string, pageSize: number = 1000) {
+  const query = useInfiniteQuery({
+    queryKey: ["transactions", portfolioId, pageSize],
+    queryFn: ({ pageParam }) =>
+      fetchTransactionsPage(portfolioId, pageParam as number, pageSize),
+    initialPageParam: 1,
+    getNextPageParam: (lastPage, allPages) => {
+      const nextPage = allPages.length + 1;
+      return nextPage <= lastPage.totalPages ? nextPage : undefined;
+    },
     enabled: !!portfolioId,
-    staleTime: 30_000, // 1/2 minute
+    staleTime: 60_000, //  1 minute
+    refetchInterval: 60_000, // 1 minute
   });
 
+  const allTransactions =
+    query.data?.pages.flatMap((p) => p.transactions) ?? [];
+  const walletCount = query.data?.pages[0]?.walletCount ?? 0;
+
   return {
-    transactions: query.data?.transactions ?? [],
-    totalPages: query.data?.totalPages ?? 1,
-    walletCount: query.data?.walletCount ?? 0,
-    isLoading: query.isLoading,
+    transactions: allTransactions,
+    walletCount,
+    fetchNextPage: query.fetchNextPage,
+    hasNextPage: query.hasNextPage,
+    isFetchingNextPage: query.isFetchingNextPage,
     isPending: query.isPending,
     isError: query.isError,
     error: query.error,
-    page,
-    setPage,
   };
 }

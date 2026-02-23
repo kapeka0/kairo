@@ -1,10 +1,11 @@
 import { fetchWalletBalanceHistory } from "@/lib/services/blockbook";
-import { TokenType } from "@/lib/types";
-import { convertToZpub } from "@/lib/utils/bitcoin";
+import { TokenType, type BipType } from "@/lib/types";
+import { toDescriptor } from "@/lib/utils/bitcoin";
 import { getTokenMetadata } from "@/lib/utils/token-metadata";
 
 type WalletInput = {
   publicKey: string;
+  bipType: string;
   tokenType: string;
   lastBalanceInSatoshis: string;
 };
@@ -29,8 +30,8 @@ export async function computeWalletDayMap(
   switch (wallet.tokenType as TokenType) {
     case TokenType.BTC: {
       const { decimals } = getTokenMetadata(TokenType.BTC);
-      const zpub = convertToZpub(wallet.publicKey);
-      const entries = await fetchWalletBalanceHistory(zpub);
+      const descriptor = toDescriptor(wallet.publicKey, wallet.bipType as BipType);
+      const entries = await fetchWalletBalanceHistory(descriptor);
 
       entries.sort((a, b) => a.time - b.time);
 
@@ -58,8 +59,8 @@ export async function computeWalletPnlData(
   switch (wallet.tokenType as TokenType) {
     case TokenType.BTC: {
       const { decimals } = getTokenMetadata(TokenType.BTC);
-      const zpub = convertToZpub(wallet.publicKey);
-      const entries = await fetchWalletBalanceHistory(zpub);
+      const descriptor = toDescriptor(wallet.publicKey, wallet.bipType as BipType);
+      const entries = await fetchWalletBalanceHistory(descriptor);
 
       let totalCostUsd = 0;
       let totalTokensReceived = 0;
