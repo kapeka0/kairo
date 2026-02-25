@@ -200,9 +200,10 @@
     "addPortfolio": "Add portfolio"
   },
   "BalanceChart": {
+    "title": "Portfolio Balance",
     "noHistory": "No balance history yet",
-    "7d": "7 days",
-    "30d": "30 days",
+    "7d": "1 week",
+    "30d": "1 month",
     "90d": "3 months",
     "180d": "6 months",
     "365d": "1 year"

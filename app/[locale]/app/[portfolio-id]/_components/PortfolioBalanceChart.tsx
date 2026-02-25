@@ -1,15 +1,23 @@
 "use client";
-import { Card, CardContent } from "@/components/ui/card";
+import { Card, CardContent, CardHeader } from "@/components/ui/card";
 import {
   ChartConfig,
   ChartContainer,
   ChartTooltip,
 } from "@/components/ui/chart";
+import {
+  Select,
+  SelectContent,
+  SelectItem,
+  SelectTrigger,
+  SelectValue,
+} from "@/components/ui/select";
 import { Skeleton } from "@/components/ui/skeleton";
 import { useBalanceHistory } from "@/lib/hooks/useBalanceHistory";
 import { useCurrencyRates } from "@/lib/hooks/useCurrencyRates";
 import { useDisplayCurrency } from "@/lib/hooks/useDisplayCurrency";
-import { usePeriod } from "@/lib/hooks/usePeriod";
+import { PERIOD_VALUES, usePeriod } from "@/lib/hooks/usePeriod";
+import { Period } from "@/lib/types";
 import { formatDate } from "@/lib/utils";
 import { useLocale, useTranslations } from "next-intl";
 import { useMemo } from "react";
@@ -23,7 +31,7 @@ const chartConfig = {
 } satisfies ChartConfig;
 
 export function PortfolioBalanceChart() {
-  const [period] = usePeriod();
+  const [period, setPeriod] = usePeriod();
   const locale = useLocale();
   const t = useTranslations("BalanceChart");
   const { displayCurrency } = useDisplayCurrency();
@@ -57,8 +65,25 @@ export function PortfolioBalanceChart() {
   }
 
   return (
-    <Card>
-      <CardContent>
+    <Card className="pt-0">
+      <CardHeader className="flex items-center gap-2 space-y-0  pt-5 sm:flex-row">
+        <Select value={period} onValueChange={(v) => setPeriod(v as Period)}>
+          <SelectTrigger
+            className="w-35 rounded-lg sm:ml-auto"
+            aria-label="Select period"
+          >
+            <SelectValue>{t(period)}</SelectValue>
+          </SelectTrigger>
+          <SelectContent className="rounded-xl">
+            {PERIOD_VALUES.map((p) => (
+              <SelectItem key={p} value={p} className="rounded-lg">
+                {t(p)}
+              </SelectItem>
+            ))}
+          </SelectContent>
+        </Select>
+      </CardHeader>
+      <CardContent className="px-2 pt-4 sm:px-6 sm:pt-6">
         {chartData.length === 0 ? (
           <div className="h-75 flex items-center justify-center text-muted-foreground text-sm">
             {t("noHistory")}

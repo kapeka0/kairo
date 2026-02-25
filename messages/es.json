@@ -113,9 +113,10 @@
     }
   },
   "BalanceChart": {
+    "title": "Balance del portafolio",
     "noHistory": "Aún no hay historial de balance",
-    "7d": "7 días",
-    "30d": "30 días",
+    "7d": "1 semana",
+    "30d": "1 mes",
     "90d": "3 meses",
     "180d": "6 meses",
     "365d": "1 año"

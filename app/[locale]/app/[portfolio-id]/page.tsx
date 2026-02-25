@@ -3,7 +3,6 @@ import { BalancePeriodChange } from "./_components/BalancePeriodChange";
 import BalanceTitle from "./_components/BalanceTitle";
 import { MarketOverview } from "./_components/MarketOverview";
 import PageTitle from "./_components/PageTitle";
-import { PeriodTabs } from "./_components/PeriodTabs";
 import { PortfolioBalanceChart } from "./_components/PortfolioBalanceChart";
 import { TokenAllocationTable } from "./_components/TokenAllocationTable";
 
@@ -19,10 +18,7 @@ export default function DashboardPage({
       <div className="flex flex-col items-start gap-1">
         <PageTitle text={tDashboard("title")} />
         <BalanceTitle />
-        <div className="flex w-full items-end justify-between">
-          <BalancePeriodChange />
-          <PeriodTabs />
-        </div>
+        <BalancePeriodChange />
       </div>
       <PortfolioBalanceChart />
       <TokenAllocationTable />
