@@ -49,8 +49,8 @@ export function IconPicker({
     const searchLower = search.toLowerCase();
     return icons.filter((icon) => {
       const nameMatch = icon.name.toLowerCase().includes(searchLower);
-      const tagsMatch = icon.tags?.some(tag =>
-        tag.toLowerCase().includes(searchLower)
+      const tagsMatch = icon.tags?.some((tag) =>
+        tag.toLowerCase().includes(searchLower),
       );
       return nameMatch || tagsMatch;
     });

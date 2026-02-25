@@ -180,7 +180,14 @@
     "oneYear": "1 year",
     "unrealizedGainsOrLosses": "Unrealized gains/losses",
     "unrealizedPnl": "Unrealized PnL",
-    "unrealizedPnlExplanation": "Estimated profit or loss if you sold your assets right now, calculated as the difference between your average purchase price (WAP) and the current market price."
+    "unrealizedPnlExplanation": "Estimated profit or loss if you sold your assets right now, calculated as the difference between your average purchase price (WAP) and the current market price.",
+    "tokenAllocation": {
+      "title": "Assets",
+      "token": "Token",
+      "amount": "Amount",
+      "value": "Value",
+      "allocation": "Allocation"
+    }
   },
   "Portfolio": {
     "portfolios": "Portfolios",

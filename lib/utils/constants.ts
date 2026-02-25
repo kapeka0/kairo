@@ -35,7 +35,12 @@ export const CURRENCIES = [
 export type Currency = (typeof CURRENCIES)[number]["coingeckoValue"];
 
 export const SUPPORTED_CRYPTOCURRENCIES = [
-  { value: "BTC", logo: "/images/logos/crypto/btc.svg", label: "Bitcoin" },
+  {
+    value: "BTC",
+    logo: "/images/logos/crypto/btc.svg",
+    label: "Bitcoin",
+    prominentColor: "#f7931a",
+  },
 ];
 
 export const WALLET_ICONS: IconDefinition[] = [

@@ -103,7 +103,14 @@
     "oneYear": "1 año",
     "unrealizedGainsOrLosses": "Ganancias/pérdidas no realizadas",
     "unrealizedPnl": "PnL no realizado",
-    "unrealizedPnlExplanation": "Diferencia entre el valor actual y tu base de coste, calculada usando el precio medio ponderado (PMP)."
+    "unrealizedPnlExplanation": "Diferencia entre el valor actual y tu base de coste, calculada usando el precio medio ponderado (PMP).",
+    "tokenAllocation": {
+      "title": "Asignación por Token",
+      "token": "Token",
+      "amount": "Cantidad",
+      "value": "Valor",
+      "allocation": "Asignación"
+    }
   },
   "BalanceChart": {
     "noHistory": "Aún no hay historial de balance",

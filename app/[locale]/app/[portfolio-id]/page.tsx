@@ -5,6 +5,7 @@ import { MarketOverview } from "./_components/MarketOverview";
 import PageTitle from "./_components/PageTitle";
 import { PeriodTabs } from "./_components/PeriodTabs";
 import { PortfolioBalanceChart } from "./_components/PortfolioBalanceChart";
+import { TokenAllocationTable } from "./_components/TokenAllocationTable";
 
 export default function DashboardPage({
   params,
@@ -24,6 +25,7 @@ export default function DashboardPage({
         </div>
       </div>
       <PortfolioBalanceChart />
+      <TokenAllocationTable />
       <MarketOverview />
     </div>
   );

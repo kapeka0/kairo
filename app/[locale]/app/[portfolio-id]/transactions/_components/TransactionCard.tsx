@@ -173,21 +173,25 @@ const TransactionCard = ({ tx, tokenPrice }: TransactionCardProps) => {
             </TooltipContent>
           </Tooltip>
         </span>
-        {historicalValue != null ? (
-          <NumberFlow
-            locales={locale}
-            value={historicalValue}
-            format={{
-              style: "currency",
-              currency: displayCurrency,
-              currencySign: "standard",
-              minimumFractionDigits: 2,
-              maximumFractionDigits: 2,
-              trailingZeroDisplay: "stripIfInteger",
-            }}
-            className="text-xs tabular-nums text-muted-foreground"
-          />
-        ) : null}
+        <div className="text-xs tabular-nums text-muted-foreground">
+          {" "}
+          {historicalValue != null ? (
+            <NumberFlow
+              locales={locale}
+              value={historicalValue}
+              format={{
+                style: "currency",
+                currency: displayCurrency,
+                currencySign: "standard",
+                minimumFractionDigits: 2,
+                maximumFractionDigits: 2,
+                trailingZeroDisplay: "stripIfInteger",
+              }}
+            />
+          ) : (
+            <span>-</span>
+          )}
+        </div>
       </PrivacyValue>
     </div>
   );

@@ -81,7 +81,7 @@ export default function WalletsTable() {
 
   const { execute } = useAction(updateWalletIcon, {
     onSuccess: async () => {
-      await queryClient.invalidateQueries({
+      await queryClient.refetchQueries({
         queryKey: ["wallets", portfolioId],
       });
       toast.success(tTable("iconUpdated"));
