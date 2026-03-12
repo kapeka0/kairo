@@ -7,7 +7,6 @@ import { z } from "zod";
 import {
   deleteWalletById,
   getWalletByIdAndTokenType,
-  updateBitcoinWalletBalanceById,
 } from "@/lib/db/data/wallet";
 import { db } from "@/lib/db/db";
 import { bitcoinWallet, portfolio } from "@/lib/db/schema";
@@ -50,16 +49,6 @@ export const createBitcoinWallet = authActionClient
       });
     }
 
-    let balance = "0";
-    try {
-      const blockbookData = await fetchBlockbookBalance(
-        toDescriptor(publicKey, bipType as BipType),
-      );
-      balance = blockbookData.balance;
-    } catch (error) {
-      console.error("Failed to fetch initial balance:", error);
-    }
-
     const walletId = generateUUID();
     const gradientUrl = `https://avatar.vercel.sh/${walletId}.svg?gradient=true`;
 
@@ -72,8 +61,6 @@ export const createBitcoinWallet = authActionClient
         publicKey,
         bipType,
         portfolioId,
-        lastBalanceInSatoshis: balance,
-        lastBalanceInSatoshisUpdatedAt: new Date(),
       })
       .returning();
 
@@ -129,56 +116,7 @@ export const refreshWalletBalance = authActionClient
       toDescriptor(wallet.publicKey, wallet.bipType as BipType),
     );
 
-    await db
-      .update(bitcoinWallet)
-      .set({
-        lastBalanceInSatoshis: blockbookData.balance,
-        lastBalanceInSatoshisUpdatedAt: new Date(),
-      })
-      .where(eq(bitcoinWallet.id, walletId));
-
     return { success: true, balance: blockbookData.balance };
-  });
-
-const updateWalletBalanceSchema = z.object({
-  walletId: z.string().uuid(),
-  tokenType: z.nativeEnum(TokenType),
-  balance: z.string().regex(/^\d+$/),
-});
-
-export const updateWalletBalance = authActionClient
-  .metadata({ actionName: "updateWalletBalance" })
-  .inputSchema(updateWalletBalanceSchema)
-  .action(async ({ parsedInput, ctx }) => {
-    const { walletId, tokenType, balance } = parsedInput;
-
-    const wallet = await getWalletByIdAndTokenType(walletId, tokenType);
-
-    if (!wallet) {
-      throw new Error("Wallet not found");
-    }
-
-    if (wallet.portfolio.userId !== ctx.user.id) {
-      throw new Error("Unauthorized: Wallet does not belong to user");
-    }
-
-    switch (tokenType) {
-      case TokenType.BTC:
-        await updateBitcoinWalletBalanceById(walletId, balance);
-        break;
-      case TokenType.ETH:
-        throw new Error("ETH support coming soon");
-      default:
-        throw new Error(`Unsupported token type: ${tokenType}`);
-    }
-
-    return {
-      success: true,
-      walletId,
-      tokenType,
-      balance,
-      updatedAt: new Date().toISOString(),
-    };
   });
 
 export const deleteWallet = authActionClient

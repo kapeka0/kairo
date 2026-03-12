@@ -38,6 +38,7 @@ import { Portfolio, TokenType, Wallet } from "@/lib/types";
 import { devLog } from "@/lib/utils";
 import { calculateWalletBalanceInCurrency } from "@/lib/utils/balance";
 import { CURRENCIES } from "@/lib/utils/constants";
+import { Skeleton } from "./skeleton";
 
 interface WalletsResponse {
   wallets: Wallet[];
@@ -68,13 +69,8 @@ export function PortfolioSwitcher() {
   const format = useFormatter();
   const queryClient = useQueryClient();
 
-  const getCurrencySymbol = (currencyCode: string) => {
-    return (
-      CURRENCIES.find((c) => c.value === currencyCode)?.symbol || currencyCode
-    );
-  };
   const { isMobile } = useSidebar();
-  const { data: portfolios, isLoading } = usePortfolios();
+  const { data: portfolios, isPending } = usePortfolios();
   const [activePortfolioId, setActivePortfolioId] = useAtom(
     activePortfolioIdAtom,
   );
@@ -120,11 +116,27 @@ export function PortfolioSwitcher() {
           return 0;
         }
 
-        const walletsByTokenType = wallets.reduce((acc, wallet) => {
-          if (!acc[wallet.tokenType]) acc[wallet.tokenType] = [];
-          acc[wallet.tokenType].push(wallet);
-          return acc;
-        }, {} as Record<TokenType, Wallet[]>);
+        const liveBalances = await Promise.all(
+          wallets.map((w) =>
+            axios
+              .get<{ balance: string }>(`/api/wallet/${w.id}/balance`)
+              .then((r) => r.data.balance)
+              .catch(() => "0"),
+          ),
+        );
+        const walletsWithLiveBalance = wallets.map((w, i) => ({
+          ...w,
+          lastBalanceInTokens: liveBalances[i],
+        }));
+
+        const walletsByTokenType = walletsWithLiveBalance.reduce(
+          (acc, wallet) => {
+            if (!acc[wallet.tokenType]) acc[wallet.tokenType] = [];
+            acc[wallet.tokenType].push(wallet);
+            return acc;
+          },
+          {} as Record<TokenType, typeof walletsWithLiveBalance>,
+        );
 
         const pricePromises = Object.keys(walletsByTokenType).map((tokenType) =>
           axios.get<TokenPriceResponse>(`/api/token/price`, {
@@ -195,7 +207,7 @@ export function PortfolioSwitcher() {
     );
   }, [portfolios, activePortfolioId, calculatePortfolioBalance]);
 
-  if (isLoading) {
+  if (isPending) {
     return (
       <SidebarMenu>
         <SidebarMenuItem>
@@ -269,10 +281,14 @@ export function PortfolioSwitcher() {
               <span className="truncate text-xs text-muted-foreground">
                 {" "}
                 <PrivacyValue>
-                  {format.number(activePortfolioBalance, {
-                    style: "currency",
-                    currency: activePortfolio.currency,
-                  })}
+                  {activePortfolioBalance > -1 ? (
+                    format.number(activePortfolioBalance, {
+                      style: "currency",
+                      currency: activePortfolio.currency,
+                    })
+                  ) : (
+                    <Skeleton className="h-3 w-16" />
+                  )}
                 </PrivacyValue>
               </span>{" "}
             </div>

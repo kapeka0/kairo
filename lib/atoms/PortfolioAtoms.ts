@@ -11,5 +11,5 @@ export const portfolioBalancesAtom = atom<Record<string, number>>({});
 export const activePortfolioBalanceInUserCurrencyAtom = atom((get) => {
   const portfolioBalances = get(portfolioBalancesAtom);
   const activePortfolioId = get(activePortfolioIdAtom);
-  return activePortfolioId ? portfolioBalances[activePortfolioId] || 0 : 0;
+  return activePortfolioId ? portfolioBalances[activePortfolioId] || -1 : -1;
 });

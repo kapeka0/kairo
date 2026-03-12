@@ -2,7 +2,7 @@
 
 import NumberFlow from "@number-flow/react";
 import { useQueryClient } from "@tanstack/react-query";
-import { Copy, MoreHorizontal, RefreshCcw } from "lucide-react";
+import { Copy, MoreHorizontal } from "lucide-react";
 import { useFormatter, useLocale, useTranslations } from "next-intl";
 import Image from "next/image";
 //eslint-disable-next-line
@@ -10,7 +10,6 @@ import { useParams } from "next/navigation";
 import { useEffect, useState } from "react";
 import { toast } from "sonner";
 
-import TimeAgoIntl from "@/components/global/TimeAgoIntl";
 import { PrivacyValue } from "@/components/privacy-value";
 import {
   AlertDialog,
@@ -40,11 +39,6 @@ import {
   TableHeader,
   TableRow,
 } from "@/components/ui/table";
-import {
-  Tooltip,
-  TooltipContent,
-  TooltipTrigger,
-} from "@/components/ui/tooltip";
 import {
   deleteWallet,
   refreshWalletBalance,
@@ -321,23 +315,11 @@ export default function WalletsTable() {
                   </TableCell>
                   <TableCell>
                     <div className="flex flex-col gap-1 items-start">
-                      <Tooltip>
-                        <TooltipTrigger>
-                          {" "}
-                          <PrivacyValue className="cursor-help">
-                            <span className="font-medium">
-                              {formatBtc(balanceInBTC)}
-                            </span>
-                          </PrivacyValue>
-                        </TooltipTrigger>
-                        <TooltipContent className={"flex items-center gap-1 "}>
-                          <RefreshCcw className="size-3  inline" />
-                          <TimeAgoIntl
-                            className="text-xs"
-                            date={wallet.lastBalanceInTokensUpdatedAt}
-                          />
-                        </TooltipContent>
-                      </Tooltip>
+                      <PrivacyValue>
+                        <span className="font-medium">
+                          {formatBtc(balanceInBTC)}
+                        </span>
+                      </PrivacyValue>
 
                       {getPriceByTokenType(wallet.tokenType) !== undefined && (
                         <PrivacyValue>

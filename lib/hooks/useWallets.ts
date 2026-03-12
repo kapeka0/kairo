@@ -1,8 +1,6 @@
-import { updateWalletBalance } from "@/lib/actions/wallet";
 import { useQueries, useQuery } from "@tanstack/react-query";
 import axios from "axios";
-import { useAction } from "next-safe-action/hooks";
-import { useCallback, useEffect, useMemo, useRef } from "react";
+import { useCallback, useMemo } from "react";
 import { Wallet } from "../types";
 import { devLog } from "../utils";
 import { calculateWalletBalanceInCurrency } from "../utils/balance";
@@ -33,14 +31,6 @@ export function useWallets(portfolioId: string) {
     staleTime: 60 * 60 * 1000, // 1 hour
   });
 
-  const { execute: executeUpdateBalance } = useAction(updateWalletBalance, {
-    onError: (e) => {
-      devLog("Failed to update wallet balance:", e.error.serverError);
-    },
-  });
-
-  const lastPersistedRef = useRef<Record<string, string>>({});
-
   const wallets = useMemo(
     () => query.data?.wallets ?? [],
     [query.data?.wallets],
@@ -69,15 +59,12 @@ export function useWallets(portfolioId: string) {
     [getPriceByTokenType],
   );
 
-  const balanceDataKey = balanceQueries.map((q) => q.data).join(",");
-
   const walletsWithBalance = useMemo(() => {
     if (!wallets.length) return [];
 
     return wallets.map((wallet, i) => ({
       ...wallet,
-      lastBalanceInTokens:
-        balanceQueries[i]?.data ?? wallet.lastBalanceInTokens,
+      lastBalanceInTokens: balanceQueries[i]?.data ?? undefined,
     }));
   }, [wallets, balanceQueries]);
 
@@ -96,20 +83,6 @@ export function useWallets(portfolioId: string) {
 
     return map;
   }, [walletsWithBalance, getWalletBalanceInCurrency]);
-
-  useEffect(() => {
-    balanceQueries.forEach((result, i) => {
-      const wallet = wallets[i];
-      if (!result.data || !wallet) return;
-      if (lastPersistedRef.current[wallet.id] === result.data) return;
-      lastPersistedRef.current[wallet.id] = result.data;
-      executeUpdateBalance({
-        walletId: wallet.id,
-        tokenType: wallet.tokenType,
-        balance: result.data,
-      });
-    });
-  }, [balanceDataKey, executeUpdateBalance, wallets, balanceQueries]);
 
   return {
     ...query,

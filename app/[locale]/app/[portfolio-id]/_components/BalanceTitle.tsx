@@ -38,7 +38,7 @@ const BalanceTitle = (props: Props) => {
 
   return (
     <PrivacyValue>
-      {displayBalance ? (
+      {displayBalance && displayBalance > -1 ? (
         <div className="flex items-end gap-4 ">
           <GradientText
             variant="fire"

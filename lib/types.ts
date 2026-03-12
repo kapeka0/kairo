@@ -34,8 +34,7 @@ export type Wallet = {
   icon: string | null;
   publicKey: string;
   portfolioId: string;
-  lastBalanceInTokens: string;
-  lastBalanceInTokensUpdatedAt: Date;
+  lastBalanceInTokens?: string;
   createdAt: Date;
   updatedAt: Date;
   tokenType: TokenType;
@@ -49,8 +48,6 @@ export type BitcoinWallet = {
   publicKey: string;
   bipType: BipType;
   portfolioId: string;
-  lastBalanceInSatoshis: string;
-  lastBalanceInSatoshisUpdatedAt: Date;
   createdAt: Date;
   updatedAt: Date;
   tokenType: TokenType.BTC;

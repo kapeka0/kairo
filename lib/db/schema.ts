@@ -143,12 +143,6 @@ export const bitcoinWallet = pgTable("bitcoin_wallet", {
   portfolioId: text("portfolio_id")
     .notNull()
     .references(() => portfolio.id, { onDelete: "cascade" }),
-  lastBalanceInSatoshis: text("last_balance_in_satoshis")
-    .notNull()
-    .default("0"),
-  lastBalanceInSatoshisUpdatedAt: timestamp("balance_in_satoshis_updated_at")
-    .defaultNow()
-    .notNull(),
   createdAt: timestamp("created_at").defaultNow().notNull(),
   updatedAt: timestamp("updated_at")
     .defaultNow()

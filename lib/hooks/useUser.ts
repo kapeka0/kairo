@@ -1,7 +1,9 @@
 "use client";
 
+import { useEffect } from "react";
 import { authClient } from "../auth-client";
 import { User } from "../types";
+import { devLog } from "../utils";
 
 export const useUser = (): {
   user: User | null | undefined;
@@ -15,6 +17,10 @@ export const useUser = (): {
     error, //error object
     refetch, //refetch the session
   } = authClient.useSession();
+
+  useEffect(() => {
+    devLog("useUser session data:", session);
+  }, [session]);
 
   return {
     user: session?.user,

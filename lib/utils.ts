@@ -52,8 +52,6 @@ export const mapBTCWalletToWallet = (wallet: BitcoinWallet): Wallet => ({
   icon: wallet.icon,
   publicKey: wallet.publicKey,
   portfolioId: wallet.portfolioId,
-  lastBalanceInTokens: wallet.lastBalanceInSatoshis,
-  lastBalanceInTokensUpdatedAt: wallet.lastBalanceInSatoshisUpdatedAt,
   createdAt: wallet.createdAt,
   updatedAt: wallet.updatedAt,
   tokenType: wallet.tokenType,
