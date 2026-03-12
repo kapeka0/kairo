@@ -14,33 +14,5 @@ services:
     env_file:
       - .env
 
-  migrate:
-    build:
-      context: .
-      target: deps
-    working_dir: /app
-    command: pnpm db:migrate
-    env_file:
-      - .env
-    environment:
-      DB_HOST: postgres
-    depends_on:
-      - postgres
-    restart: on-failure
-
-  kairo:
-    build: .
-    container_name: kairo-app
-    restart: unless-stopped
-    ports:
-      - "3000:3000"
-    env_file:
-      - .env
-    environment:
-      DB_HOST: postgres
-    depends_on:
-      - migrate
-      - postgres
-
 volumes:
   postgres_data:
