@@ -17,7 +17,7 @@ services:
   migrate:
     build:
       context: .
-      target: deps
+      target: migrator
     working_dir: /app
     command: pnpm db:migrate
     env_file:
