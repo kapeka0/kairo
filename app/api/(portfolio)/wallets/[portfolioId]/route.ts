@@ -52,8 +52,6 @@ export async function GET(
       icon: wallet.icon,
       publicKey: wallet.publicKey,
       portfolioId: wallet.portfolioId,
-      lastBalanceInSatoshis: wallet.lastBalanceInSatoshis,
-      lastBalanceInSatoshisUpdatedAt: wallet.lastBalanceInSatoshisUpdatedAt,
       createdAt: wallet.createdAt,
       bipType: wallet.bipType as BipType,
       updatedAt: wallet.updatedAt,

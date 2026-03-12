@@ -7,7 +7,6 @@ type WalletInput = {
   publicKey: string;
   bipType: string;
   tokenType: string;
-  lastBalanceInSatoshis: string;
 };
 
 export type WalletDayMapResult = {
@@ -30,7 +29,10 @@ export async function computeWalletDayMap(
   switch (wallet.tokenType as TokenType) {
     case TokenType.BTC: {
       const { decimals } = getTokenMetadata(TokenType.BTC);
-      const descriptor = toDescriptor(wallet.publicKey, wallet.bipType as BipType);
+      const descriptor = toDescriptor(
+        wallet.publicKey,
+        wallet.bipType as BipType,
+      );
       const entries = await fetchWalletBalanceHistory(descriptor);
 
       entries.sort((a, b) => a.time - b.time);
@@ -59,7 +61,10 @@ export async function computeWalletPnlData(
   switch (wallet.tokenType as TokenType) {
     case TokenType.BTC: {
       const { decimals } = getTokenMetadata(TokenType.BTC);
-      const descriptor = toDescriptor(wallet.publicKey, wallet.bipType as BipType);
+      const descriptor = toDescriptor(
+        wallet.publicKey,
+        wallet.bipType as BipType,
+      );
       const entries = await fetchWalletBalanceHistory(descriptor);
 
       let totalCostUsd = 0;
@@ -74,8 +79,11 @@ export async function computeWalletPnlData(
         }
       }
 
-      const currentTokenBalance =
-        Number(wallet.lastBalanceInSatoshis) / Math.pow(10, decimals);
+      const rawBalance = entries.reduce(
+        (acc, e) => acc + BigInt(e.received) - BigInt(e.sent),
+        BigInt(0),
+      );
+      const currentTokenBalance = Number(rawBalance) / Math.pow(10, decimals);
 
       return {
         tokenType: TokenType.BTC,
