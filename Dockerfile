@@ -7,9 +7,8 @@ COPY package.json pnpm-lock.yaml ./
 RUN pnpm install --frozen-lockfile
 
 FROM deps AS migrator
-COPY drizzle.config.ts ./
-COPY drizzle ./drizzle
-
+COPY --from=deps /app/node_modules ./node_modules
+COPY . .  
 FROM base AS builder
 COPY --from=deps /app/node_modules ./node_modules
 COPY . .
