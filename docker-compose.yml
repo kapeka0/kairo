@@ -19,7 +19,7 @@ services:
       context: .
       target: migrator
     working_dir: /app
-    command: pnpm db:migrate
+    command: sh -c "pnpm db:generate && pnpm db:migrate"
     env_file:
       - .env
     environment:
