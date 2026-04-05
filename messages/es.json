@@ -77,10 +77,49 @@
   "Sidebar": {
     "platform": "Plataforma",
     "portfolio": "Portafolio",
-    "Overview": "Resumen",
-    "Wallets": "Billeteras",
-    "Tokens": "Tokens",
-    "Activity": "Actividad"
+    "dashboard": "Panel",
+    "wallets": "Billeteras",
+    "settings": "Configuracion",
+    "transactions": "Transacciones"
+  },
+  "Settings": {
+    "title": "Configuracion",
+    "name": {
+      "title": "Nombre del Portafolio",
+      "description": "El nombre utilizado para identificar este portafolio.",
+      "placeholder": "Ingresa el nombre del portafolio",
+      "save": "Guardar",
+      "success": "Nombre del portafolio actualizado.",
+      "errors": {
+        "invalidName": "Por favor ingresa un nombre de portafolio valido.",
+        "duplicateName": "Ya existe un portafolio con este nombre.",
+        "unexpected": "Algo salio mal. Por favor intenta nuevamente."
+      }
+    },
+    "currency": {
+      "title": "Moneda de Visualizacion",
+      "description": "Todos los valores del portafolio se mostraran en esta moneda.",
+      "save": "Guardar",
+      "success": "Moneda actualizada.",
+      "errors": {
+        "invalidCurrency": "Por favor selecciona una moneda valida.",
+        "unexpected": "Algo salio mal. Por favor intenta nuevamente."
+      }
+    },
+    "danger": "Zona de Peligro",
+    "delete": {
+      "title": "Eliminar Portafolio",
+      "description": "Eliminar permanentemente este portafolio y todos los datos asociados. Esta accion no se puede deshacer.",
+      "button": "Eliminar Portafolio",
+      "confirmTitle": "Eliminar Portafolio",
+      "confirmDescription": "Estas seguro de que deseas eliminar \"{portfolioName}\"? Todas las billeteras, transacciones y datos seran eliminados permanentemente.",
+      "confirmCancel": "Cancelar",
+      "confirmAction": "Eliminar",
+      "success": "Portafolio eliminado.",
+      "errors": {
+        "unexpected": "Algo salio mal. Por favor intenta nuevamente."
+      }
+    }
   },
   "Portfolio": {
     "portfolios": "Portafolios",

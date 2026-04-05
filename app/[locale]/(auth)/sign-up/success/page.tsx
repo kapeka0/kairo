@@ -1,5 +1,6 @@
 "use client";
 import { useTranslations } from "next-intl";
+//eslint-disable-next-line
 import { useSearchParams } from "next/navigation";
 
 import BuisnessMessage from "@/components/global/BusinessMessage";

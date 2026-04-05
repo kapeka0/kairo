@@ -6,6 +6,7 @@ import { activePortfolioBalanceInUserCurrencyAtom } from "@/lib/atoms/PortfolioA
 import { useCurrencyRates } from "@/lib/hooks/useCurrencyRates";
 import { useDisplayCurrency } from "@/lib/hooks/useDisplayCurrency";
 import { usePortfolios } from "@/lib/hooks/usePortfolios";
+import { useWallets } from "@/lib/hooks/useWallets";
 import NumberFlow from "@number-flow/react";
 import { useAtomValue } from "jotai";
 import { useLocale } from "next-intl";
@@ -21,6 +22,8 @@ const BalanceTitle = (props: Props) => {
   const [displayValue, setdisplayValue] = useState<number>(0);
   const locale = useLocale();
   const { activePortfolio } = usePortfolios();
+  const { data, isPending } = useWallets();
+  const hasWallets = !!data && data.wallets.length > 0 && !isPending;
   const currency = activePortfolio?.currency;
 
   const { convertAmount } = useCurrencyRates(currency);
@@ -38,28 +41,32 @@ const BalanceTitle = (props: Props) => {
 
   return (
     <PrivacyValue>
-      {displayBalance && displayBalance > -1 ? (
-        <div className="flex items-end gap-4 ">
-          <GradientText
-            variant="fire"
-            className="text-4xl font-bold tracking-tight tabular-nums"
-            as="h1"
-          >
-            <NumberFlow
-              value={displayBalance}
-              locales={locale}
-              trend={0}
-              format={{
-                style: "currency",
-                currency: displayCurrency,
-                currencySign: "standard",
-                minimumFractionDigits: 2,
-                maximumFractionDigits: 2,
-                trailingZeroDisplay: "stripIfInteger",
-              }}
-            />
-          </GradientText>
-        </div>
+      {hasWallets ? (
+        displayBalance && displayBalance > -1 ? (
+          <div className="flex items-end gap-4">
+            <GradientText
+              variant="fire"
+              className="text-4xl font-bold tracking-tight tabular-nums"
+              as="h1"
+            >
+              <NumberFlow
+                value={displayBalance}
+                locales={locale}
+                trend={0}
+                format={{
+                  style: "currency",
+                  currency: displayCurrency,
+                  currencySign: "standard",
+                  minimumFractionDigits: 2,
+                  maximumFractionDigits: 2,
+                  trailingZeroDisplay: "stripIfInteger",
+                }}
+              />
+            </GradientText>
+          </div>
+        ) : (
+          <Skeleton className="h-10 w-48" />
+        )
       ) : (
         <Skeleton className="h-10 w-48" />
       )}

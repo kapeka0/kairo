@@ -86,6 +86,7 @@ function SignUpForm() {
       //     res.data?.user?.email || "",
       //   )}`,
       // );
+      router.push(`/app/create`);
     },
   });
 

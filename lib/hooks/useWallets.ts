@@ -4,6 +4,7 @@ import { useCallback, useMemo } from "react";
 import { Wallet } from "../types";
 import { devLog } from "../utils";
 import { calculateWalletBalanceInCurrency } from "../utils/balance";
+import { usePortfolios } from "./usePortfolios";
 import { useTokenStats } from "./useTokenStats";
 
 interface UseWalletsResult {
@@ -22,12 +23,14 @@ async function fetchWallets(portfolioId: string): Promise<UseWalletsResult> {
   }
 }
 
-export function useWallets(portfolioId: string) {
+export function useWallets(portfolioId?: string) {
+  const { activePortfolio } = usePortfolios();
   const { getPriceByTokenType } = useTokenStats();
+  const currentPortfolioId = portfolioId || activePortfolio?.id || ""; // Handle case where activePortfolio might be undefined
   const query = useQuery({
-    queryKey: ["wallets", portfolioId],
-    queryFn: () => fetchWallets(portfolioId),
-    enabled: !!portfolioId,
+    queryKey: ["wallets", currentPortfolioId],
+    queryFn: () => fetchWallets(currentPortfolioId),
+    enabled: !!currentPortfolioId,
     staleTime: 60 * 60 * 1000, // 1 hour
   });
 

@@ -208,6 +208,45 @@
     "180d": "6 months",
     "365d": "1 year"
   },
+  "Settings": {
+    "title": "Settings",
+    "name": {
+      "title": "Portfolio Name",
+      "description": "The name used to identify this portfolio.",
+      "placeholder": "Enter portfolio name",
+      "save": "Save",
+      "success": "Portfolio name updated.",
+      "errors": {
+        "invalidName": "Please enter a valid portfolio name.",
+        "duplicateName": "A portfolio with this name already exists.",
+        "unexpected": "Something went wrong. Please try again."
+      }
+    },
+    "currency": {
+      "title": "Display Currency",
+      "description": "All portfolio values will be displayed in this currency.",
+      "save": "Save",
+      "success": "Currency updated.",
+      "errors": {
+        "invalidCurrency": "Please select a valid currency.",
+        "unexpected": "Something went wrong. Please try again."
+      }
+    },
+    "danger": "Danger Zone",
+    "delete": {
+      "title": "Delete Portfolio",
+      "description": "Permanently delete this portfolio and all associated data. This action cannot be undone.",
+      "button": "Delete Portfolio",
+      "confirmTitle": "Delete Portfolio",
+      "confirmDescription": "Are you sure you want to delete \"{portfolioName}\"? All wallets, transactions, and data will be permanently removed.",
+      "confirmCancel": "Cancel",
+      "confirmAction": "Delete",
+      "success": "Portfolio deleted.",
+      "errors": {
+        "unexpected": "Something went wrong. Please try again."
+      }
+    }
+  },
   "MarketOverview": {
     "title": "Market",
     "coin": "Coin",
