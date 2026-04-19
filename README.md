@@ -1,8 +1,8 @@
 <p align="center">
-  <img src="/public/images/logos/logo-square-light.svg" width="200" />
+  <img src="/public/images/logos/logo-square-light.svg" width="120" />
 </p>
 
-# Kairo
+<h1 align="center">Kairo</h1>
 
 Kairo is a **privacy-first, self-hosted** crypto portfolio tracker. Keep your keys, your node, and your data under your own control.
 
@@ -16,8 +16,8 @@ Track multiple portfolios, wallets and tokens without exposing your XPUB to thir
 
 ## Requirements
 
-- Docker
-- A reachable PostgreSQL 14+ instance (Kairo does **not** bundle a database)
+- Node.js +20 or Docker
+- A reachable PostgreSQL 14+ instance
 - A Blockbook endpoint (see [Blockbook](#blockbook) below)
 
 ---
@@ -26,16 +26,16 @@ Track multiple portfolios, wallets and tokens without exposing your XPUB to thir
 
 Copy `.env.example` to `.env` and fill in:
 
-| Variable                             | Required | Description                                        |
-| ------------------------------------ | -------- | -------------------------------------------------- |
-| `DB_HOST`                            | yes      | Host of your Postgres instance                     |
-| `DB_PORT`                            | yes      | Postgres port (default `5432`)                     |
-| `POSTGRES_USER`                      | yes      | Postgres user                                      |
-| `POSTGRES_PASSWORD`                  | yes      | Postgres password                                  |
-| `POSTGRES_DB`                        | yes      | Database name (default `kairo`)                    |
-| `BETTER_AUTH_SECRET`                 | yes      | Auth signing key (min. 20 chars, random)           |
-| `NEXT_PUBLIC_URL`                    | yes      | Public base URL (e.g. `http://localhost:3000`)     |
-| `NEXT_PUBLIC_BTC_HTTP_BLOCKBOOK_URL` | yes      | HTTP URL of your Blockbook instance                |
+| Variable                             | Required | Description                                    |
+| ------------------------------------ | -------- | ---------------------------------------------- |
+| `DB_HOST`                            | yes      | Host of your Postgres instance                 |
+| `DB_PORT`                            | yes      | Postgres port (default `5432`)                 |
+| `POSTGRES_USER`                      | yes      | Postgres user                                  |
+| `POSTGRES_PASSWORD`                  | yes      | Postgres password                              |
+| `POSTGRES_DB`                        | yes      | Database name (default `kairo`)                |
+| `BETTER_AUTH_SECRET`                 | yes      | Auth signing key (min. 20 chars, random)       |
+| `NEXT_PUBLIC_URL`                    | yes      | Public base URL (e.g. `http://localhost:3000`) |
+| `NEXT_PUBLIC_BTC_HTTP_BLOCKBOOK_URL` | yes      | HTTP URL of your Blockbook instance            |
 
 Generate a strong secret:
 
@@ -87,12 +87,6 @@ docker run -d -p 3000:3000 --env-file .env --name kairo kairo
 ```
 
 Open <http://localhost:3000> and create your account.
-
-To stop:
-
-```bash
-docker stop kairo && docker rm kairo
-```
 
 ---
 
