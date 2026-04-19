@@ -16,34 +16,9 @@ Track multiple portfolios, wallets and tokens without exposing your XPUB to thir
 
 ## Requirements
 
-- Docker and Docker Compose
-- A Blockbook endpoint (see [Blockbook setup](#blockbook) below)
-
----
-
-## Quick start (Docker)
-
-```bash
-git clone https://github.com/<your-fork>/kairo.git
-cd kairo
-cp .env.example .env
-# edit .env with your values
-docker compose up -d --build
-```
-
-Open <http://localhost:3000> and create your account.
-
-The compose stack spins up:
-
-- `postgres` — database
-- `migrate` — runs `pnpm db:generate && pnpm db:migrate` once at startup
-- `kairo` — the Next.js app on port `3000`
-
-To stop everything:
-
-```bash
-docker compose down
-```
+- Docker
+- A reachable PostgreSQL 14+ instance (Kairo does **not** bundle a database)
+- A Blockbook endpoint (see [Blockbook](#blockbook) below)
 
 ---
 
@@ -51,21 +26,72 @@ docker compose down
 
 Copy `.env.example` to `.env` and fill in:
 
-| Variable                             | Required | Description                                    |
-| ------------------------------------ | -------- | ---------------------------------------------- |
-| `DB_HOST`                            | yes      | Postgres host (`postgres` inside compose)      |
-| `DB_PORT`                            | yes      | Postgres port (default `5432`)                 |
-| `POSTGRES_USER`                      | yes      | Postgres user                                  |
-| `POSTGRES_PASSWORD`                  | yes      | Postgres password                              |
-| `POSTGRES_DB`                        | yes      | Database name (default `kairo`)                |
-| `BETTER_AUTH_SECRET`                 | yes      | Auth signing key (min. 20 chars, random)       |
-| `NEXT_PUBLIC_URL`                    | yes      | Public base URL (e.g. `http://localhost:3000`) |
-| `NEXT_PUBLIC_BTC_HTTP_BLOCKBOOK_URL` | yes      | HTTP URL of your Blockbook instance            |
+| Variable                             | Required | Description                                        |
+| ------------------------------------ | -------- | -------------------------------------------------- |
+| `DB_HOST`                            | yes      | Host of your Postgres instance                     |
+| `DB_PORT`                            | yes      | Postgres port (default `5432`)                     |
+| `POSTGRES_USER`                      | yes      | Postgres user                                      |
+| `POSTGRES_PASSWORD`                  | yes      | Postgres password                                  |
+| `POSTGRES_DB`                        | yes      | Database name (default `kairo`)                    |
+| `BETTER_AUTH_SECRET`                 | yes      | Auth signing key (min. 20 chars, random)           |
+| `NEXT_PUBLIC_URL`                    | yes      | Public base URL (e.g. `http://localhost:3000`)     |
+| `NEXT_PUBLIC_BTC_HTTP_BLOCKBOOK_URL` | yes      | HTTP URL of your Blockbook instance                |
 
 Generate a strong secret:
 
 ```bash
 openssl rand -hex 32
+```
+
+`DB_HOST` must point to a Postgres instance reachable from the container. If Postgres runs on the Docker host machine, use `host.docker.internal` on Docker Desktop, or pass `--add-host=host.docker.internal:host-gateway` on Linux.
+
+---
+
+## 1. Configure `.env`
+
+```bash
+git clone https://github.com/<your-fork>/kairo.git
+cd kairo
+cp .env.example .env
+# edit .env with your values
+```
+
+---
+
+## 2. Run database migrations
+
+Create an empty database on your Postgres instance matching `POSTGRES_DB`, then apply the schema.
+
+**Option A — locally (requires pnpm + Node 22):**
+
+```bash
+pnpm install
+pnpm db:generate
+pnpm db:migrate
+```
+
+**Option B — in Docker (no local Node needed):**
+
+```bash
+docker build --target migrator -t kairo-migrator .
+docker run --rm --env-file .env kairo-migrator
+```
+
+---
+
+## 3. Build and run the app
+
+```bash
+docker build -t kairo .
+docker run -d -p 3000:3000 --env-file .env --name kairo kairo
+```
+
+Open <http://localhost:3000> and create your account.
+
+To stop:
+
+```bash
+docker stop kairo && docker rm kairo
 ```
 
 ---

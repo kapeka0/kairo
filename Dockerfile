@@ -6,13 +6,14 @@ FROM base AS deps
 COPY package.json pnpm-lock.yaml ./
 RUN pnpm install --frozen-lockfile
 
-FROM deps AS migrator
+FROM base AS migrator
 COPY --from=deps /app/node_modules ./node_modules
-COPY . .  
+COPY . .
+CMD ["sh","-c","pnpm db:generate && pnpm db:migrate"]
+
 FROM base AS builder
 COPY --from=deps /app/node_modules ./node_modules
 COPY . .
-COPY .env .env
 RUN pnpm build
 
 FROM base AS runner
@@ -24,5 +25,4 @@ COPY --from=builder --chown=nextjs:nodejs /app/.next/static ./.next/static
 USER nextjs
 EXPOSE 3000
 ENV PORT=3000
-CMD ["node_modules/.bin/next", "start", "-H", "0.0.0.0", "-p", "3000"]
-
+CMD ["node", "server.js"]
