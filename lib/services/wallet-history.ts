@@ -67,30 +67,38 @@ export async function computeWalletPnlData(
       );
       const entries = await fetchWalletBalanceHistory(descriptor);
 
-      let totalCostUsd = 0;
-      let totalTokensReceived = 0;
+      entries.sort((a, b) => a.time - b.time);
+
+      const factor = Math.pow(10, decimals);
+      let tokens = 0;
+      let costBasisUsd = 0;
 
       for (const entry of entries) {
-        const receivedRaw = Number(entry.received);
-        if (receivedRaw > 0 && entry.rates?.usd > 0) {
-          const tokensReceived = receivedRaw / Math.pow(10, decimals);
-          totalTokensReceived += tokensReceived;
-          totalCostUsd += tokensReceived * entry.rates.usd;
+        const received = Number(entry.received) / factor;
+        const sent = Number(entry.sent) / factor;
+        const net = received - sent;
+        const price = entry.rates?.usd ?? 0;
+
+        if (net > 0) {
+          if (price > 0) costBasisUsd += net * price;
+          tokens += net;
+        } else if (net < 0 && tokens > 0) {
+          const outflow = Math.min(-net, tokens);
+          const wap = costBasisUsd / tokens;
+          costBasisUsd -= outflow * wap;
+          tokens -= outflow;
         }
       }
 
-      const rawBalance = entries.reduce(
-        (acc, e) => acc + BigInt(e.received) - BigInt(e.sent),
-        BigInt(0),
-      );
-      const currentTokenBalance = Number(rawBalance) / Math.pow(10, decimals);
+      if (tokens < 0) tokens = 0;
+      if (costBasisUsd < 0) costBasisUsd = 0;
 
       return {
         tokenType: TokenType.BTC,
         decimals,
-        totalCostUsd,
-        totalTokensReceived,
-        currentTokenBalance,
+        totalCostUsd: costBasisUsd,
+        totalTokensReceived: tokens,
+        currentTokenBalance: tokens,
       };
     }
     case TokenType.ETH:

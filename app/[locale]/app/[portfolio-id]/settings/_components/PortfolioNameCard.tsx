@@ -5,6 +5,7 @@ import { useQueryClient } from "@tanstack/react-query";
 import { Loader2 } from "lucide-react";
 import { useTranslations } from "next-intl";
 import { useAction } from "next-safe-action/hooks";
+import { useEffect } from "react";
 import { useForm } from "react-hook-form";
 import { toast } from "sonner";
 import { z } from "zod";
@@ -27,6 +28,7 @@ import {
 import { Input } from "@/components/ui/input";
 import { updatePortfolioName } from "@/lib/actions/portfolio";
 import { usePortfolios } from "@/lib/hooks/usePortfolios";
+import SettingsCardSkeleton from "./SettingsCardSkeleton";
 
 const schema = z.object({
   name: z.string().min(1).max(50),
@@ -36,7 +38,8 @@ type FormData = z.infer<typeof schema>;
 
 export default function PortfolioNameCard() {
   const t = useTranslations("Settings.name");
-  const { activePortfolio } = usePortfolios();
+  const { activePortfolio, isPending: isPendingActivePortfolio } =
+    usePortfolios();
   const queryClient = useQueryClient();
 
   const form = useForm<FormData>({
@@ -46,6 +49,12 @@ export default function PortfolioNameCard() {
       name: activePortfolio?.name ?? "",
     },
   });
+
+  useEffect(() => {
+    if (activePortfolio?.name && !form.formState.isDirty) {
+      form.reset({ name: activePortfolio.name });
+    }
+  }, [activePortfolio?.name, form]);
 
   const { execute, isPending } = useAction(updatePortfolioName, {
     onError: (e) => {
@@ -67,6 +76,10 @@ export default function PortfolioNameCard() {
     execute({ portfolioId: activePortfolio.id, name: data.name });
   };
 
+  if (isPendingActivePortfolio || !activePortfolio) {
+    return <SettingsCardSkeleton />;
+  }
+
   return (
     <Card>
       <CardHeader>
@@ -84,7 +97,7 @@ export default function PortfolioNameCard() {
                   <FormItem className="space-y-0">
                     <FormControl>
                       <Input
-                        disabled={isPending}
+                        disabled={isPending || isPendingActivePortfolio}
                         placeholder={t("placeholder")}
                         {...field}
                         className="placeholder:text-muted-foreground/50 max-w-xs"
@@ -96,7 +109,11 @@ export default function PortfolioNameCard() {
               />{" "}
               <Button
                 type="submit"
-                disabled={isPending || !form.formState.isDirty}
+                disabled={
+                  isPending ||
+                  isPendingActivePortfolio ||
+                  !form.formState.isDirty
+                }
               >
                 {isPending ? (
                   <Loader2 className="size-4 animate-spin" />

@@ -8,7 +8,6 @@ import { useState } from "react";
 import { useForm } from "react-hook-form";
 import { z } from "zod";
 
-import { Checkbox } from "@/components/ui/checkbox";
 import {
   Form,
   FormControl,
@@ -19,7 +18,7 @@ import {
 } from "@/components/ui/form";
 import { Input } from "@/components/ui/input";
 import { ShinyButton } from "@/components/ui/shiny-button";
-import { Link, useRouter } from "@/i18n/routing";
+import { useRouter } from "@/i18n/routing";
 import { signUp } from "@/lib/actions/auth";
 import { devLog } from "@/lib/utils";
 import { getProfilePicBySeed } from "@/lib/utils/development";
@@ -47,9 +46,6 @@ function SignUpForm() {
         .regex(/[0-9]/, { message: tForm("passwordNumber") })
         .regex(/[^a-zA-Z0-9]/, { message: tForm("passwordSpecial") }),
       confirmPassword: z.string().min(8).max(100),
-      acceptTerms: z.boolean().refine((data) => data === true, {
-        message: tAuth("acceptTerms"),
-      }),
     })
     .refine((data) => data.password === data.confirmPassword, {
       message: tAuth("passwordMismatch"),
@@ -63,7 +59,6 @@ function SignUpForm() {
       email: "",
       password: "",
       confirmPassword: "",
-      acceptTerms: false,
     },
   });
   const { execute, isPending } = useAction(signUp, {
@@ -72,20 +67,15 @@ function SignUpForm() {
       if (e.error.validationErrors?.email) {
         form.setError("email", {
           type: "manual",
-          message: "Email already in use",
+          message: tError("existingEmail"),
         });
-        toast.error("Email already exists");
+        toast.error(tError("existingEmail"));
       } else {
         toast.error(e.error.serverError || tError("unexpected"));
       }
     },
-    onSuccess: (res) => {
-      toast.success("Account created successfully!");
-      // router.push(
-      //   `/sign-up/success?email=${encodeURIComponent(
-      //     res.data?.user?.email || "",
-      //   )}`,
-      // );
+    onSuccess: () => {
+      toast.success(tAuth("signUpSuccess"));
       router.push(`/app/create`);
     },
   });
@@ -95,7 +85,6 @@ function SignUpForm() {
       name: data.name,
       email: data.email,
       password: data.password,
-      acceptTerms: data.acceptTerms,
       image: getProfilePicBySeed(data.name),
     });
   };
@@ -113,7 +102,7 @@ function SignUpForm() {
             render={({ field }) => (
               <FormItem className="space-y-0">
                 <FormLabel className="text-sm text-muted-foreground font-normal">
-                  Full Name
+                  {tAuth("name")}
                 </FormLabel>
                 <FormControl>
                   <Input
@@ -134,7 +123,7 @@ function SignUpForm() {
             render={({ field }) => (
               <FormItem className="space-y-0">
                 <FormLabel className="text-sm text-muted-foreground font-normal">
-                  Email
+                  {tAuth("email")}
                 </FormLabel>
                 <FormControl>
                   <Input
@@ -211,39 +200,6 @@ function SignUpForm() {
                     </span>
                   </div>
                 </FormControl>
-                <FormMessage />
-              </FormItem>
-            )}
-          />
-          <FormField
-            control={form.control}
-            name="acceptTerms"
-            render={({ field }) => (
-              <FormItem className="space-y-2 ">
-                <div className="flex justify-start items-start gap-2">
-                  <FormControl>
-                    <Checkbox
-                      checked={field.value}
-                      className="placeholder:text-muted-foreground/50"
-                      disabled={isPending}
-                      onCheckedChange={field.onChange}
-                    />
-                  </FormControl>
-                  <p className="text-xs">
-                    {tAuth("preTerms")}
-
-                    <Link className="cursor-pointer text-primary" href="/terms">
-                      {tAuth("terms")}
-                    </Link>
-                    {tAuth("inTerms")}
-                    <Link
-                      className="cursor-pointer text-primary"
-                      href="/privacy"
-                    >
-                      {tAuth("privacy")}
-                    </Link>
-                  </p>
-                </div>
                 <FormMessage />
               </FormItem>
             )}

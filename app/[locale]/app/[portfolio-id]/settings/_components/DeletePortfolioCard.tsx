@@ -30,10 +30,12 @@ import { useRouter } from "@/i18n/routing";
 import { deletePortfolio } from "@/lib/actions/portfolio";
 import { activePortfolioIdAtom } from "@/lib/atoms/PortfolioAtoms";
 import { usePortfolios } from "@/lib/hooks/usePortfolios";
+import SettingsCardSkeleton from "./SettingsCardSkeleton";
 
 export default function DeletePortfolioCard() {
   const t = useTranslations("Settings.delete");
-  const { activePortfolio } = usePortfolios();
+  const { activePortfolio, isPending: isPendingActivePortfolio } =
+    usePortfolios();
   const setActivePortfolioId = useSetAtom(activePortfolioIdAtom);
   const router = useRouter();
   const [open, setOpen] = useState(false);
@@ -54,6 +56,10 @@ export default function DeletePortfolioCard() {
     if (!activePortfolio) return;
     execute({ portfolioId: activePortfolio.id });
   };
+
+  if (isPendingActivePortfolio || !activePortfolio) {
+    return <SettingsCardSkeleton variant="destructive" />;
+  }
 
   return (
     <Card className="">

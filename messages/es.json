@@ -2,7 +2,9 @@
   "Auth": {
     "welcome": "Bienvenido a Kairo",
     "welcomeMessage": "Inicia sesión para continuar a tu cuenta",
+    "welcomeBack": "¡Bienvenido de nuevo!",
     "signIn": "Iniciar sesión",
+    "name": "Nombre completo",
     "email": "Correo electrónico",
     "invalidEmail": "Correo electrónico inválido",
     "invalidUsername": "Nombre de usuario inválido",
@@ -10,22 +12,18 @@
     "passwordPlaceholder": "Asegúrate de que nadie esté mirando",
     "noAccount": "¿No tienes una cuenta?",
     "signUp": "Regístrate",
+    "signUpSuccess": "¡Cuenta creada con éxito!",
     "loginError": "Nombre de usuario o contraseña inválidos",
     "join": "Únete a Kairo",
     "joinMessage": "Comienza hoy mismo tu viaje",
     "strongPassword": "Selecciona una contraseña segura",
     "confirmPassword": "Confirma tu contraseña",
-    "preTerms": "Estoy de acuerdo con los ",
-    "inTerms": " y ",
-    "terms": "Términos y Condiciones",
-    "privacy": "Política de Privacidad",
     "alreadyAccount": "¿Ya tienes una cuenta?",
     "passwordMismatch": "Las contraseñas no coinciden",
-    "acceptTerms": "Debes aceptar los términos y condiciones",
     "username": "Nombre de usuario",
+    "namePlaceholder": "Satoshi Nakamoto",
+    "emailPlaceholder": "satoshinakamoto@btc.com",
     "usernamePlaceholder": "Satoshi Nakamoto",
-    "signUpSuccess": "¡Registro exitoso!",
-
     "emailSent": "Te has registrado con éxito. Por favor, revisa tu correo electrónico para verificar tu cuenta.",
     "resendEmail": "Reenviar correo electrónico",
     "resendEmailSuccess": "Correo electrónico reenviado",
@@ -39,11 +37,11 @@
       "existingUsername": "Nombre de usuario ya está en uso.",
       "existingUsernameDesc": "Nombre de usuario ya está en uso, por favor elige otro."
     },
-
     "zod": {
       "email": "Correo electrónico inválido",
+      "passwordMatch": "Las contraseñas no coinciden",
       "passwordLength": "La contraseña debe tener al menos 8 caracteres",
-      "passwordMaxLength": "La contraseña no puede tener más de 20 caracteres",
+      "passwordMaxLength": "La contraseña no puede tener más de {length} caracteres",
       "passwordLowercase": "La contraseña debe contener al menos una letra minúscula",
       "passwordUppercase": "La contraseña debe contener al menos una letra mayúscula",
       "passwordNumber": "La contraseña debe contener al menos un número",
@@ -52,7 +50,27 @@
       "passwordRestriction": "La contraseña debe contener al menos una mayúscula, una minúscula y un número",
       "usernameLength": "El nombre de usuario debe tener entre 3 y 20 caracteres.",
       "usernameMaxLength": "El nombre de usuario no puede tener más de 20 caracteres.",
-      "usernameInvalid": "El nombre de usuario solo puede contener letras, números y guiones bajos."
+      "usernameInvalid": "El nombre de usuario solo puede contener letras, números y guiones bajos.",
+      "nameLength": "El nombre debe tener entre 3 y 50 caracteres."
+    }
+  },
+  "New": {
+    "title": "Empieza creando tu primer portafolio",
+    "description": "Agrega tus billeteras y tokens para comenzar a rastrear tus activos cripto.",
+    "button": "Crear Portafolio",
+    "createPortfolio": "Crear Portafolio",
+    "portfolioName": "Nombre del Portafolio",
+    "portfolioNamePlaceholder": "Ingresa el nombre del portafolio",
+    "portfolioCurrency": "Moneda",
+    "selectCurrency": "Selecciona una moneda",
+    "creating": "Creando...",
+    "createSuccess": "¡Portafolio creado con éxito!",
+    "createError": "Error al crear el portafolio",
+    "errors": {
+      "duplicateName": "Ya existe un portafolio con este nombre",
+      "invalidName": "Por favor ingresa un nombre de portafolio válido",
+      "invalidCurrency": "Por favor selecciona una moneda válida",
+      "unexpected": "Algo salió mal. Por favor intenta nuevamente"
     }
   },
   "Global": {
@@ -63,27 +81,38 @@
     "system": "Sistema",
     "lang": "Idioma",
     "es": "Español",
-    "en": "Inglés"
+    "en": "Inglés",
+    "privacyMode": "Modo privacidad",
+    "noIcons": "No se encontraron iconos",
+    "search": "Buscar..."
+  },
+  "Navbar": {
+    "dashboard": "Panel",
+    "signIn": "Iniciar sesión"
+  },
+  "NavUser": {
+    "logOut": "Cerrar sesión"
   },
   "LandingPage": {
-    "title": "Empieza a construir 🚀",
-    "description": "Mi plantilla de Next.js diseñada para desarrollar SaaS, herramientas de IA u otras aplicaciones web de forma rápida y efectiva, lista para ayudarte a monetizar desde el primer día.",
-    "button": "Haz click aquí"
+    "title": "Rastrea tus cripto. Conserva tu privacidad.",
+    "description": "Kairo es un tracker de portafolios self-hosted para tus billeteras y tokens. Tus claves, tu nodo, tus datos.",
+    "ctaSignedOut": "Empezar",
+    "ctaSignedIn": "Ir al panel"
   },
   "Metadata": {
     "title": "Kairo",
-    "description": "Descripción de la App"
+    "description": "App web enfocada en la privacidad para rastrear portafolios cripto."
   },
   "Sidebar": {
     "platform": "Plataforma",
     "portfolio": "Portafolio",
     "dashboard": "Panel",
     "wallets": "Billeteras",
-    "settings": "Configuracion",
+    "settings": "Configuración",
     "transactions": "Transacciones"
   },
   "Settings": {
-    "title": "Configuracion",
+    "title": "Configuración",
     "name": {
       "title": "Nombre del Portafolio",
       "description": "El nombre utilizado para identificar este portafolio.",
@@ -91,33 +120,33 @@
       "save": "Guardar",
       "success": "Nombre del portafolio actualizado.",
       "errors": {
-        "invalidName": "Por favor ingresa un nombre de portafolio valido.",
+        "invalidName": "Por favor ingresa un nombre de portafolio válido.",
         "duplicateName": "Ya existe un portafolio con este nombre.",
-        "unexpected": "Algo salio mal. Por favor intenta nuevamente."
+        "unexpected": "Algo salió mal. Por favor intenta nuevamente."
       }
     },
     "currency": {
-      "title": "Moneda de Visualizacion",
-      "description": "Todos los valores del portafolio se mostraran en esta moneda.",
+      "title": "Moneda de visualización",
+      "description": "Todos los valores del portafolio se mostrarán en esta moneda.",
       "save": "Guardar",
       "success": "Moneda actualizada.",
       "errors": {
-        "invalidCurrency": "Por favor selecciona una moneda valida.",
-        "unexpected": "Algo salio mal. Por favor intenta nuevamente."
+        "invalidCurrency": "Por favor selecciona una moneda válida.",
+        "unexpected": "Algo salió mal. Por favor intenta nuevamente."
       }
     },
-    "danger": "Zona de Peligro",
+    "danger": "Zona de peligro",
     "delete": {
       "title": "Eliminar Portafolio",
-      "description": "Eliminar permanentemente este portafolio y todos los datos asociados. Esta accion no se puede deshacer.",
+      "description": "Elimina permanentemente este portafolio y todos los datos asociados. Esta acción no se puede deshacer.",
       "button": "Eliminar Portafolio",
       "confirmTitle": "Eliminar Portafolio",
-      "confirmDescription": "Estas seguro de que deseas eliminar \"{portfolioName}\"? Todas las billeteras, transacciones y datos seran eliminados permanentemente.",
+      "confirmDescription": "¿Seguro que deseas eliminar \"{portfolioName}\"? Todas las billeteras, transacciones y datos serán eliminados permanentemente.",
       "confirmCancel": "Cancelar",
       "confirmAction": "Eliminar",
       "success": "Portafolio eliminado.",
       "errors": {
-        "unexpected": "Algo salio mal. Por favor intenta nuevamente."
+        "unexpected": "Algo salió mal. Por favor intenta nuevamente."
       }
     }
   },
@@ -144,7 +173,7 @@
     "unrealizedPnl": "PnL no realizado",
     "unrealizedPnlExplanation": "Diferencia entre el valor actual y tu base de coste, calculada usando el precio medio ponderado (PMP).",
     "tokenAllocation": {
-      "title": "Asignación por Token",
+      "title": "Activos",
       "token": "Token",
       "amount": "Cantidad",
       "value": "Valor",
@@ -159,6 +188,17 @@
     "90d": "3 meses",
     "180d": "6 meses",
     "365d": "1 año"
+  },
+  "MarketOverview": {
+    "title": "Mercado",
+    "coin": "Moneda",
+    "price": "Precio",
+    "change1h": "1h",
+    "change24h": "24h",
+    "change7d": "7d",
+    "volume": "Volumen",
+    "marketCap": "Cap. mercado",
+    "chart7d": "7d"
   },
   "Transactions": {
     "title": "Transacciones",

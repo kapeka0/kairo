@@ -1,37 +1,90 @@
-This is a [Next.js](https://nextjs.org) project bootstrapped with [`create-next-app`](https://nextjs.org/docs/app/api-reference/cli/create-next-app).
+<p align="center">
+  <img src="/public/images/logos/logo-square-light.svg" width="200" />
+</p>
 
-## Getting Started
+# Kairo
 
-First, run the development server:
+Kairo is a **privacy-first, self-hosted** crypto portfolio tracker. Keep your keys, your node, and your data under your own control.
+
+- Track multiple portfolios, wallets and tokens.
+- Chain-agnostic by design, starting with Bitcoin via [Blockbook](https://github.com/trezor/blockbook).
+- Ships with Docker Compose for one-command deploys.
+
+---
+
+## Requirements
+
+- Docker and Docker Compose
+- A Blockbook endpoint (see [Blockbook setup](#blockbook) below)
+
+---
+
+## Quick start (Docker)
 
 ```bash
-npm run dev
-# or
-yarn dev
-# or
-pnpm dev
-# or
-bun dev
+git clone https://github.com/<your-fork>/kairo.git
+cd kairo
+cp .env.example .env
+# edit .env with your values
+docker compose up -d --build
 ```
 
-Open [http://localhost:3000](http://localhost:3000) with your browser to see the result.
+Open <http://localhost:3000> and create your account.
 
-You can start editing the page by modifying `app/page.tsx`. The page auto-updates as you edit the file.
+The compose stack spins up:
 
-This project uses [`next/font`](https://nextjs.org/docs/app/building-your-application/optimizing/fonts) to automatically optimize and load [Geist](https://vercel.com/font), a new font family for Vercel.
+- `postgres` — database
+- `migrate` — runs `pnpm db:generate && pnpm db:migrate` once at startup
+- `kairo` — the Next.js app on port `3000`
 
-## Learn More
+To stop everything:
 
-To learn more about Next.js, take a look at the following resources:
+```bash
+docker compose down
+```
 
-- [Next.js Documentation](https://nextjs.org/docs) - learn about Next.js features and API.
-- [Learn Next.js](https://nextjs.org/learn) - an interactive Next.js tutorial.
+---
 
-You can check out [the Next.js GitHub repository](https://github.com/vercel/next.js) - your feedback and contributions are welcome!
+## Environment variables
 
-## Deploy on Vercel
+Copy `.env.example` to `.env` and fill in:
 
-The easiest way to deploy your Next.js app is to use the [Vercel Platform](https://vercel.com/new?utm_medium=default-template&filter=next.js&utm_source=create-next-app&utm_campaign=create-next-app-readme) from the creators of Next.js.
+| Variable                             | Required | Description                                    |
+| ------------------------------------ | -------- | ---------------------------------------------- |
+| `DB_HOST`                            | yes      | Postgres host (`postgres` inside compose)      |
+| `DB_PORT`                            | yes      | Postgres port (default `5432`)                 |
+| `POSTGRES_USER`                      | yes      | Postgres user                                  |
+| `POSTGRES_PASSWORD`                  | yes      | Postgres password                              |
+| `POSTGRES_DB`                        | yes      | Database name (default `kairo`)                |
+| `BETTER_AUTH_SECRET`                 | yes      | Auth signing key (min. 20 chars, random)       |
+| `NEXT_PUBLIC_URL`                    | yes      | Public base URL (e.g. `http://localhost:3000`) |
+| `NEXT_PUBLIC_BTC_HTTP_BLOCKBOOK_URL` | yes      | HTTP URL of your Blockbook instance            |
 
-Check out our [Next.js deployment documentation](https://nextjs.org/docs/app/building-your-application/deploying) for more details.
-# kairo
+Generate a strong secret:
+
+```bash
+openssl rand -hex 32
+```
+
+---
+
+## Local development
+
+Requires **pnpm** (mandatory).
+
+```bash
+pnpm install
+cp .env.example .env
+pnpm db:migrate
+pnpm dev
+```
+
+App runs at <http://localhost:3000>.
+
+---
+
+## Blockbook
+
+Kairo needs a Blockbook HTTP endpoint to index blockchain data. Blockbook is not bundled with this repo — set it up separately and point `NEXT_PUBLIC_BTC_HTTP_BLOCKBOOK_URL` at it.
+
+For setup and self-hosting instructions see the official project: **<https://github.com/trezor/blockbook>**.

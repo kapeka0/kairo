@@ -2,7 +2,9 @@
   "Auth": {
     "welcome": "Welcome to Kairo",
     "welcomeMessage": "Sign in to continue to your account",
+    "welcomeBack": "Welcome back!",
     "signIn": "Sign in",
+    "name": "Full Name",
     "email": "Email",
     "invalidEmail": "Invalid email",
     "invalidUsername": "Invalid username",
@@ -10,22 +12,17 @@
     "passwordPlaceholder": "Make sure nobody is watching",
     "noAccount": "Don't have an account?",
     "signUp": "Sign up",
+    "signUpSuccess": "Account created successfully!",
     "loginError": "Invalid username or password",
     "join": "Join Kairo",
     "joinMessage": "Start your journey today",
     "strongPassword": "Choose a strong password",
     "confirmPassword": "Confirm your password",
-    "preTerms": "I agree to the ",
-    "inTerms": " and ",
-    "terms": "Terms and Conditions",
-    "privacy": "Privacy Policy",
     "alreadyAccount": "Already have an account?",
     "passwordMismatch": "Passwords do not match",
-    "acceptTerms": "You must accept the terms and conditions",
     "username": "Username",
     "namePlaceholder": "Satoshi Nakamoto",
     "emailPlaceholder": "satoshinakamoto@btc.com",
-    "signUpSuccess": "Sign up successful!",
     "emailSent": "You have successfully signed up for Kairo.",
     "google": "Continue with Google",
     "or": "or",
@@ -36,7 +33,6 @@
       "existingUsername": "Username already taken.",
       "existingUsernameDesc": "Username already taken, please choose another."
     },
-
     "zod": {
       "email": "Invalid email",
       "passwordMatch": "Passwords do not match",
@@ -85,6 +81,13 @@
     "privacyMode": "Privacy Mode",
     "noIcons": "No icons found",
     "search": "Search..."
+  },
+  "Navbar": {
+    "dashboard": "Dashboard",
+    "signIn": "Sign in"
+  },
+  "NavUser": {
+    "logOut": "Log out"
   },
   "Wallets": {
     "title": "My Wallets",
@@ -153,9 +156,10 @@
     }
   },
   "LandingPage": {
-    "title": "Start building 🚀",
-    "description": "My Next.js template designed to develop SaaS, AI tools or other web applications quickly and effectively, ready to help you monetize from day one.",
-    "button": "Click me"
+    "title": "Track your crypto. Keep your privacy.",
+    "description": "Kairo is a self-hosted portfolio tracker for your wallets and tokens. Your keys, your node, your data.",
+    "ctaSignedOut": "Get started",
+    "ctaSignedIn": "Go to dashboard"
   },
   "Metadata": {
     "title": "Kairo",

@@ -24,19 +24,18 @@ import { activePortfolioIdAtom } from "@/lib/atoms/PortfolioAtoms";
 import { useAtomValue } from "jotai";
 import { toast } from "sonner";
 
-const formSchema = z.object({
-  email: z.string().email("Invalid email"),
-  password: z.string(),
-});
-
-type SignInFormData = z.infer<typeof formSchema>;
-
 function SignInForm() {
   const tAuth = useTranslations("Auth");
+  const tForm = useTranslations("Auth.zod");
   const tError = useTranslations("Auth.errors");
   const [showPassword, setshowPassword] = useState(false);
   const activePortfolioId = useAtomValue(activePortfolioIdAtom);
   const router = useRouter();
+  const formSchema = z.object({
+    email: z.string().email({ message: tForm("email") }),
+    password: z.string(),
+  });
+  type SignInFormData = z.infer<typeof formSchema>;
   const { execute, isPending, result } = useAction(signIn, {
     onError: (e) => {
       if (e.error.validationErrors?._errors) {
@@ -47,7 +46,7 @@ function SignInForm() {
       }
     },
     onSuccess: () => {
-      toast.success("Welcome back!");
+      toast.success(tAuth("welcomeBack"));
       if (activePortfolioId) {
         router.push(`/app/${activePortfolioId}`);
       } else {

@@ -5,6 +5,7 @@ import { useQueryClient } from "@tanstack/react-query";
 import { Loader2 } from "lucide-react";
 import { useTranslations } from "next-intl";
 import { useAction } from "next-safe-action/hooks";
+import { useEffect } from "react";
 import { useForm } from "react-hook-form";
 import { toast } from "sonner";
 import { z } from "zod";
@@ -34,6 +35,7 @@ import {
 import { updatePortfolioCurrency } from "@/lib/actions/portfolio";
 import { usePortfolios } from "@/lib/hooks/usePortfolios";
 import { CURRENCIES } from "@/lib/utils/constants";
+import SettingsCardSkeleton from "./SettingsCardSkeleton";
 
 const schema = z.object({
   currency: z.enum(["USD", "EUR", "GBP", "JPY", "CNY"]),
@@ -43,16 +45,25 @@ type FormData = z.infer<typeof schema>;
 
 export default function PortfolioCurrencyCard() {
   const t = useTranslations("Settings.currency");
-  const { activePortfolio } = usePortfolios();
+  const { activePortfolio, isPending: isPendingActivePortfolio } =
+    usePortfolios();
   const queryClient = useQueryClient();
 
   const form = useForm<FormData>({
     mode: "onChange",
     resolver: zodResolver(schema),
     defaultValues: {
-      currency: activePortfolio?.currency ?? "USD",
+      currency: (activePortfolio?.currency as FormData["currency"]) ?? "USD",
     },
   });
+
+  useEffect(() => {
+    if (activePortfolio?.currency && !form.formState.isDirty) {
+      form.reset({
+        currency: activePortfolio.currency as FormData["currency"],
+      });
+    }
+  }, [activePortfolio?.currency, form]);
 
   const { execute, isPending } = useAction(updatePortfolioCurrency, {
     onError: () => {
@@ -69,6 +80,10 @@ export default function PortfolioCurrencyCard() {
     if (!activePortfolio) return;
     execute({ portfolioId: activePortfolio.id, currency: data.currency });
   };
+
+  if (isPendingActivePortfolio || !activePortfolio) {
+    return <SettingsCardSkeleton />;
+  }
 
   return (
     <Card>
@@ -88,7 +103,7 @@ export default function PortfolioCurrencyCard() {
                     <Select
                       onValueChange={field.onChange}
                       value={field.value}
-                      disabled={isPending}
+                      disabled={isPending || isPendingActivePortfolio}
                     >
                       <FormControl>
                         <SelectTrigger className="max-w-xs">
@@ -117,7 +132,11 @@ export default function PortfolioCurrencyCard() {
               />{" "}
               <Button
                 type="submit"
-                disabled={isPending || !form.formState.isDirty}
+                disabled={
+                  isPending ||
+                  isPendingActivePortfolio ||
+                  !form.formState.isDirty
+                }
               >
                 {isPending ? (
                   <Loader2 className="size-4 animate-spin" />

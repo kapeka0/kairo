@@ -50,7 +50,6 @@ const signUpSchema = z.object({
     .regex(/[A-Z]/)
     .regex(/[0-9]/)
     .regex(/[^a-zA-Z0-9]/),
-  acceptTerms: z.boolean().refine((val) => val === true),
   image: z.string(),
 });
 
