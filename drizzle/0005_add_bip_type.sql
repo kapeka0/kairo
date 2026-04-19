@@ -1,1 +1,0 @@
-ALTER TABLE "bitcoin_wallet" ADD COLUMN IF NOT EXISTS "bip_type" text NOT NULL DEFAULT 'BIP84';
