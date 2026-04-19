@@ -10,8 +10,6 @@
 !.yarn/releases
 !.yarn/versions
 
-# testing
-/coverage
 
 # next.js
 /.next/
@@ -48,3 +46,6 @@ CLAUDE.MD
 
 # Drizzle
 null
+
+# Development
+.vscode

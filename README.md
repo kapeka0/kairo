@@ -6,9 +6,11 @@
 
 Kairo is a **privacy-first, self-hosted** crypto portfolio tracker. Keep your keys, your node, and your data under your own control.
 
-- Track multiple portfolios, wallets and tokens.
-- Chain-agnostic by design, starting with Bitcoin via [Blockbook](https://github.com/trezor/blockbook).
-- Ships with Docker Compose for one-command deploys.
+Track multiple portfolios, wallets and tokens without exposing your XPUB to third-party vendors.
+
+**Currently supported:**
+
+- Bitcoin
 
 ---
 
@@ -87,4 +89,6 @@ App runs at <http://localhost:3000>.
 
 Kairo needs a Blockbook HTTP endpoint to index blockchain data. Blockbook is not bundled with this repo — set it up separately and point `NEXT_PUBLIC_BTC_HTTP_BLOCKBOOK_URL` at it.
 
-For setup and self-hosting instructions see the official project: **<https://github.com/trezor/blockbook>**.
+If you trust Trezor, you can start with their public Blockbook endpoints (used by Trezor Suite frontend) such as **https://btc.trezor.io**, but this will expose your master public keys to a third party. A self-hosted Blockbook instance is recommended.
+
+For setup and self-hosting instructions, see the official project: **<https://github.com/trezor/blockbook>**.
