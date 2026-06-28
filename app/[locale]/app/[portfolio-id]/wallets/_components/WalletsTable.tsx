@@ -49,8 +49,8 @@ import { useTokenStats } from "@/lib/hooks/useTokenStats";
 import { useWallets } from "@/lib/hooks/useWallets";
 import { TokenType } from "@/lib/types";
 import { devLog } from "@/lib/utils";
-import { formatBtc, satoshisToBtc } from "@/lib/utils/bitcoin";
 import { SUPPORTED_CRYPTOCURRENCIES } from "@/lib/utils/constants";
+import { getTokenMetadata } from "@/lib/utils/token-metadata";
 import { useAction } from "next-safe-action/hooks";
 import WalletIconPicker from "./WalletIconPicker";
 
@@ -130,8 +130,12 @@ export default function WalletsTable() {
     }
   }, [editingWalletId]);
 
-  const handleIconChange = async (walletId: string, icon: string | null) => {
-    execute({ walletId, icon });
+  const handleIconChange = async (
+    walletId: string,
+    icon: string | null,
+    tokenType: TokenType,
+  ) => {
+    execute({ walletId, icon, tokenType });
   };
 
   const copyToClipboard = async (text: string) => {
@@ -241,10 +245,14 @@ export default function WalletsTable() {
           <TableBody>
             {walletsSortedByBalance.map((wallet) => {
               const crypto = SUPPORTED_CRYPTOCURRENCIES.find(
-                (c) => c.value === "BTC",
+                (c) => c.value === wallet.tokenType,
               );
-              const balanceInBTC = satoshisToBtc(
-                wallet.lastBalanceInTokens || "0",
+              const tokenMeta = getTokenMetadata(wallet.tokenType as TokenType);
+              const rawBalance = wallet.lastBalanceInTokens || "0";
+              const balanceInTokens =
+                Number(rawBalance) / Math.pow(10, tokenMeta.decimals);
+              const formattedBalance = balanceInTokens.toFixed(
+                Math.min(tokenMeta.decimals, 8),
               );
 
               return (
@@ -257,7 +265,11 @@ export default function WalletsTable() {
                             value={wallet.icon}
                             gradientUrl={wallet.gradientUrl}
                             onValueChange={(icon) =>
-                              handleIconChange(wallet.id, icon)
+                              handleIconChange(
+                                wallet.id,
+                                icon,
+                                wallet.tokenType as TokenType,
+                              )
                             }
                           />
                         </div>
@@ -303,7 +315,7 @@ export default function WalletsTable() {
                           <span className="text-xs text-muted-foreground flex items-center gap-1">
                             <Image
                               src={crypto.logo}
-                              alt="BTC"
+                              alt={crypto.value}
                               width={12}
                               height={12}
                             />
@@ -317,7 +329,7 @@ export default function WalletsTable() {
                     <div className="flex flex-col gap-1 items-start">
                       <PrivacyValue>
                         <span className="font-medium">
-                          {formatBtc(balanceInBTC)}
+                          {formattedBalance} {tokenMeta.symbol}
                         </span>
                       </PrivacyValue>
 
@@ -375,7 +387,10 @@ export default function WalletsTable() {
                           <DropdownMenuItem
                             disabled={isRefreshing}
                             onClick={() =>
-                              executeRefresh({ walletId: wallet.id })
+                              executeRefresh({
+                                walletId: wallet.id,
+                                tokenType: wallet.tokenType as TokenType,
+                              })
                             }
                           >
                             {isRefreshing

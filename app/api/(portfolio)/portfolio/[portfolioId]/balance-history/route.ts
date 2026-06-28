@@ -1,6 +1,6 @@
 import { auth } from "@/lib/auth";
 import { existsPortfolioByIdAndUserId } from "@/lib/db/data/portfolio";
-import { getWalletsByPortfolioId } from "@/lib/db/data/wallet";
+import { getAllWalletsByPortfolioId } from "@/lib/db/data/wallet";
 import { getHistoricalTokenPrices } from "@/lib/services/coingecko";
 import { computeWalletDayMap } from "@/lib/services/wallet-history";
 import { Period, TokenType } from "@/lib/types";
@@ -68,7 +68,7 @@ export async function GET(
 
     const { period } = queryValidation.data as { period: Period };
 
-    const wallets = await getWalletsByPortfolioId(portfolioId);
+    const wallets = await getAllWalletsByPortfolioId(portfolioId);
 
     if (wallets.length === 0) {
       return NextResponse.json([]);

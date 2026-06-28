@@ -176,18 +176,45 @@ export const addressTag = pgTable(
   ],
 );
 
+export const ethereumWallet = pgTable("ethereum_wallet", {
+  id: text("id")
+    .primaryKey()
+    .$default(() => generateUUID()),
+  name: text("name").notNull(),
+  tokenType: text("token_type").notNull().default("ETH"),
+  gradientUrl: text("gradient_url").notNull(),
+  icon: text("icon"),
+  publicKey: text("public_key").notNull(),
+  portfolioId: text("portfolio_id")
+    .notNull()
+    .references(() => portfolio.id, { onDelete: "cascade" }),
+  createdAt: timestamp("created_at").defaultNow().notNull(),
+  updatedAt: timestamp("updated_at")
+    .defaultNow()
+    .$onUpdate(() => /* @__PURE__ */ new Date())
+    .notNull(),
+});
+
 export const portfolioRelations = relations(portfolio, ({ one, many }) => ({
   user: one(user, {
     fields: [portfolio.userId],
     references: [user.id],
   }),
   bitcoinWallets: many(bitcoinWallet),
+  ethereumWallets: many(ethereumWallet),
   addressTags: many(addressTag),
 }));
 
 export const bitcoinWalletRelations = relations(bitcoinWallet, ({ one }) => ({
   portfolio: one(portfolio, {
     fields: [bitcoinWallet.portfolioId],
+    references: [portfolio.id],
+  }),
+}));
+
+export const ethereumWalletRelations = relations(ethereumWallet, ({ one }) => ({
+  portfolio: one(portfolio, {
+    fields: [ethereumWallet.portfolioId],
     references: [portfolio.id],
   }),
 }));

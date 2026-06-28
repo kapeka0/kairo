@@ -1,16 +1,19 @@
 import { NextRequest, NextResponse } from "next/server";
 import { headers } from "next/headers";
 import { auth } from "@/lib/auth";
-import { getBitcoinWalletById } from "@/lib/db/data/wallet";
+import {
+  getBitcoinWalletById,
+  getEthereumWalletById,
+} from "@/lib/db/data/wallet";
 import { walletIdParamSchema } from "@/lib/validations/api";
 import { validateRequest } from "@/lib/utils/api-validation";
-import { fetchBlockbookBalance } from "@/lib/services/blockbook";
+import { btcBlockbook, ethBlockbook } from "@/lib/services/blockbook";
 import { TokenType, type BipType } from "@/lib/types";
 import { toDescriptor } from "@/lib/utils/bitcoin";
 
 export async function GET(
   request: NextRequest,
-  { params }: { params: Promise<{ walletId: string }> }
+  { params }: { params: Promise<{ walletId: string }> },
 ) {
   try {
     const session = await auth.api.getSession({
@@ -30,45 +33,61 @@ export async function GET(
 
     const { walletId } = validation.data;
 
-    const wallet = await getBitcoinWalletById(walletId);
+    const tokenTypeParam = request.nextUrl.searchParams.get("tokenType");
+    const tokenType =
+      tokenTypeParam === TokenType.ETH ? TokenType.ETH : TokenType.BTC;
 
-    if (!wallet) {
-      return NextResponse.json({ error: "Wallet not found" }, { status: 404 });
-    }
+    if (tokenType === TokenType.ETH) {
+      const wallet = await getEthereumWalletById(walletId);
 
-    if (wallet.portfolio.userId !== session.user.id) {
-      return NextResponse.json(
-        { error: "Unauthorized: Wallet does not belong to user" },
-        { status: 403 }
-      );
-    }
-
-    switch (wallet.tokenType) {
-      case TokenType.BTC: {
-        const blockbookData = await fetchBlockbookBalance(toDescriptor(wallet.publicKey, wallet.bipType as BipType));
-
-        return NextResponse.json({
-          walletId,
-          tokenType: TokenType.BTC,
-          balance: blockbookData.balance,
-          unconfirmedBalance: blockbookData.unconfirmedBalance,
-          totalReceived: blockbookData.totalReceived,
-          totalSent: blockbookData.totalSent,
-          txCount: blockbookData.txCount,
-        });
+      if (!wallet) {
+        return NextResponse.json({ error: "Wallet not found" }, { status: 404 });
       }
 
-      case TokenType.ETH:
+      if (wallet.portfolio.userId !== session.user.id) {
         return NextResponse.json(
-          { error: "ETH support coming soon" },
-          { status: 501 }
+          { error: "Unauthorized: Wallet does not belong to user" },
+          { status: 403 },
         );
+      }
 
-      default:
+      const blockbookData = await ethBlockbook.fetchBalance(wallet.publicKey);
+
+      return NextResponse.json({
+        walletId,
+        tokenType: TokenType.ETH,
+        balance: blockbookData.balance,
+        unconfirmedBalance: blockbookData.unconfirmedBalance,
+        txCount: blockbookData.txCount,
+        tokens: blockbookData.tokens,
+      });
+    } else {
+      const wallet = await getBitcoinWalletById(walletId);
+
+      if (!wallet) {
+        return NextResponse.json({ error: "Wallet not found" }, { status: 404 });
+      }
+
+      if (wallet.portfolio.userId !== session.user.id) {
         return NextResponse.json(
-          { error: `Unsupported token type: ${wallet.tokenType}` },
-          { status: 400 }
+          { error: "Unauthorized: Wallet does not belong to user" },
+          { status: 403 },
         );
+      }
+
+      const blockbookData = await btcBlockbook.fetchBalance(
+        toDescriptor(wallet.publicKey, wallet.bipType as BipType),
+      );
+
+      return NextResponse.json({
+        walletId,
+        tokenType: TokenType.BTC,
+        balance: blockbookData.balance,
+        unconfirmedBalance: blockbookData.unconfirmedBalance,
+        totalReceived: blockbookData.totalReceived,
+        totalSent: blockbookData.totalSent,
+        txCount: blockbookData.txCount,
+      });
     }
   } catch (error) {
     console.error("Error fetching wallet balance:", error);

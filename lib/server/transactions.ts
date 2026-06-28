@@ -1,9 +1,10 @@
 import "server-only";
 
 import { withCache } from "@/lib/cache";
-import { getWalletsByPortfolioId } from "@/lib/db/data/wallet";
+import { getAllWalletsByPortfolioId } from "@/lib/db/data/wallet";
 import {
-  fetchTransactions,
+  btcBlockbook,
+  ethBlockbook,
   FormattedTransaction,
 } from "@/lib/services/blockbook";
 import { getHistoricalTokenPrices } from "@/lib/services/coingecko";
@@ -20,14 +21,11 @@ export interface TransactionsPayload {
   walletCount: number;
 }
 
-function buildQuery(wallet: {
+function buildBtcQuery(wallet: {
   publicKey: string;
-  tokenType: string;
-  bipType: string;
+  bipType?: string;
 }): string {
-  return wallet.tokenType === TokenType.BTC
-    ? toDescriptor(wallet.publicKey, wallet.bipType as BipType)
-    : wallet.publicKey;
+  return toDescriptor(wallet.publicKey, wallet.bipType as BipType);
 }
 
 function walletMeta(wallet: {
@@ -51,7 +49,7 @@ export async function getPortfolioTransactions(
   page: number,
   pageSize: number,
 ): Promise<TransactionsPayload> {
-  const wallets = await getWalletsByPortfolioId(portfolioId);
+  const wallets = await getAllWalletsByPortfolioId(portfolioId);
 
   if (wallets.length === 0) {
     return { transactions: [], totalPages: 1, walletCount: 0 };
@@ -59,11 +57,22 @@ export async function getPortfolioTransactions(
 
   const results = await Promise.all(
     wallets.map(async (wallet) => {
-      const result = await fetchTransactions(
-        buildQuery(wallet),
-        1,
-        FETCH_PAGE_SIZE,
-      );
+      let result: { transactions: FormattedTransaction[] };
+
+      if (wallet.tokenType === TokenType.ETH) {
+        result = await ethBlockbook.fetchTransactions(
+          wallet.publicKey,
+          1,
+          FETCH_PAGE_SIZE,
+        );
+      } else {
+        result = await btcBlockbook.fetchTransactions(
+          buildBtcQuery(wallet),
+          1,
+          FETCH_PAGE_SIZE,
+        );
+      }
+
       return result.transactions.map((tx) => ({
         ...tx,
         ...walletMeta(wallet),

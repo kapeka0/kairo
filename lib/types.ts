@@ -53,6 +53,18 @@ export type BitcoinWallet = {
   tokenType: TokenType.BTC;
 };
 
+export type EthereumWallet = {
+  id: string;
+  name: string;
+  gradientUrl: string;
+  icon: string | null;
+  publicKey: string;
+  portfolioId: string;
+  createdAt: Date;
+  updatedAt: Date;
+  tokenType: TokenType.ETH;
+};
+
 export type PortfoliosResponse = Portfolio[];
 
 export type Period = "7d" | "30d" | "90d" | "180d" | "365d";

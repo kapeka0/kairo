@@ -69,6 +69,9 @@ export default function AddWalletDialog({
     if (step1Data?.cryptocurrency === "BTC") {
       return tForm("step2TitleBtc");
     }
+    if (step1Data?.cryptocurrency === "ETH") {
+      return tForm("step2TitleEth");
+    }
     return tForm("step1Title");
   };
 
@@ -78,6 +81,9 @@ export default function AddWalletDialog({
     }
     if (step1Data?.cryptocurrency === "BTC") {
       return tForm("step2DescriptionBtc");
+    }
+    if (step1Data?.cryptocurrency === "ETH") {
+      return tForm("step2DescriptionEth");
     }
     return tForm("step1Description");
   };

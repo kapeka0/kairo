@@ -2,7 +2,7 @@ import { z } from "zod";
 
 export const walletStep1Schema = z.object({
   name: z.string().min(1).max(50).trim(),
-  cryptocurrency: z.enum(["BTC"]),
+  cryptocurrency: z.enum(["BTC", "ETH"]),
 });
 
 const XPUB_PATTERNS = {
@@ -42,6 +42,24 @@ export const createBitcoinWalletSchema = walletStep1Schema
     portfolioId: z.string().uuid(),
   });
 
+export const ethereumWalletSchema = z.object({
+  publicKey: z
+    .string()
+    .min(1, "Ethereum address is required")
+    .regex(
+      /^0x[a-fA-F0-9]{40}$/,
+      "Invalid Ethereum address. Must be a 42-character hex string starting with 0x.",
+    ),
+});
+
+export const createEthereumWalletSchema = walletStep1Schema
+  .extend(ethereumWalletSchema.shape)
+  .extend({
+    portfolioId: z.string().uuid(),
+  });
+
 export type WalletStep1Data = z.infer<typeof walletStep1Schema>;
 export type BitcoinWalletData = z.infer<typeof bitcoinWalletSchema>;
 export type CreateBitcoinWalletData = z.infer<typeof createBitcoinWalletSchema>;
+export type EthereumWalletData = z.infer<typeof ethereumWalletSchema>;
+export type CreateEthereumWalletData = z.infer<typeof createEthereumWalletSchema>;

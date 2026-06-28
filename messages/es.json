@@ -226,6 +226,8 @@
       "step1Description": "Elige un nombre y selecciona el tipo de criptomoneda",
       "step2TitleBtc": "Agregar Billetera Bitcoin",
       "step2DescriptionBtc": "Ingresa tu clave pública extendida para rastrear tu billetera Bitcoin",
+      "step2TitleEth": "Agregar Billetera Ethereum",
+      "step2DescriptionEth": "Ingresa tu dirección de Ethereum para rastrear tu ETH y tokens ERC-20",
       "walletName": "Nombre de la Billetera",
       "walletNamePlaceholder": "Mi Billetera Bitcoin",
       "cryptocurrency": "Criptomoneda",
@@ -241,6 +243,9 @@
       "bipTypeNestedSegwit": "Nested SegWit (BIP49) - Direcciones comienzan con 3",
       "bipTypeNativeSegwit": "Native SegWit (BIP84) - Direcciones comienzan con bc1",
       "bipTypeTaproot": "Taproot (BIP86) - Direcciones comienzan con bc1p",
+      "ethereumAddress": "Dirección Ethereum",
+      "ethereumAddressPlaceholder": "0x...",
+      "ethereumAddressHelper": "Tu dirección pública de Ethereum que comienza con 0x. Es segura de compartir — solo expone saldos y transacciones.",
       "back": "Atrás",
       "next": "Siguiente",
       "addWallet": "Agregar Billetera"
@@ -255,6 +260,7 @@
       "selectCrypto": "Por favor selecciona una criptomoneda",
       "invalidXpubFormat": "Formato de clave pública extendida inválido. Debe ser xpub, ypub o zpub válido",
       "duplicateXpub": "Esta billetera ya está agregada a tu portafolio",
+      "invalidEthAddress": "Dirección Ethereum inválida. Debe ser una cadena hexadecimal de 42 caracteres que comience con 0x.",
       "duplicateName": "Ya existe una billetera con este nombre",
       "unexpected": "Algo salió mal. Por favor intenta nuevamente"
     },

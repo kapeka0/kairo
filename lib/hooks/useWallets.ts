@@ -43,7 +43,9 @@ export function useWallets(portfolioId?: string) {
     queries: wallets.map((wallet) => ({
       queryKey: ["balance", wallet.id],
       queryFn: async () => {
-        const { data } = await axios.get(`/api/wallet/${wallet.id}/balance`);
+        const { data } = await axios.get(`/api/wallet/${wallet.id}/balance`, {
+          params: { tokenType: wallet.tokenType },
+        });
         return data.balance as string;
       },
       staleTime: 120_000, // 2 minutes

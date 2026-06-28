@@ -98,6 +98,8 @@
       "step1Description": "Choose a name and select the cryptocurrency type",
       "step2TitleBtc": "Add Bitcoin Wallet",
       "step2DescriptionBtc": "Enter your extended public key to track your Bitcoin wallet",
+      "step2TitleEth": "Add Ethereum Wallet",
+      "step2DescriptionEth": "Enter your Ethereum wallet address to track your ETH and ERC-20 tokens",
       "walletName": "Wallet Name",
       "walletNamePlaceholder": "My Bitcoin Wallet",
       "cryptocurrency": "Cryptocurrency",
@@ -113,6 +115,9 @@
       "bipTypeNestedSegwit": "Nested SegWit (BIP49)",
       "bipTypeNativeSegwit": "Native SegWit (BIP84)",
       "bipTypeTaproot": "Taproot (BIP86)",
+      "ethereumAddress": "Ethereum Address",
+      "ethereumAddressPlaceholder": "0x...",
+      "ethereumAddressHelper": "Your public Ethereum wallet address starting with 0x. Safe to share — only exposes balances and transactions.",
       "back": "Back",
       "next": "Next",
       "addWallet": "Add Wallet"
@@ -127,6 +132,7 @@
       "selectCrypto": "Please select a cryptocurrency",
       "invalidXpubFormat": "Invalid extended public key format. Must be valid xpub, ypub, or zpub",
       "duplicateXpub": "This wallet is already added to your portfolio",
+      "invalidEthAddress": "Invalid Ethereum address. Must be a 42-character hex string starting with 0x.",
       "duplicateName": "A wallet with this name already exists",
       "unexpected": "Something went wrong. Please try again"
     },

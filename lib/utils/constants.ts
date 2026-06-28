@@ -41,6 +41,12 @@ export const SUPPORTED_CRYPTOCURRENCIES = [
     label: "Bitcoin",
     prominentColor: "#f7931a",
   },
+  {
+    value: "ETH",
+    logo: "/images/logos/crypto/eth.svg",
+    label: "Ethereum",
+    prominentColor: "#627eea",
+  },
 ];
 
 export const WALLET_ICONS: IconDefinition[] = [

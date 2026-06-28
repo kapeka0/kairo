@@ -3,9 +3,8 @@ import { NextRequest, NextResponse } from "next/server";
 
 import { auth } from "@/lib/auth";
 import { existsPortfolioByIdAndUserId } from "@/lib/db/data/portfolio";
-import { getWalletsByPortfolioId } from "@/lib/db/data/wallet";
-import { BipType, BitcoinWallet, TokenType } from "@/lib/types";
-import { mapBTCWalletToWallet } from "@/lib/utils";
+import { getAllWalletsByPortfolioId } from "@/lib/db/data/wallet";
+import { TokenType } from "@/lib/types";
 import { validateRequest } from "@/lib/utils/api-validation";
 import { portfolioIdParamSchema } from "@/lib/validations/api";
 
@@ -43,9 +42,9 @@ export async function GET(
       );
     }
 
-    const dbWallets = await getWalletsByPortfolioId(portfolioId);
+    const dbWallets = await getAllWalletsByPortfolioId(portfolioId);
 
-    const btcWallets: BitcoinWallet[] = dbWallets.map((wallet) => ({
+    const mappedWallets = dbWallets.map((wallet) => ({
       id: wallet.id,
       name: wallet.name,
       gradientUrl: wallet.gradientUrl,
@@ -53,13 +52,10 @@ export async function GET(
       publicKey: wallet.publicKey,
       portfolioId: wallet.portfolioId,
       createdAt: wallet.createdAt,
-      bipType: wallet.bipType as BipType,
       updatedAt: wallet.updatedAt,
-      tokenType: TokenType.BTC,
+      tokenType: wallet.tokenType as TokenType,
     }));
 
-    const mappedWallets = btcWallets.map(mapBTCWalletToWallet);
-    // TODO: Add support for other wallet types (e.g. Ethereum) in the future
     return NextResponse.json({ wallets: mappedWallets });
   } catch (error) {
     console.error("Error fetching wallets:", error);
