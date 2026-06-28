@@ -7,19 +7,16 @@ import { useCurrencyRates } from "@/lib/hooks/useCurrencyRates";
 import { useDisplayCurrency } from "@/lib/hooks/useDisplayCurrency";
 import { usePortfolios } from "@/lib/hooks/usePortfolios";
 import { useWallets } from "@/lib/hooks/useWallets";
-import NumberFlow from "@number-flow/react";
 import { useAtomValue } from "jotai";
 import { useLocale } from "next-intl";
 import { useEffect, useState } from "react";
 
-type Props = {};
-
-const BalanceTitle = (props: Props) => {
+const BalanceTitle = () => {
   const activePortfolioBalance = useAtomValue(
     activePortfolioBalanceInUserCurrencyAtom,
   );
 
-  const [displayValue, setdisplayValue] = useState<number>(0);
+  const [displayValue, setDisplayValue] = useState<number>(0);
   const locale = useLocale();
   const { activePortfolio } = usePortfolios();
   const { data, isPending } = useWallets();
@@ -27,41 +24,37 @@ const BalanceTitle = (props: Props) => {
   const currency = activePortfolio?.currency;
 
   const { convertAmount } = useCurrencyRates(currency);
-
   const { displayCurrency } = useDisplayCurrency();
 
   useEffect(() => {
     if (activePortfolioBalance !== 0) {
-      setdisplayValue(activePortfolioBalance);
+      setDisplayValue(activePortfolioBalance);
     }
   }, [activePortfolioBalance]);
 
-  const rawBalance = displayValue;
-  const displayBalance = convertAmount(rawBalance, displayCurrency);
+  const displayBalance = convertAmount(displayValue, displayCurrency);
+
+  const formatted =
+    displayBalance != null && displayBalance > -1
+      ? new Intl.NumberFormat(locale, {
+          style: "currency",
+          currency: displayCurrency,
+          minimumFractionDigits: 2,
+          maximumFractionDigits: 2,
+        }).format(displayBalance)
+      : null;
 
   return (
     <PrivacyValue>
       {hasWallets ? (
-        displayBalance && displayBalance > -1 ? (
+        formatted != null ? (
           <div className="flex items-end gap-4">
             <GradientText
               variant="fire"
               className="text-4xl font-bold tracking-tight tabular-nums"
               as="h1"
             >
-              <NumberFlow
-                value={displayBalance}
-                locales={locale}
-                trend={0}
-                format={{
-                  style: "currency",
-                  currency: displayCurrency,
-                  currencySign: "standard",
-                  minimumFractionDigits: 2,
-                  maximumFractionDigits: 2,
-                  trailingZeroDisplay: "stripIfInteger",
-                }}
-              />
+              {formatted}
             </GradientText>
           </div>
         ) : (
