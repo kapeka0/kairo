@@ -40,12 +40,21 @@ export const SUPPORTED_CRYPTOCURRENCIES = [
     logo: "/images/logos/crypto/btc.svg",
     label: "Bitcoin",
     prominentColor: "#f7931a",
+    parentChain: undefined as string | undefined,
   },
   {
     value: "ETH",
     logo: "/images/logos/crypto/eth.svg",
     label: "Ethereum",
     prominentColor: "#627eea",
+    parentChain: undefined as string | undefined,
+  },
+  {
+    value: "USDC",
+    logo: "/images/logos/crypto/usdc.svg",
+    label: "USD Coin",
+    prominentColor: "#2775ca",
+    parentChain: "ETH",
   },
 ];
 

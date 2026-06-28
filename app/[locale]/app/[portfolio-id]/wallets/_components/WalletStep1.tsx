@@ -89,26 +89,42 @@ export default function WalletStep1({
                 <FormControl>
                   <SelectTrigger>
                     <SelectValue placeholder={tForm("selectCryptocurrency")}>
-                      {field.value && (
-                        <div className="flex items-center gap-2">
-                          <Image
-                            src={
-                              SUPPORTED_CRYPTOCURRENCIES.find(
-                                (c) => c.value === field.value,
-                              )?.logo || ""
-                            }
-                            alt={field.value}
-                            width={16}
-                            height={16}
-                            className="shrink-0"
-                          />
-                          <span>
-                            {SUPPORTED_CRYPTOCURRENCIES.find(
-                              (c) => c.value === field.value,
-                            )?.label || field.value}
-                          </span>
-                        </div>
-                      )}
+                      {field.value && (() => {
+                        const crypto = SUPPORTED_CRYPTOCURRENCIES.find(
+                          (c) => c.value === field.value,
+                        );
+                        return crypto ? (
+                          <div className="flex items-center gap-2">
+                            <div className="relative shrink-0">
+                              <Image
+                                src={crypto.logo}
+                                alt={crypto.value}
+                                width={16}
+                                height={16}
+                              />
+                              {crypto.parentChain && (
+                                <Image
+                                  src={
+                                    SUPPORTED_CRYPTOCURRENCIES.find(
+                                      (c) => c.value === crypto.parentChain,
+                                    )?.logo || ""
+                                  }
+                                  alt={crypto.parentChain}
+                                  width={8}
+                                  height={8}
+                                  className="absolute -bottom-0.5 -right-0.5 rounded-full ring-1 ring-background"
+                                />
+                              )}
+                            </div>
+                            <span>{crypto.label}</span>
+                            {crypto.parentChain && (
+                              <span className="text-xs text-muted-foreground">
+                                on {crypto.parentChain}
+                              </span>
+                            )}
+                          </div>
+                        ) : null;
+                      })()}
                     </SelectValue>
                   </SelectTrigger>
                 </FormControl>
@@ -116,14 +132,33 @@ export default function WalletStep1({
                   {SUPPORTED_CRYPTOCURRENCIES.map((crypto) => (
                     <SelectItem key={crypto.value} value={crypto.value}>
                       <div className="flex items-center gap-2">
-                        <Image
-                          src={crypto.logo}
-                          alt={crypto.value}
-                          width={16}
-                          height={16}
-                          className="shrink-0"
-                        />
+                        <div className="relative shrink-0">
+                          <Image
+                            src={crypto.logo}
+                            alt={crypto.value}
+                            width={16}
+                            height={16}
+                          />
+                          {crypto.parentChain && (
+                            <Image
+                              src={
+                                SUPPORTED_CRYPTOCURRENCIES.find(
+                                  (c) => c.value === crypto.parentChain,
+                                )?.logo || ""
+                              }
+                              alt={crypto.parentChain}
+                              width={8}
+                              height={8}
+                              className="absolute -bottom-0.5 -right-0.5 rounded-full ring-1 ring-background"
+                            />
+                          )}
+                        </div>
                         <span>{crypto.label}</span>
+                        {crypto.parentChain && (
+                          <span className="text-xs text-muted-foreground">
+                            on {crypto.parentChain}
+                          </span>
+                        )}
                       </div>
                     </SelectItem>
                   ))}

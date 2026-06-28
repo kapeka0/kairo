@@ -328,56 +328,44 @@ export default function WalletsTable() {
                     </div>
                   </TableCell>
                   <TableCell>
-                    <div className="flex flex-col gap-1 items-start">
-                      <PrivacyValue>
-                        <span className="font-medium">
-                          {formattedBalance} {tokenMeta.symbol}
-                        </span>
-                      </PrivacyValue>
+                    <div className="flex flex-col gap-0.5 items-start">
+                      {balanceInTokens > 0 && (
+                        <PrivacyValue>
+                          <span className="font-medium text-sm">
+                            {formattedBalance} {tokenMeta.symbol}
+                          </span>
+                        </PrivacyValue>
+                      )}
 
                       {wallet.erc20Tokens?.map((token) => {
                         const meta = getErc20Metadata(token.symbol);
                         if (!meta || token.balance === "0") return null;
                         const tokenAmount = parseInt(token.balance) / Math.pow(10, token.decimals);
-                        const tokenUsdValue = erc20PricesMap[token.symbol.toUpperCase()];
                         return (
                           <PrivacyValue key={token.contract}>
-                            <span className="flex items-center gap-1 text-xs text-muted-foreground">
-                              <Image src={meta.logoPath} alt={token.symbol} width={12} height={12} />
+                            <span className="flex items-center gap-1.5 font-medium text-sm">
+                              <Image src={meta.logoPath} alt={token.symbol} width={14} height={14} className="shrink-0" />
                               {tokenAmount.toLocaleString(locale, { maximumFractionDigits: 2 })} {token.symbol}
-                              {tokenUsdValue !== undefined && (
-                                <span className="ml-1">
-                                  ·{" "}
-                                  <NumberFlow
-                                    locales={locale}
-                                    format={{ style: "currency", currency: currency || "USD", minimumFractionDigits: 2, maximumFractionDigits: 2 }}
-                                    value={tokenAmount * tokenUsdValue}
-                                  />
-                                </span>
-                              )}
                             </span>
                           </PrivacyValue>
                         );
                       })}
 
-                      {getPriceByTokenType(wallet.tokenType) !== undefined && (
-                        <PrivacyValue>
-                          <span className="text-xs text-muted-foreground">
-                            <NumberFlow
-                              locales={locale}
-                              format={{
-                                style: "currency",
-                                currency: currency || "USD",
-                                currencySign: "standard",
-                                minimumFractionDigits: 2,
-                                maximumFractionDigits: 2,
-                                trailingZeroDisplay: "stripIfInteger",
-                              }}
-                              value={getWalletBalanceInCurrency(wallet) ?? 0}
-                            />
-                          </span>
-                        </PrivacyValue>
-                      )}
+                      <PrivacyValue>
+                        <NumberFlow
+                          locales={locale}
+                          format={{
+                            style: "currency",
+                            currency: currency || "USD",
+                            currencySign: "standard",
+                            minimumFractionDigits: 2,
+                            maximumFractionDigits: 2,
+                            trailingZeroDisplay: "stripIfInteger",
+                          }}
+                          className="text-xs text-muted-foreground"
+                          value={getWalletBalanceInCurrency(wallet) ?? 0}
+                        />
+                      </PrivacyValue>
                     </div>
                   </TableCell>
                   <TableCell>

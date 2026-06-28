@@ -2,7 +2,7 @@ import { z } from "zod";
 
 export const walletStep1Schema = z.object({
   name: z.string().min(1).max(50).trim(),
-  cryptocurrency: z.enum(["BTC", "ETH"]),
+  cryptocurrency: z.enum(["BTC", "ETH", "USDC"]),
 });
 
 const XPUB_PATTERNS = {
