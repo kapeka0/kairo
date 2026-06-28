@@ -9,9 +9,15 @@ RUN pnpm install --frozen-lockfile
 FROM base AS migrator
 COPY --from=deps /app/node_modules ./node_modules
 COPY . .
-CMD ["sh","-c","pnpm db:generate && pnpm db:migrate"]
+CMD ["sh", "-c", "pnpm db:migrate"]
 
 FROM base AS builder
+ARG NEXT_PUBLIC_URL
+ARG NEXT_PUBLIC_BTC_HTTP_BLOCKBOOK_URL
+ARG NEXT_PUBLIC_ETH_HTTP_BLOCKBOOK_URL
+ENV NEXT_PUBLIC_URL=$NEXT_PUBLIC_URL
+ENV NEXT_PUBLIC_BTC_HTTP_BLOCKBOOK_URL=$NEXT_PUBLIC_BTC_HTTP_BLOCKBOOK_URL
+ENV NEXT_PUBLIC_ETH_HTTP_BLOCKBOOK_URL=$NEXT_PUBLIC_ETH_HTTP_BLOCKBOOK_URL
 COPY --from=deps /app/node_modules ./node_modules
 COPY . .
 RUN pnpm build
