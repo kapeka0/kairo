@@ -12,4 +12,5 @@ export const server_env = createEnv({
     COINGECKO_API_KEY: z.string().min(1),
   },
   experimental__runtimeEnv: process.env,
+  skipValidation: !!process.env.SKIP_ENV_VALIDATION,
 });
