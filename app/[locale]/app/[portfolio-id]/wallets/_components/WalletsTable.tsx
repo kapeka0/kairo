@@ -2,7 +2,7 @@
 
 import NumberFlow from "@number-flow/react";
 import { useQueryClient } from "@tanstack/react-query";
-import { Copy, MoreHorizontal, Plus } from "lucide-react";
+import { Copy, MoreHorizontal } from "lucide-react";
 import { useLocale, useTranslations } from "next-intl";
 import Image from "next/image";
 import { useParams } from "next/navigation";
@@ -294,14 +294,6 @@ export default function WalletsTable() {
                 </div>
               </div>
               <div className="flex items-center gap-1">
-                <Button
-                  variant="ghost"
-                  size="icon"
-                  className="size-8"
-                  onClick={() => setAddAssetWalletId(pw.id)}
-                >
-                  <Plus className="size-4" />
-                </Button>
                 <AlertDialog>
                   <DropdownMenu>
                     <DropdownMenuTrigger
@@ -313,6 +305,11 @@ export default function WalletsTable() {
                       </Button>
                     </DropdownMenuTrigger>
                     <DropdownMenuContent align="end">
+                      <DropdownMenuItem
+                        onClick={() => setAddAssetWalletId(pw.id)}
+                      >
+                        {tTable("addAsset")}
+                      </DropdownMenuItem>
                       <AlertDialogTrigger className="w-full">
                         <DropdownMenuItem className="text-destructive hover:text-destructive!">
                           {tTable("delete")}

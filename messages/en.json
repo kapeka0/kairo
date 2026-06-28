@@ -161,7 +161,8 @@
       "deleteConfirmTitle": "Delete Wallet",
       "deleteConfirmDescription": "This action cannot be undone. \"{walletName}\" and all associated data will be permanently removed.",
       "deleteConfirmCancel": "Cancel",
-      "deleteConfirmAction": "Delete"
+      "deleteConfirmAction": "Delete",
+      "addAsset": "Add Asset"
     }
   },
   "LandingPage": {

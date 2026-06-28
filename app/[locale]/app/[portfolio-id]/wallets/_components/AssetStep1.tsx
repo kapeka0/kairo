@@ -60,8 +60,17 @@ export default function AssetStep1({ onNext }: AssetStep1Props) {
                     </div>
                     <span>{crypto.label}</span>
                     {crypto.parentChain && (
-                      <span className="text-xs text-muted-foreground">
-                        on {crypto.parentChain}
+                      <span className="text-xs text-muted-foreground flex items-center gap-0.5">
+                        (<Image
+                          src={
+                            SUPPORTED_CRYPTOCURRENCIES.find(
+                              (c) => c.value === crypto.parentChain,
+                            )?.logo || ""
+                          }
+                          alt={crypto.parentChain}
+                          width={12}
+                          height={12}
+                        />)
                       </span>
                     )}
                   </div>
