@@ -129,20 +129,33 @@ export const portfolio = pgTable("portfolio", {
     .notNull(),
 });
 
-export const bitcoinWallet = pgTable("bitcoin_wallet", {
+export const wallet = pgTable("wallet", {
   id: text("id")
     .primaryKey()
     .$default(() => generateUUID()),
   name: text("name").notNull(),
-  tokenType: text("token_type").notNull().default("BTC"),
   gradientUrl: text("gradient_url").notNull(),
   icon: text("icon"),
-  publicKey: text("public_key").notNull(),
-  bipType: text("bip_type").notNull().default("BIP84"),
-
   portfolioId: text("portfolio_id")
     .notNull()
     .references(() => portfolio.id, { onDelete: "cascade" }),
+  createdAt: timestamp("created_at").defaultNow().notNull(),
+  updatedAt: timestamp("updated_at")
+    .defaultNow()
+    .$onUpdate(() => /* @__PURE__ */ new Date())
+    .notNull(),
+});
+
+export const walletAsset = pgTable("wallet_asset", {
+  id: text("id")
+    .primaryKey()
+    .$default(() => generateUUID()),
+  walletId: text("wallet_id")
+    .notNull()
+    .references(() => wallet.id, { onDelete: "cascade" }),
+  tokenType: text("token_type").notNull(),
+  publicKey: text("public_key").notNull(),
+  bipType: text("bip_type"),
   createdAt: timestamp("created_at").defaultNow().notNull(),
   updatedAt: timestamp("updated_at")
     .defaultNow()
@@ -176,46 +189,27 @@ export const addressTag = pgTable(
   ],
 );
 
-export const ethereumWallet = pgTable("ethereum_wallet", {
-  id: text("id")
-    .primaryKey()
-    .$default(() => generateUUID()),
-  name: text("name").notNull(),
-  tokenType: text("token_type").notNull().default("ETH"),
-  gradientUrl: text("gradient_url").notNull(),
-  icon: text("icon"),
-  publicKey: text("public_key").notNull(),
-  portfolioId: text("portfolio_id")
-    .notNull()
-    .references(() => portfolio.id, { onDelete: "cascade" }),
-  createdAt: timestamp("created_at").defaultNow().notNull(),
-  updatedAt: timestamp("updated_at")
-    .defaultNow()
-    .$onUpdate(() => /* @__PURE__ */ new Date())
-    .notNull(),
-});
-
 export const portfolioRelations = relations(portfolio, ({ one, many }) => ({
   user: one(user, {
     fields: [portfolio.userId],
     references: [user.id],
   }),
-  bitcoinWallets: many(bitcoinWallet),
-  ethereumWallets: many(ethereumWallet),
+  wallets: many(wallet),
   addressTags: many(addressTag),
 }));
 
-export const bitcoinWalletRelations = relations(bitcoinWallet, ({ one }) => ({
+export const walletRelations = relations(wallet, ({ one, many }) => ({
   portfolio: one(portfolio, {
-    fields: [bitcoinWallet.portfolioId],
+    fields: [wallet.portfolioId],
     references: [portfolio.id],
   }),
+  assets: many(walletAsset),
 }));
 
-export const ethereumWalletRelations = relations(ethereumWallet, ({ one }) => ({
-  portfolio: one(portfolio, {
-    fields: [ethereumWallet.portfolioId],
-    references: [portfolio.id],
+export const walletAssetRelations = relations(walletAsset, ({ one }) => ({
+  wallet: one(wallet, {
+    fields: [walletAsset.walletId],
+    references: [wallet.id],
   }),
 }));
 

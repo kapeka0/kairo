@@ -46,10 +46,12 @@ export async function GET(
 
     const mappedWallets = dbWallets.map((wallet) => ({
       id: wallet.id,
+      walletId: wallet.walletId,
       name: wallet.name,
       gradientUrl: wallet.gradientUrl,
       icon: wallet.icon,
       publicKey: wallet.publicKey,
+      bipType: wallet.bipType,
       portfolioId: wallet.portfolioId,
       createdAt: wallet.createdAt,
       updatedAt: wallet.updatedAt,

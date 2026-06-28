@@ -1,5 +1,10 @@
 import { z } from "zod";
 
+export const createWalletSchema = z.object({
+  name: z.string().min(1).max(50).trim(),
+  portfolioId: z.string().uuid(),
+});
+
 export const walletStep1Schema = z.object({
   name: z.string().min(1).max(50).trim(),
   cryptocurrency: z.enum(["BTC", "ETH", "USDC"]),
@@ -34,6 +39,29 @@ export const bitcoinWalletSchema = z.object({
     ),
 
   bipType: z.enum(["BIP44", "BIP49", "BIP84", "BIP86"]),
+});
+
+export const addBtcAssetSchema = z.object({
+  walletId: z.string().uuid(),
+  publicKey: z
+    .string()
+    .min(1)
+    .refine(
+      (value) =>
+        XPUB_PATTERNS.xpub.test(value) ||
+        XPUB_PATTERNS.ypub.test(value) ||
+        XPUB_PATTERNS.zpub.test(value),
+      { message: "Invalid extended public key format." },
+    ),
+  bipType: z.enum(["BIP44", "BIP49", "BIP84", "BIP86"]),
+});
+
+export const addEthAssetSchema = z.object({
+  walletId: z.string().uuid(),
+  publicKey: z
+    .string()
+    .min(1)
+    .regex(/^0x[a-fA-F0-9]{40}$/),
 });
 
 export const createBitcoinWalletSchema = walletStep1Schema

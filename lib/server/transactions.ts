@@ -23,7 +23,7 @@ export interface TransactionsPayload {
 
 function buildBtcQuery(wallet: {
   publicKey: string;
-  bipType?: string;
+  bipType?: string | null;
 }): string {
   return toDescriptor(wallet.publicKey, wallet.bipType as BipType);
 }

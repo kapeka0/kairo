@@ -5,7 +5,7 @@ import { getTokenMetadata } from "@/lib/utils/token-metadata";
 
 type WalletInput = {
   publicKey: string;
-  bipType?: string;
+  bipType?: string | null;
   tokenType: string;
 };
 

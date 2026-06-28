@@ -59,7 +59,6 @@ export function useWallets(portfolioId?: string) {
       queryFn: async (): Promise<WalletBalanceResponse> => {
         const { data } = await axios.get<WalletBalanceResponse>(
           `/api/wallet/${wallet.id}/balance`,
-          { params: { tokenType: wallet.tokenType } },
         );
         return { balance: data.balance, tokens: data.tokens ?? [] };
       },

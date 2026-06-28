@@ -1,10 +1,10 @@
-import { TokenType } from "@/lib/types";
 import { eq } from "drizzle-orm";
 import { db } from "../db";
-import { bitcoinWallet, ethereumWallet } from "../schema";
+import { wallet, walletAsset } from "../schema";
 
 export type UnifiedWalletRow = {
   id: string;
+  walletId: string;
   name: string;
   publicKey: string;
   tokenType: string;
@@ -13,80 +13,85 @@ export type UnifiedWalletRow = {
   portfolioId: string;
   createdAt: Date;
   updatedAt: Date;
-  bipType?: string;
-};
-
-export const getWalletsByPortfolioId = async (portfolioId: string) => {
-  return await db.query.bitcoinWallet.findMany({
-    where: eq(bitcoinWallet.portfolioId, portfolioId),
-    orderBy: (wallet, { desc }) => [desc(wallet.createdAt)],
-  });
+  bipType?: string | null;
 };
 
 export const getAllWalletsByPortfolioId = async (
   portfolioId: string,
 ): Promise<UnifiedWalletRow[]> => {
-  const [btcWallets, ethWallets] = await Promise.all([
-    db.query.bitcoinWallet.findMany({
-      where: eq(bitcoinWallet.portfolioId, portfolioId),
-      orderBy: (wallet, { desc }) => [desc(wallet.createdAt)],
-    }),
-    db.query.ethereumWallet.findMany({
-      where: eq(ethereumWallet.portfolioId, portfolioId),
-      orderBy: (wallet, { desc }) => [desc(wallet.createdAt)],
-    }),
-  ]);
+  const wallets = await db.query.wallet.findMany({
+    where: eq(wallet.portfolioId, portfolioId),
+    with: { assets: true },
+    orderBy: (w, { desc }) => [desc(w.createdAt)],
+  });
 
-  return [
-    ...btcWallets.map((w) => ({ ...w, bipType: w.bipType })),
-    ...ethWallets.map((w) => ({ ...w, bipType: undefined })),
-  ];
+  return wallets.flatMap((w) =>
+    w.assets.map((asset) => ({
+      id: asset.id,
+      walletId: w.id,
+      name: w.name,
+      gradientUrl: w.gradientUrl,
+      icon: w.icon,
+      publicKey: asset.publicKey,
+      tokenType: asset.tokenType,
+      bipType: asset.bipType,
+      portfolioId: w.portfolioId,
+      createdAt: asset.createdAt,
+      updatedAt: asset.updatedAt,
+    })),
+  );
 };
 
-export const getBitcoinWalletById = async (walletId: string) => {
-  return await db.query.bitcoinWallet.findFirst({
-    where: eq(bitcoinWallet.id, walletId),
-    with: {
-      portfolio: true,
-    },
+export const getWalletsByPortfolioId = getAllWalletsByPortfolioId;
+
+export const getAssetById = async (assetId: string) => {
+  return await db.query.walletAsset.findFirst({
+    where: eq(walletAsset.id, assetId),
+    with: { wallet: { with: { portfolio: true } } },
   });
 };
 
-export const getEthereumWalletById = async (walletId: string) => {
-  return await db.query.ethereumWallet.findFirst({
-    where: eq(ethereumWallet.id, walletId),
-    with: {
-      portfolio: true,
-    },
+export const getWalletById = async (walletId: string) => {
+  return await db.query.wallet.findFirst({
+    where: eq(wallet.id, walletId),
+    with: { portfolio: true },
   });
 };
 
-export const getWalletByIdAndTokenType = async (
-  walletId: string,
-  tokenType: TokenType,
-) => {
-  switch (tokenType) {
-    case TokenType.BTC:
-      return await getBitcoinWalletById(walletId);
-    case TokenType.ETH:
-      return await getEthereumWalletById(walletId);
-    default:
-      throw new Error(`Unsupported token type: ${tokenType}`);
+export const deleteAssetById = async (assetId: string) => {
+  const asset = await db.query.walletAsset.findFirst({
+    where: eq(walletAsset.id, assetId),
+  });
+
+  if (!asset) return;
+
+  await db.delete(walletAsset).where(eq(walletAsset.id, assetId));
+
+  const remaining = await db.query.walletAsset.findMany({
+    where: eq(walletAsset.walletId, asset.walletId),
+  });
+
+  if (remaining.length === 0) {
+    await db.delete(wallet).where(eq(wallet.id, asset.walletId));
   }
 };
 
-export const deleteWalletById = async (
-  walletId: string,
-  tokenType: TokenType,
-) => {
-  switch (tokenType) {
-    case TokenType.BTC:
-      await db.delete(bitcoinWallet).where(eq(bitcoinWallet.id, walletId));
-      break;
-    case TokenType.ETH:
-      await db.delete(ethereumWallet).where(eq(ethereumWallet.id, walletId));
-      break;
-    default:
-      throw new Error(`Unsupported token type: ${tokenType}`);
-  }
+export const deleteWalletById = async (walletId: string) => {
+  await db.delete(wallet).where(eq(wallet.id, walletId));
+};
+
+export const isDuplicateAsset = async (
+  portfolioId: string,
+  publicKey: string,
+): Promise<boolean> => {
+  const wallets = await db.query.wallet.findMany({
+    where: eq(wallet.portfolioId, portfolioId),
+    with: { assets: true },
+  });
+
+  return wallets.some((w) =>
+    w.assets.some(
+      (a) => a.publicKey.toLowerCase() === publicKey.toLowerCase(),
+    ),
+  );
 };

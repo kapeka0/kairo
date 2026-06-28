@@ -34,7 +34,7 @@ import {
   portfolioBalancesAtom,
 } from "@/lib/atoms/PortfolioAtoms";
 import { usePortfolios } from "@/lib/hooks/usePortfolios";
-import { Portfolio, TokenType, Wallet } from "@/lib/types";
+import { type Portfolio, TokenType, type Wallet } from "@/lib/types";
 import { devLog } from "@/lib/utils";
 import { calculateWalletBalanceInCurrency } from "@/lib/utils/balance";
 import { CURRENCIES } from "@/lib/utils/constants";

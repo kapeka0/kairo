@@ -2,7 +2,6 @@
 
 import { useTranslations } from "next-intl";
 import { useState } from "react";
-//eslint-disable-next-line
 import { useParams } from "next/navigation";
 
 import {
@@ -65,15 +64,22 @@ export default function AddWalletDialog({
   const getDialogTitle = () => {
     if (currentStep === 1) return tForm("step1Title");
     if (step1Data?.cryptocurrency === "BTC") return tForm("step2TitleBtc");
-    if (step1Data?.cryptocurrency === "ETH" || step1Data?.cryptocurrency === "USDC")
+    if (
+      step1Data?.cryptocurrency === "ETH" ||
+      step1Data?.cryptocurrency === "USDC"
+    )
       return tForm("step2TitleEth");
     return tForm("step1Title");
   };
 
   const getDialogDescription = () => {
     if (currentStep === 1) return tForm("step1Description");
-    if (step1Data?.cryptocurrency === "BTC") return tForm("step2DescriptionBtc");
-    if (step1Data?.cryptocurrency === "ETH" || step1Data?.cryptocurrency === "USDC")
+    if (step1Data?.cryptocurrency === "BTC")
+      return tForm("step2DescriptionBtc");
+    if (
+      step1Data?.cryptocurrency === "ETH" ||
+      step1Data?.cryptocurrency === "USDC"
+    )
       return tForm("step2DescriptionEth");
     return tForm("step1Description");
   };

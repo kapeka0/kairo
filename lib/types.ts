@@ -38,10 +38,12 @@ export type Erc20Token = {
 
 export type Wallet = {
   id: string;
+  walletId: string;
   name: string;
   gradientUrl: string;
   icon: string | null;
   publicKey: string;
+  bipType?: string | null;
   portfolioId: string;
   lastBalanceInTokens?: string;
   erc20Tokens?: Erc20Token[];
@@ -50,29 +52,13 @@ export type Wallet = {
   tokenType: TokenType;
 };
 
-export type BitcoinWallet = {
+export type PhysicalWallet = {
   id: string;
   name: string;
   gradientUrl: string;
   icon: string | null;
-  publicKey: string;
-  bipType: BipType;
   portfolioId: string;
-  createdAt: Date;
-  updatedAt: Date;
-  tokenType: TokenType.BTC;
-};
-
-export type EthereumWallet = {
-  id: string;
-  name: string;
-  gradientUrl: string;
-  icon: string | null;
-  publicKey: string;
-  portfolioId: string;
-  createdAt: Date;
-  updatedAt: Date;
-  tokenType: TokenType.ETH;
+  assets: Wallet[];
 };
 
 export type PortfoliosResponse = Portfolio[];

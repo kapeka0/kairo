@@ -1,10 +1,7 @@
 import { NextRequest, NextResponse } from "next/server";
 import { headers } from "next/headers";
 import { auth } from "@/lib/auth";
-import {
-  getBitcoinWalletById,
-  getEthereumWalletById,
-} from "@/lib/db/data/wallet";
+import { getAssetById } from "@/lib/db/data/wallet";
 import { walletIdParamSchema } from "@/lib/validations/api";
 import { validateRequest } from "@/lib/utils/api-validation";
 import { btcBlockbook, ethBlockbook } from "@/lib/services/blockbook";
@@ -33,25 +30,21 @@ export async function GET(
 
     const { walletId } = validation.data;
 
-    const tokenTypeParam = request.nextUrl.searchParams.get("tokenType");
-    const tokenType =
-      tokenTypeParam === TokenType.ETH ? TokenType.ETH : TokenType.BTC;
+    const asset = await getAssetById(walletId);
 
-    if (tokenType === TokenType.ETH) {
-      const wallet = await getEthereumWalletById(walletId);
+    if (!asset) {
+      return NextResponse.json({ error: "Asset not found" }, { status: 404 });
+    }
 
-      if (!wallet) {
-        return NextResponse.json({ error: "Wallet not found" }, { status: 404 });
-      }
+    if (asset.wallet.portfolio.userId !== session.user.id) {
+      return NextResponse.json(
+        { error: "Unauthorized: Asset does not belong to user" },
+        { status: 403 },
+      );
+    }
 
-      if (wallet.portfolio.userId !== session.user.id) {
-        return NextResponse.json(
-          { error: "Unauthorized: Wallet does not belong to user" },
-          { status: 403 },
-        );
-      }
-
-      const blockbookData = await ethBlockbook.fetchBalance(wallet.publicKey);
+    if (asset.tokenType === "ETH") {
+      const blockbookData = await ethBlockbook.fetchBalance(asset.publicKey);
 
       return NextResponse.json({
         walletId,
@@ -62,21 +55,8 @@ export async function GET(
         tokens: blockbookData.tokens,
       });
     } else {
-      const wallet = await getBitcoinWalletById(walletId);
-
-      if (!wallet) {
-        return NextResponse.json({ error: "Wallet not found" }, { status: 404 });
-      }
-
-      if (wallet.portfolio.userId !== session.user.id) {
-        return NextResponse.json(
-          { error: "Unauthorized: Wallet does not belong to user" },
-          { status: 403 },
-        );
-      }
-
       const blockbookData = await btcBlockbook.fetchBalance(
-        toDescriptor(wallet.publicKey, wallet.bipType as BipType),
+        toDescriptor(asset.publicKey, asset.bipType as BipType),
       );
 
       return NextResponse.json({

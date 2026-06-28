@@ -5,20 +5,138 @@ import { returnValidationErrors } from "next-safe-action";
 import { z } from "zod";
 
 import {
+  deleteAssetById,
   deleteWalletById,
-  getWalletByIdAndTokenType,
+  getAssetById,
+  getWalletById,
+  isDuplicateAsset,
 } from "@/lib/db/data/wallet";
 import { db } from "@/lib/db/db";
-import { bitcoinWallet, ethereumWallet, portfolio } from "@/lib/db/schema";
+import { portfolio, wallet, walletAsset } from "@/lib/db/schema";
 import { authActionClient } from "@/lib/safe-actions";
 import { btcBlockbook, ethBlockbook } from "@/lib/services/blockbook";
 import { TokenType, type BipType } from "@/lib/types";
 import { generateUUID } from "@/lib/utils";
 import { toDescriptor } from "@/lib/utils/bitcoin";
 import {
+  addBtcAssetSchema,
+  addEthAssetSchema,
   createBitcoinWalletSchema,
   createEthereumWalletSchema,
+  createWalletSchema,
 } from "@/lib/validations/wallet";
+
+export const createWallet = authActionClient
+  .metadata({ actionName: "createWallet" })
+  .inputSchema(createWalletSchema)
+  .action(async ({ parsedInput, ctx }) => {
+    const { name, portfolioId } = parsedInput;
+
+    const portfolioExists = await db.query.portfolio.findFirst({
+      where: and(
+        eq(portfolio.id, portfolioId),
+        eq(portfolio.userId, ctx.user.id),
+      ),
+    });
+
+    if (!portfolioExists) {
+      throw new Error("Portfolio not found or does not belong to the user");
+    }
+
+    const walletId = generateUUID();
+    const gradientUrl = `https://avatar.vercel.sh/${walletId}.svg?gradient=true`;
+
+    const newWallet = await db
+      .insert(wallet)
+      .values({
+        id: walletId,
+        name,
+        gradientUrl,
+        portfolioId,
+      })
+      .returning();
+
+    return { success: true, wallet: newWallet[0] };
+  });
+
+export const addBtcAsset = authActionClient
+  .metadata({ actionName: "addBtcAsset" })
+  .inputSchema(addBtcAssetSchema)
+  .action(async ({ parsedInput, ctx }) => {
+    const { walletId, publicKey, bipType } = parsedInput;
+
+    const parentWallet = await getWalletById(walletId);
+
+    if (!parentWallet || parentWallet.portfolio.userId !== ctx.user.id) {
+      throw new Error("Wallet not found or does not belong to the user");
+    }
+
+    const duplicate = await isDuplicateAsset(
+      parentWallet.portfolioId,
+      publicKey,
+    );
+    if (duplicate) {
+      returnValidationErrors(addBtcAssetSchema, {
+        publicKey: {
+          _errors: ["This address is already added to your portfolio"],
+        },
+      });
+    }
+
+    const assetId = generateUUID();
+
+    const newAsset = await db
+      .insert(walletAsset)
+      .values({
+        id: assetId,
+        walletId,
+        tokenType: "BTC",
+        publicKey,
+        bipType,
+      })
+      .returning();
+
+    return { success: true, asset: newAsset[0] };
+  });
+
+export const addEthAsset = authActionClient
+  .metadata({ actionName: "addEthAsset" })
+  .inputSchema(addEthAssetSchema)
+  .action(async ({ parsedInput, ctx }) => {
+    const { walletId, publicKey } = parsedInput;
+
+    const parentWallet = await getWalletById(walletId);
+
+    if (!parentWallet || parentWallet.portfolio.userId !== ctx.user.id) {
+      throw new Error("Wallet not found or does not belong to the user");
+    }
+
+    const duplicate = await isDuplicateAsset(
+      parentWallet.portfolioId,
+      publicKey,
+    );
+    if (duplicate) {
+      returnValidationErrors(addEthAssetSchema, {
+        publicKey: {
+          _errors: ["This address is already added to your portfolio"],
+        },
+      });
+    }
+
+    const assetId = generateUUID();
+
+    const newAsset = await db
+      .insert(walletAsset)
+      .values({
+        id: assetId,
+        walletId,
+        tokenType: "ETH",
+        publicKey,
+      })
+      .returning();
+
+    return { success: true, asset: newAsset[0] };
+  });
 
 export const createBitcoinWallet = authActionClient
   .metadata({ actionName: "createBitcoinWallet" })
@@ -37,14 +155,8 @@ export const createBitcoinWallet = authActionClient
       throw new Error("Portfolio not found or does not belong to the user");
     }
 
-    const existingWallet = await db.query.bitcoinWallet.findFirst({
-      where: and(
-        eq(bitcoinWallet.publicKey, publicKey),
-        eq(bitcoinWallet.portfolioId, portfolioId),
-      ),
-    });
-
-    if (existingWallet) {
+    const duplicate = await isDuplicateAsset(portfolioId, publicKey);
+    if (duplicate) {
       returnValidationErrors(createBitcoinWalletSchema, {
         publicKey: {
           _errors: ["This wallet is already added to your portfolio"],
@@ -56,16 +168,22 @@ export const createBitcoinWallet = authActionClient
     const gradientUrl = `https://avatar.vercel.sh/${walletId}.svg?gradient=true`;
 
     const newWallet = await db
-      .insert(bitcoinWallet)
+      .insert(wallet)
       .values({
         id: walletId,
         name,
         gradientUrl,
-        publicKey,
-        bipType,
         portfolioId,
       })
       .returning();
+
+    await db.insert(walletAsset).values({
+      id: generateUUID(),
+      walletId,
+      tokenType: "BTC",
+      publicKey,
+      bipType,
+    });
 
     return { success: true, wallet: newWallet[0] };
   });
@@ -87,14 +205,8 @@ export const createEthereumWallet = authActionClient
       throw new Error("Portfolio not found or does not belong to the user");
     }
 
-    const existingWallet = await db.query.ethereumWallet.findFirst({
-      where: and(
-        eq(ethereumWallet.publicKey, publicKey),
-        eq(ethereumWallet.portfolioId, portfolioId),
-      ),
-    });
-
-    if (existingWallet) {
+    const duplicate = await isDuplicateAsset(portfolioId, publicKey);
+    if (duplicate) {
       returnValidationErrors(createEthereumWalletSchema, {
         publicKey: {
           _errors: ["This wallet is already added to your portfolio"],
@@ -106,15 +218,21 @@ export const createEthereumWallet = authActionClient
     const gradientUrl = `https://avatar.vercel.sh/${walletId}.svg?gradient=true`;
 
     const newWallet = await db
-      .insert(ethereumWallet)
+      .insert(wallet)
       .values({
         id: walletId,
         name,
         gradientUrl,
-        publicKey,
         portfolioId,
       })
       .returning();
+
+    await db.insert(walletAsset).values({
+      id: generateUUID(),
+      walletId,
+      tokenType: "ETH",
+      publicKey,
+    });
 
     return { success: true, wallet: newWallet[0] };
   });
@@ -125,41 +243,18 @@ export const updateWalletIcon = authActionClient
     z.object({
       walletId: z.string().uuid(),
       icon: z.string().nullable(),
-      tokenType: z.nativeEnum(TokenType).optional().default(TokenType.BTC),
     }),
   )
   .action(async ({ parsedInput, ctx }) => {
-    const { walletId, icon, tokenType } = parsedInput;
+    const { walletId: wId, icon } = parsedInput;
 
-    if (tokenType === TokenType.ETH) {
-      const wallet = await db.query.ethereumWallet.findFirst({
-        where: eq(ethereumWallet.id, walletId),
-        with: { portfolio: true },
-      });
+    const w = await getWalletById(wId);
 
-      if (!wallet || wallet.portfolio.userId !== ctx.user.id) {
-        throw new Error("Wallet not found or does not belong to the user");
-      }
-
-      await db
-        .update(ethereumWallet)
-        .set({ icon })
-        .where(eq(ethereumWallet.id, walletId));
-    } else {
-      const wallet = await db.query.bitcoinWallet.findFirst({
-        where: eq(bitcoinWallet.id, walletId),
-        with: { portfolio: true },
-      });
-
-      if (!wallet || wallet.portfolio.userId !== ctx.user.id) {
-        throw new Error("Wallet not found or does not belong to the user");
-      }
-
-      await db
-        .update(bitcoinWallet)
-        .set({ icon })
-        .where(eq(bitcoinWallet.id, walletId));
+    if (!w || w.portfolio.userId !== ctx.user.id) {
+      throw new Error("Wallet not found or does not belong to the user");
     }
+
+    await db.update(wallet).set({ icon }).where(eq(wallet.id, wId));
 
     return { success: true };
   });
@@ -168,40 +263,51 @@ export const refreshWalletBalance = authActionClient
   .metadata({ actionName: "refreshWalletBalance" })
   .inputSchema(
     z.object({
-      walletId: z.string().uuid(),
-      tokenType: z.nativeEnum(TokenType).optional().default(TokenType.BTC),
+      assetId: z.string().uuid(),
     }),
   )
   .action(async ({ parsedInput, ctx }) => {
-    const { walletId, tokenType } = parsedInput;
+    const { assetId } = parsedInput;
 
-    if (tokenType === TokenType.ETH) {
-      const wallet = await db.query.ethereumWallet.findFirst({
-        where: eq(ethereumWallet.id, walletId),
-        with: { portfolio: true },
-      });
+    const asset = await getAssetById(assetId);
 
-      if (!wallet || wallet.portfolio.userId !== ctx.user.id) {
-        throw new Error("Wallet not found");
-      }
+    if (!asset || asset.wallet.portfolio.userId !== ctx.user.id) {
+      throw new Error("Asset not found");
+    }
 
-      const blockbookData = await ethBlockbook.fetchBalance(wallet.publicKey);
+    if (asset.tokenType === "ETH") {
+      const blockbookData = await ethBlockbook.fetchBalance(asset.publicKey);
       return { success: true, balance: blockbookData.balance };
     } else {
-      const wallet = await db.query.bitcoinWallet.findFirst({
-        where: eq(bitcoinWallet.id, walletId),
-        with: { portfolio: true },
-      });
-
-      if (!wallet || wallet.portfolio.userId !== ctx.user.id) {
-        throw new Error("Wallet not found");
-      }
-
       const blockbookData = await btcBlockbook.fetchBalance(
-        toDescriptor(wallet.publicKey, wallet.bipType as BipType),
+        toDescriptor(asset.publicKey, asset.bipType as BipType),
       );
       return { success: true, balance: blockbookData.balance };
     }
+  });
+
+export const deleteAsset = authActionClient
+  .metadata({ actionName: "deleteAsset" })
+  .inputSchema(
+    z.object({
+      assetId: z.string().uuid(),
+    }),
+  )
+  .action(async ({ parsedInput, ctx }) => {
+    const { assetId } = parsedInput;
+    const asset = await getAssetById(assetId);
+
+    if (!asset) {
+      throw new Error("Asset not found");
+    }
+
+    if (asset.wallet.portfolio.userId !== ctx.user.id) {
+      throw new Error("Unauthorized: Asset does not belong to user");
+    }
+
+    await deleteAssetById(assetId);
+
+    return { success: true };
   });
 
 export const deleteWallet = authActionClient
@@ -209,22 +315,21 @@ export const deleteWallet = authActionClient
   .inputSchema(
     z.object({
       walletId: z.string().uuid(),
-      tokenType: z.nativeEnum(TokenType),
     }),
   )
   .action(async ({ parsedInput, ctx }) => {
-    const { walletId, tokenType } = parsedInput;
-    const wallet = await getWalletByIdAndTokenType(walletId, tokenType);
+    const { walletId: wId } = parsedInput;
+    const w = await getWalletById(wId);
 
-    if (!wallet) {
+    if (!w) {
       throw new Error("Wallet not found");
     }
 
-    if (wallet.portfolio.userId !== ctx.user.id) {
+    if (w.portfolio.userId !== ctx.user.id) {
       throw new Error("Unauthorized: Wallet does not belong to user");
     }
 
-    await deleteWalletById(walletId, tokenType);
+    await deleteWalletById(wId);
 
     return { success: true };
   });

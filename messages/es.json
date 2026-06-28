@@ -248,7 +248,10 @@
       "ethereumAddressHelper": "Tu dirección pública de Ethereum que comienza con 0x. Es segura de compartir — solo expone saldos y transacciones.",
       "back": "Atrás",
       "next": "Siguiente",
-      "addWallet": "Agregar Billetera"
+      "addWallet": "Agregar Billetera",
+      "addAssetTitle": "Agregar Activo",
+      "addAssetDescription": "Agrega una nueva dirección blockchain a esta billetera",
+      "addAsset": "Agregar Activo"
     },
     "success": {
       "walletAdded": "¡Billetera agregada exitosamente!",

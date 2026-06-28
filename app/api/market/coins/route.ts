@@ -1,6 +1,6 @@
 import { auth } from "@/lib/auth";
 import { existsPortfolioByIdAndUserId } from "@/lib/db/data/portfolio";
-import { getWalletsByPortfolioId } from "@/lib/db/data/wallet";
+import { getAllWalletsByPortfolioId } from "@/lib/db/data/wallet";
 import { getCoinsMarkets } from "@/lib/services/coingecko";
 import { TokenType } from "@/lib/types";
 import { validateRequest, parseSearchParams } from "@/lib/utils/api-validation";
@@ -48,7 +48,7 @@ export async function GET(request: NextRequest) {
       );
     }
 
-    const wallets = await getWalletsByPortfolioId(portfolioId);
+    const wallets = await getAllWalletsByPortfolioId(portfolioId);
 
     const uniqueTokenTypes = [
       ...new Set(wallets.map((w) => w.tokenType as TokenType)),

@@ -2,7 +2,6 @@ import { clsx, type ClassValue } from "clsx";
 import { twMerge } from "tailwind-merge";
 import UserAgent from "user-agents";
 import { v4 as uuidv4 } from "uuid";
-import { BitcoinWallet, EthereumWallet, Wallet } from "./types";
 
 export function cn(...inputs: ClassValue[]) {
   return twMerge(clsx(inputs));
@@ -45,29 +44,6 @@ export function getRealisticUserAgent(): string {
   return ua.toString();
 }
 
-export const mapBTCWalletToWallet = (wallet: BitcoinWallet): Wallet => ({
-  id: wallet.id,
-  name: wallet.name,
-  gradientUrl: wallet.gradientUrl,
-  icon: wallet.icon,
-  publicKey: wallet.publicKey,
-  portfolioId: wallet.portfolioId,
-  createdAt: wallet.createdAt,
-  updatedAt: wallet.updatedAt,
-  tokenType: wallet.tokenType,
-});
-
-export const mapETHWalletToWallet = (wallet: EthereumWallet): Wallet => ({
-  id: wallet.id,
-  name: wallet.name,
-  gradientUrl: wallet.gradientUrl,
-  icon: wallet.icon,
-  publicKey: wallet.publicKey,
-  portfolioId: wallet.portfolioId,
-  createdAt: wallet.createdAt,
-  updatedAt: wallet.updatedAt,
-  tokenType: wallet.tokenType,
-});
 
 export function formatDate(
   dateStr: string,
