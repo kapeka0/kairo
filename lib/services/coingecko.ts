@@ -49,6 +49,27 @@ export const getTokenPrice = async ({
   }
 };
 
+export const getErc20Price = async ({
+  coingeckoId,
+  currency = "usd",
+}: {
+  coingeckoId: string;
+  currency: Currency;
+}) => {
+  try {
+    const response = await coingeckoClient.simple.price.get({
+      vs_currencies: currency,
+      ids: coingeckoId,
+      precision: "full",
+    });
+
+    return (response[coingeckoId] as Record<Currency, number>)[currency];
+  } catch (error) {
+    console.error(`Error fetching ERC-20 price (${coingeckoId}) from CoinGecko:`, error);
+    throw error;
+  }
+};
+
 export const getBitcoinPrice = async ({
   currency = "usd",
 }: {

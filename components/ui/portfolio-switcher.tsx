@@ -116,17 +116,21 @@ export function PortfolioSwitcher() {
           return 0;
         }
 
-        const liveBalances = await Promise.all(
+        const liveBalanceResults = await Promise.all(
           wallets.map((w) =>
             axios
-              .get<{ balance: string }>(`/api/wallet/${w.id}/balance`)
-              .then((r) => r.data.balance)
-              .catch(() => "0"),
+              .get<{ balance: string; tokens?: Wallet["erc20Tokens"] }>(
+                `/api/wallet/${w.id}/balance`,
+                { params: { tokenType: w.tokenType } },
+              )
+              .then((r) => ({ balance: r.data.balance, erc20Tokens: r.data.tokens ?? [] }))
+              .catch(() => ({ balance: "0", erc20Tokens: [] })),
           ),
         );
         const walletsWithLiveBalance = wallets.map((w, i) => ({
           ...w,
-          lastBalanceInTokens: liveBalances[i],
+          lastBalanceInTokens: liveBalanceResults[i].balance,
+          erc20Tokens: liveBalanceResults[i].erc20Tokens,
         }));
 
         const walletsByTokenType = walletsWithLiveBalance.reduce(
@@ -152,6 +156,30 @@ export function PortfolioSwitcher() {
           priceMap[response.data.tokenType as TokenType] = response.data.price;
         });
 
+        const erc20Symbols = [
+          ...new Set(
+            walletsWithLiveBalance.flatMap((w) =>
+              (w.erc20Tokens ?? []).map((t) => t.symbol.toUpperCase()),
+            ),
+          ),
+        ];
+
+        const erc20PriceResults = await Promise.all(
+          erc20Symbols.map((symbol) =>
+            axios
+              .get<{ symbol: string; price: number }>(`/api/token/erc20-price`, {
+                params: { symbol, currency: coingeckoCurrency },
+              })
+              .then((r) => r.data)
+              .catch(() => null),
+          ),
+        );
+
+        const erc20PricesMap: Record<string, number> = {};
+        erc20PriceResults.forEach((r) => {
+          if (r) erc20PricesMap[r.symbol] = r.price;
+        });
+
         let totalBalance = 0;
 
         for (const [tokenType, tokenWallets] of Object.entries(
@@ -163,6 +191,7 @@ export function PortfolioSwitcher() {
             totalBalance += calculateWalletBalanceInCurrency(
               wallet,
               tokenPrice,
+              erc20PricesMap,
             );
           }
         }

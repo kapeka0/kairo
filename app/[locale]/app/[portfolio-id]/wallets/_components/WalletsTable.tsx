@@ -48,6 +48,7 @@ import { usePortfolios } from "@/lib/hooks/usePortfolios";
 import { useTokenStats } from "@/lib/hooks/useTokenStats";
 import { useWallets } from "@/lib/hooks/useWallets";
 import { TokenType } from "@/lib/types";
+import { getErc20Metadata } from "@/lib/utils/erc20-metadata";
 import { devLog } from "@/lib/utils";
 import { SUPPORTED_CRYPTOCURRENCIES } from "@/lib/utils/constants";
 import { getTokenMetadata } from "@/lib/utils/token-metadata";
@@ -66,6 +67,7 @@ export default function WalletsTable() {
     error,
     walletsSortedByBalance,
     getWalletBalanceInCurrency,
+    erc20PricesMap,
   } = useWallets(portfolioId);
   const { getPriceByTokenType } = useTokenStats();
   const { activePortfolio } = usePortfolios();
@@ -332,6 +334,31 @@ export default function WalletsTable() {
                           {formattedBalance} {tokenMeta.symbol}
                         </span>
                       </PrivacyValue>
+
+                      {wallet.erc20Tokens?.map((token) => {
+                        const meta = getErc20Metadata(token.symbol);
+                        if (!meta || token.balance === "0") return null;
+                        const tokenAmount = parseInt(token.balance) / Math.pow(10, token.decimals);
+                        const tokenUsdValue = erc20PricesMap[token.symbol.toUpperCase()];
+                        return (
+                          <PrivacyValue key={token.contract}>
+                            <span className="flex items-center gap-1 text-xs text-muted-foreground">
+                              <Image src={meta.logoPath} alt={token.symbol} width={12} height={12} />
+                              {tokenAmount.toLocaleString(locale, { maximumFractionDigits: 2 })} {token.symbol}
+                              {tokenUsdValue !== undefined && (
+                                <span className="ml-1">
+                                  ·{" "}
+                                  <NumberFlow
+                                    locales={locale}
+                                    format={{ style: "currency", currency: currency || "USD", minimumFractionDigits: 2, maximumFractionDigits: 2 }}
+                                    value={tokenAmount * tokenUsdValue}
+                                  />
+                                </span>
+                              )}
+                            </span>
+                          </PrivacyValue>
+                        );
+                      })}
 
                       {getPriceByTokenType(wallet.tokenType) !== undefined && (
                         <PrivacyValue>

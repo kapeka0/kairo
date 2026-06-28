@@ -27,6 +27,15 @@ export enum TokenType {
 
 export type BipType = "BIP44" | "BIP49" | "BIP84" | "BIP86";
 
+export type Erc20Token = {
+  type: string;
+  name: string;
+  symbol: string;
+  contract: string;
+  decimals: number;
+  balance: string;
+};
+
 export type Wallet = {
   id: string;
   name: string;
@@ -35,6 +44,7 @@ export type Wallet = {
   publicKey: string;
   portfolioId: string;
   lastBalanceInTokens?: string;
+  erc20Tokens?: Erc20Token[];
   createdAt: Date;
   updatedAt: Date;
   tokenType: TokenType;

@@ -41,6 +41,18 @@ export const getTokenPriceSchema = z.object({
   }),
 });
 
+export const getErc20PriceSchema = z.object({
+  currency: z
+    .string()
+    .refine(
+      (val) => CURRENCIES.some((c) => c.coingeckoValue === val),
+      { message: `Currency must be one of: ${CURRENCIES.map(c => c.coingeckoValue).join(", ")}` }
+    ),
+  symbol: z.string().min(1).max(20),
+});
+
+export type GetErc20PriceInput = z.infer<typeof getErc20PriceSchema>;
+
 export const walletIdParamSchema = z.object({
   walletId: z.string().uuid("Invalid wallet ID format"),
 });
