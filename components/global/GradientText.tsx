@@ -1,14 +1,14 @@
 import { cn } from "@/lib/utils";
-import type { ReactNode } from "react";
+import type { CSSProperties, ReactNode } from "react";
 
 type GradientVariant = "sunset" | "ocean" | "aurora" | "fire" | "candy";
 
-const gradientMap: Record<GradientVariant, string> = {
-  sunset: "from-[#f87171] via-[#fbbf24] to-[#c084fc]",
-  ocean: "from-[#06b6d4] via-[#3b82f6] to-[#8b5cf6]",
-  aurora: "from-[#34d399] via-[#22d3ee] to-[#a78bfa]",
-  fire: "from-[#f97316] via-[#ef4444] to-[#ec4899]",
-  candy: "from-[#f472b6] via-[#c084fc] to-[#60a5fa]",
+const gradientColorMap: Record<GradientVariant, [string, string, string]> = {
+  sunset: ["#f87171", "#fbbf24", "#c084fc"],
+  ocean: ["#06b6d4", "#3b82f6", "#8b5cf6"],
+  aurora: ["#34d399", "#22d3ee", "#a78bfa"],
+  fire: ["#f97316", "#ef4444", "#ec4899"],
+  candy: ["#f472b6", "#c084fc", "#60a5fa"],
 };
 
 interface GradientTextProps {
@@ -24,14 +24,17 @@ export function GradientText({
   className,
   as: Component = "span",
 }: GradientTextProps) {
+  const [from, via, to] = gradientColorMap[variant];
+  const style: CSSProperties = {
+    backgroundImage: `linear-gradient(to right, ${from}, ${via}, ${to})`,
+    WebkitBackgroundClip: "text",
+    backgroundClip: "text",
+    WebkitTextFillColor: "transparent",
+    color: "transparent",
+  };
+
   return (
-    <Component
-      className={cn(
-        "bg-linear-to-r bg-clip-text text-transparent",
-        gradientMap[variant],
-        className,
-      )}
-    >
+    <Component className={cn("inline-block", className)} style={style}>
       {children}
     </Component>
   );
